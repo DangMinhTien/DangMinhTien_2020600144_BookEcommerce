@@ -1,0 +1,168 @@
+﻿body {}
+.searchproduct:focus {
+    outline: 0 !important;
+}
+//Image Product Detail Start
+#product-carousel {
+    height: 512px !important;
+}
+@media screen and (max-width: 750px) {
+    #product-carousel {
+        height: 400px !important;
+    }
+}
+.carousel-inner {
+    border: 0.5px solid #00000020 !important;
+    border-radius: 10px;
+}
+//Image Product Detail End
+//Toast Start
+
+.m-toast-box {
+    position: fixed;
+    top: 10px;
+    right: 0;
+    display: block;
+    z-index: 2;
+}
+
+.m-toast-box .m-toast-message {
+    min-height: 48px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    padding: 0 10px 0 16px;
+    margin-bottom: 8px;
+    margin-right: 8px;
+    max-width: 250px;
+    min-width: 300px;
+    box-shadow: rgba(0, 0, 0, 0.5) 4px 4px 4px;
+    opacity: 0;
+    animation: slideInContent 1s forwards, fadeInContent 1s forwards; /* Sử dụng animation slideInContent */
+}
+@keyframes slideInContent {
+    from {
+        transform: translateX(100%); /* Từ vị trí ngoài màn hình bên trên */
+        visibility: visible; /* Hiển thị toast content khi animation bắt đầu */
+    }
+
+    to {
+        transform: translateX(0); /* Đến vị trí cuối cùng (đã chỉ định) */
+    }
+}
+@keyframes fadeInContent {
+    from {
+        opacity: 0; /* Từ opacity 0 */
+    }
+
+    to {
+        opacity: 1; /* Đến opacity 1 */
+    }
+}
+.m-toast-message.hidden {
+    animation: slideOutContent 1s forwards, fadeOutContent 1s forwards; /* Sử dụng animation slideOutContent */
+}
+
+@keyframes slideOutContent {
+    from {
+        transform: translateX(0); /* Từ vị trí hiện tại */
+    }
+
+    to {
+        transform: translateX(100%); /* Đến vị trí ngoài màn hình bên trên */
+        visibility: hidden; /* Ẩn toast content khi animation kết thúc */
+    }
+}
+@keyframes fadeOutContent {
+    from {
+        opacity: 1; /* Từ opacity 1 */
+    }
+
+    to {
+        opacity: 0; /* Đến opacity 0 */
+    }
+}
+.m-toast-box .m-toast-message .m-toast-icon {
+    font-size: 20px;
+}
+
+.m-toast-box .m-toast-message .m-toast-text {
+    color: #000;
+    margin: 0 8px;
+    flex: 1;
+}
+
+.m-toast-box .m-toast-message .m-toast-close {
+    font-size: 20px;
+    cursor: pointer;
+}
+
+.m-toast-box .m-toast-success {
+    background-color: #baffe7;
+}
+
+.m-toast-box .m-toast-success i {
+    color: #019160;
+}
+
+.m-toast-box .m-toast-success i:hover {
+    color: #02754f;
+}
+
+.m-toast-box .m-toast-error {
+    background-color: #ffcece;
+}
+
+.m-toast-box .m-toast-error i {
+    color: #ff4747;
+}
+
+.m-toast-box .m-toast-error i:hover {
+    color: #de1f1f;
+}
+
+.m-toast-box .m-toast-warning {
+    background-color: #ffe7af;
+}
+
+.m-toast-box .m-toast-warning i {
+    color: #fa9f47;
+}
+.m-toast-box .m-toast-infor {
+    background-color: #d8eaff;
+}
+
+.m-toast-box .m-toast-infor i {
+    color: #0090e0;
+}
+
+.m-toast-box .m-toast-infor i:hover {
+    color: #0676b2;
+}
+//Toast End
+// Product Detail Start
+.link-in-productdetail {
+    color: #6c757d;
+}
+.link-in-productdetail:hover {
+    color: #28a745;
+    text-decoration: underline;
+}
+// Product Detail End
+// SideBar Start
+.sidebar-collapse:hover h5{
+    color: #28a745 !important;
+}
+.sidebar-collapse:hover i {
+    color: #28a745 !important;
+}
+.sidebar-collapse.show {
+    color: #28a745 !important;
+}
+.sidebar-collapse.show h5 {
+    color: #28a745 !important;
+}
+// SideBar End
+// Grid Extension Start
+
+// Grid Extension End

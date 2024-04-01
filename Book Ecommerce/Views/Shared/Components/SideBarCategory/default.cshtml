@@ -1,0 +1,22 @@
+﻿@model IEnumerable<CategoryVM>
+@{
+    var cssActive = Model.Any(c => c.IsActive) ? "show" : "";
+}
+<a class="d-flex justify-content-between sidebar-collapse @cssActive" data-toggle="collapse" href="#collapseSideBarCategory" role="button" aria-expanded="false" aria-controls="collapseExample">
+    <h5 class="font-weight-semi-bold mb-2">Thể loại</h5>
+    <i class="fas fa-sort-down"></i>
+</a>
+<div class="collapse @cssActive" id="collapseSideBarCategory">
+    <div class="card card-body">
+        @foreach (var item in Model)
+        {
+            var css = item.IsActive ? "item-sidebar-active" : "";
+            <div class="item-sidebar @css">
+                <a asp-action="GetByCategory" asp-controller="Products" asp-route-categorySlug="@item.CategorySlug" class="px-0">
+                    @item.CategoryName
+                    <span class="">(@item.SumProduct)</span>
+                </a>
+            </div>
+        }
+    </div>
+</div>

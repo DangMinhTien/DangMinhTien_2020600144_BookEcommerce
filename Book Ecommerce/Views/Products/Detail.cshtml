@@ -1,0 +1,408 @@
+﻿@model ProductVM
+@{
+    CultureInfo cultureInfo = new CultureInfo("vi-VN");
+}
+<!-- Shop Detail Start -->
+<div class="container-fluid py-5">
+    <div class="row px-xl-5">
+        <div class="col-lg-5 pb-5">
+            <div id="product-carousel" class="carousel slide" data-ride="carousel">
+                <div class="carousel-inner h-100">
+                    @{
+                        var imageFirst = Model.Images.FirstOrDefault();
+                    }
+                    @foreach(var image in Model.Images)
+                    {
+                        var css = (image == imageFirst) ? "active" : "";
+                        <div class="carousel-item h-100 @css">
+                            <img style="object-fit: contain;" class="w-100 h-100 img-product" src="/contents/Photos/Products/@image.ImageName" alt="Image">
+                        </div>
+                    }
+                </div>
+                <a class="carousel-control-prev" href="#product-carousel" data-slide="prev">
+                    <i class="fa fa-2x fa-angle-left text-dark"></i>
+                </a>
+                <a class="carousel-control-next" href="#product-carousel" data-slide="next">
+                    <i class="fa fa-2x fa-angle-right text-dark"></i>
+                </a>
+            </div>
+        </div>
+
+        <div class="col-lg-7 pb-5">
+            <h3 class="font-weight-semi-bold">@Model.ProductName</h3>
+            <div class="d-flex mb-3">
+                <div class="text-primary mr-2">
+                    <small class="fas fa-star"></small>
+                    <small class="fas fa-star"></small>
+                    <small class="fas fa-star"></small>
+                    <small class="fas fa-star-half-alt"></small>
+                    <small class="far fa-star"></small>
+                </div>
+                <small class="pt-1">(50 Reviews)</small>
+            </div>
+            @if(Model.PercentDiscount > 0)
+            {
+                <div class="d-flex align-items-center mb-2">
+                    <h3 class="font-weight-semi-bold">@string.Format(cultureInfo, "{0:C0}", Model.PriceAfterDiscount)</h3>
+                    <h3 class="font-weight-semi-bold text-danger ml-4"><del>@string.Format(cultureInfo, "{0:C0}", Model.Price)</del></h3>
+                </div>
+                <p class="mb-1">Giảm giá: @Model.PercentDiscount%</p>
+            }
+            else
+            {
+                <h3 class="font-weight-semi-bold mb-2">@string.Format(cultureInfo, "{0:C0}", Model.Price)</h3>
+            }
+            <a href=""></a>
+            <p class="mb-1">Mã hàng: @Model.ProductCode</p>
+            <p class="mb-1">Số lượng: @Model.Quantity</p>
+            <p class="mb-1">
+                Thể loại: 
+                @{
+                    var cateEnd = Model.Categories.Reverse().FirstOrDefault();
+                }
+                @foreach(var cate in Model.Categories)
+                {
+                    <a class="link-in-productdetail" href="@Url.Action("GetByCategory","Products",new {categorySlug = cate.CategorySlug})">@cate.CategoryName</a>
+                    if(cate != cateEnd)
+                    {
+                        <span>, </span>
+                    }
+                }
+            </p>
+            <p class="mb-1">
+                Tác giả:
+                @{
+                    var authorEnd = Model.Authors.Reverse().FirstOrDefault();
+                }
+                @foreach (var author in Model.Authors)
+                {
+                    <a class="link-in-productdetail" href="@Url.Action("GetByAuthor","Products",new {authorSlug = author.AuthorSlug})">@author.AuthorName</a>
+                    if (author != authorEnd)
+                    {
+                        <span>, </span>
+                    }
+                }
+            </p>
+            <p class="mb-2">Thương hiệu: <a class="link-in-productdetail" href="@Url.Action("GetByBrand","Products",new {brandSlug = Model.Brand?.BrandSlug})">@Model.Brand?.BrandName</a></p>
+            <p class="mb-2">Số lượt đánh giá: @Model.Comments.Count()</p>
+            
+            <div class="d-flex align-items-center mb-4 pt-2">
+                <div class="input-group quantity mr-3" style="width: 130px;">
+                    <div class="input-group-btn">
+                        <button class="btn btn-primary btn-minus">
+                            <i class="fa fa-minus"></i>
+                        </button>
+                    </div>
+                    <input id="Quantity" type="text" class="form-control bg-secondary text-center" value="1">
+                    <div class="input-group-btn">
+                        <button class="btn btn-primary btn-plus">
+                            <i class="fa fa-plus"></i>
+                        </button>
+                    </div>
+                </div>
+                <button id="AddToCart" data-productid="@Model.ProductId" class="btn btn-primary px-3"><i class="fa fa-shopping-cart mr-1"></i> Thêm vào giỏ hàng</button>
+            </div>
+        </div>
+    </div>
+    <div class="row px-xl-5">
+        <div class="col">
+            <div class="nav nav-tabs justify-content-center border-secondary mb-4">
+                <a class="nav-item nav-link active" data-toggle="tab" href="#tab-pane-1">Description</a>
+                <a class="nav-item nav-link" data-toggle="tab" href="#tab-pane-2">Information</a>
+                <a class="nav-item nav-link" data-toggle="tab" href="#tab-pane-3">Reviews (0)</a>
+            </div>
+            <div class="tab-content">
+                <div class="tab-pane fade show active" id="tab-pane-1">
+                    <h4 class="mb-3">Product Description</h4>
+                    <p>Eos no lorem eirmod diam diam, eos elitr et gubergren diam sea. Consetetur vero aliquyam invidunt duo dolores et duo sit. Vero diam ea vero et dolore rebum, dolor rebum eirmod consetetur invidunt sed sed et, lorem duo et eos elitr, sadipscing kasd ipsum rebum diam. Dolore diam stet rebum sed tempor kasd eirmod. Takimata kasd ipsum accusam sadipscing, eos dolores sit no ut diam consetetur duo justo est, sit sanctus diam tempor aliquyam eirmod nonumy rebum dolor accusam, ipsum kasd eos consetetur at sit rebum, diam kasd invidunt tempor lorem, ipsum lorem elitr sanctus eirmod takimata dolor ea invidunt.</p>
+                    <p>Dolore magna est eirmod sanctus dolor, amet diam et eirmod et ipsum. Amet dolore tempor consetetur sed lorem dolor sit lorem tempor. Gubergren amet amet labore sadipscing clita clita diam clita. Sea amet et sed ipsum lorem elitr et, amet et labore voluptua sit rebum. Ea erat sed et diam takimata sed justo. Magna takimata justo et amet magna et.</p>
+                </div>
+                <div class="tab-pane fade" id="tab-pane-2">
+                    <h4 class="mb-3">Additional Information</h4>
+                    <p>Eos no lorem eirmod diam diam, eos elitr et gubergren diam sea. Consetetur vero aliquyam invidunt duo dolores et duo sit. Vero diam ea vero et dolore rebum, dolor rebum eirmod consetetur invidunt sed sed et, lorem duo et eos elitr, sadipscing kasd ipsum rebum diam. Dolore diam stet rebum sed tempor kasd eirmod. Takimata kasd ipsum accusam sadipscing, eos dolores sit no ut diam consetetur duo justo est, sit sanctus diam tempor aliquyam eirmod nonumy rebum dolor accusam, ipsum kasd eos consetetur at sit rebum, diam kasd invidunt tempor lorem, ipsum lorem elitr sanctus eirmod takimata dolor ea invidunt.</p>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item px-0">
+                                    Sit erat duo lorem duo ea consetetur, et eirmod takimata.
+                                </li>
+                                <li class="list-group-item px-0">
+                                    Amet kasd gubergren sit sanctus et lorem eos sadipscing at.
+                                </li>
+                                <li class="list-group-item px-0">
+                                    Duo amet accusam eirmod nonumy stet et et stet eirmod.
+                                </li>
+                                <li class="list-group-item px-0">
+                                    Takimata ea clita labore amet ipsum erat justo voluptua. Nonumy.
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item px-0">
+                                    Sit erat duo lorem duo ea consetetur, et eirmod takimata.
+                                </li>
+                                <li class="list-group-item px-0">
+                                    Amet kasd gubergren sit sanctus et lorem eos sadipscing at.
+                                </li>
+                                <li class="list-group-item px-0">
+                                    Duo amet accusam eirmod nonumy stet et et stet eirmod.
+                                </li>
+                                <li class="list-group-item px-0">
+                                    Takimata ea clita labore amet ipsum erat justo voluptua. Nonumy.
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane fade" id="tab-pane-3">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h4 class="mb-4">1 review for "Colorful Stylish Shirt"</h4>
+                            <div class="media mb-4">
+                                <img src="img/user.jpg" alt="Image" class="img-fluid mr-3 mt-1" style="width: 45px;">
+                                <div class="media-body">
+                                    <h6>John Doe<small> - <i>01 Jan 2045</i></small></h6>
+                                    <div class="text-primary mb-2">
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star-half-alt"></i>
+                                        <i class="far fa-star"></i>
+                                    </div>
+                                    <p>Diam amet duo labore stet elitr ea clita ipsum, tempor labore accusam ipsum et no at. Kasd diam tempor rebum magna dolores sed sed eirmod ipsum.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <h4 class="mb-4">Leave a review</h4>
+                            <small>Your email address will not be published. Required fields are marked *</small>
+                            <div class="d-flex my-3">
+                                <p class="mb-0 mr-2">Your Rating * :</p>
+                                <div class="text-primary">
+                                    <i class="far fa-star"></i>
+                                    <i class="far fa-star"></i>
+                                    <i class="far fa-star"></i>
+                                    <i class="far fa-star"></i>
+                                    <i class="far fa-star"></i>
+                                </div>
+                            </div>
+                            <form>
+                                <div class="form-group">
+                                    <label for="message">Your Review *</label>
+                                    <textarea id="message" cols="30" rows="5" class="form-control"></textarea>
+                                </div>
+                                <div class="form-group">
+                                    <label for="name">Your Name *</label>
+                                    <input type="text" class="form-control" id="name">
+                                </div>
+                                <div class="form-group">
+                                    <label for="email">Your Email *</label>
+                                    <input type="email" class="form-control" id="email">
+                                </div>
+                                <div class="form-group mb-0">
+                                    <input type="submit" value="Leave Your Review" class="btn btn-primary px-3">
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Shop Detail End -->
+<!-- Products Start -->
+<div class="container-fluid py-5">
+    <div class="text-center mb-4">
+        <h2 class="section-title px-5"><span class="px-2">Các sản phẩm liên quan khác</span></h2>
+    </div>
+    <div class="row px-xl-5">
+        <div class="col">
+            <div class="owl-carousel related-carousel">
+                @foreach(var product in Model.Products)
+                {
+                    var image = product.Images.FirstOrDefault();
+                        <div style="box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5); border-radius: 10px; overflow: hidden;" 
+                            class="card product-item border-0 mb-4">
+                            <a asp-action ="Detail" asp-controller="Products" asp-route-productSlug="@product.ProductSlug">
+                                <div class="card-header product-img position-relative overflow-hidden bg-transparent border p-0">
+                                    @if (image != null)
+                                    {
+                                        <img style="object-fit:cover" class="w-100 img-product" src="/contents/Photos/Products/@image.ImageName" alt="">
+                                    }
+                                    else
+                                    {
+                                        <img style="object-fit:cover" class="w-100 img-product" src="/contents/Photos/No_Image_Available.jpg" alt="">
+                                    }
+                                </div>
+                                <div class="card-body border-left border-right text-center p-0 pt-4 pb-3" style="padding: 0.5rem 0 !important">
+                                    <h6 class="text-truncate" style="display: -webkit-box;-webkit-box-orient: vertical;overflow: hidden;
+                                        -webkit-line-clamp: 2;white-space: normal !important; height: 2.4em">
+                                        @product.ProductName
+                                    </h6>
+                                    <div class="d-flex justify-content-center">
+                                        @if (product.PercentDiscount > 0)
+                                        {
+                                            <h6>@string.Format(cultureInfo, "{0:C0}", product.PriceAfterDiscount)</h6>
+
+                                            <h6 class="text-muted ml-2"><del>@string.Format(cultureInfo, "{0:C0}", product.Price)</del></h6>
+                                        }
+                                        else
+                                        {
+                                            <h6>@string.Format(cultureInfo, "{0:C0}", product.Price)</h6>
+                                        }
+                                    </div>
+                                    <h6 class="text-center text-primary">Số lượng: @product.Quantity</h6>
+                                </div>
+                                <div class="card-footer d-flex justify-content-between bg-light border">
+                                    <a asp-action="Detail" asp-controller="Products" asp-route-productSlug="@product.ProductSlug" class="btn btn-sm text-dark p-0"><i class="fas fa-eye text-primary mr-1"></i>Chi tiết</a>
+                                    <a data-productid="@product.ProductId" class="btn btn-sm text-dark p-0 AddToCart"><i class="fas fa-shopping-cart text-primary mr-1"></i>Thêm</a>
+                                    <a class="btn btn-sm text-dark p-0"><i class="fas fas fa-heart text-primary mr-1"></i>Thích</a>
+                                </div>
+                            </a>
+                        </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Products End -->
+@section Scripts {
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('.AddToCart').click(function () {
+                var productid = $(this).data('productid')
+                var formData = new FormData()
+                formData.append('productid', productid)
+                formData.append('quantity', 1)
+                $.ajax({
+                    url: '@Url.Action("AddToCart", "Cart")',
+                    type: 'POST',
+                    data: formData,
+                    catch: false,
+                    contentType: false,
+                    processData: false,
+                    success: function (response) {
+                        if (response.state == true) {
+                            console.log(response.messagedev)
+                            var toast = $(`<div class="m-toast-message m-toast-success">
+                                        <div class="m-toast-icon">
+                                            <i class="fas fa-check-circle"></i>
+                                        </div>
+                                                <div class="m-toast-text">${response.messageclient}</div>
+                                        <div class="m-toast-close">
+                                            <i class="fas fa-times"></i>
+                                        </div>
+                                    </div>`)
+                            $('.m-toast-box').append(toast)
+                            HideToastAfterShow(toast)
+                            $('#sumcart').text(response.sumitem)
+                        }
+                        else {
+                            var toast = $(`<div class="m-toast-message m-toast-error">
+                                                        <div class="m-toast-icon">
+                                                            <i class="fas fa-check-circle"></i>
+                                                        </div>
+                                                        <div class="m-toast-text">${response.messageclient}</div>
+                                                        <div class="m-toast-close">
+                                                            <i class="fas fa-times"></i>
+                                                        </div>
+                                                    </div>`)
+                            $('.m-toast-box').append(toast)
+                            HideToastAfterShow(toast)
+                            $('#sumcart').text(response.sumitem)
+                        }
+                    },
+                    error: function (response) {
+                        var toast = $(`<div class="m-toast-message m-toast-error">
+                                                                <div class="m-toast-icon">
+                                                                    <i class="fas fa-check-circle"></i>
+                                                                </div>
+                                                                <div class="m-toast-text">${response.message}</div>
+                                                                <div class="m-toast-close">
+                                                                    <i class="fas fa-times"></i>
+                                                                </div>
+                                                            </div>`)
+                        $('.m-toast-box').append(toast)
+                        HideToastAfterShow(toast)
+                    }
+                })
+            })
+            $('#AddToCart').click(function () {
+                var productid = $(this).data('productid')
+                var quantity = $('#Quantity').val()
+                var formData = new FormData()
+                formData.append('productid', productid)
+                formData.append('quantity', quantity)
+                $.ajax({
+                    url: '@Url.Action("AddToCart", "Cart")',
+                    type: 'POST',
+                    data: formData,
+                    catch: false,
+                    contentType: false,
+                    processData: false,
+                    success: function (response) {
+                        if (response.state == true) {
+                            console.log(response.messagedev)
+                            var toast = $(`<div class="m-toast-message m-toast-success">
+                                                <div class="m-toast-icon">
+                                                    <i class="fas fa-check-circle"></i>
+                                                </div>
+                                                        <div class="m-toast-text">${response.messageclient}</div>
+                                                <div class="m-toast-close">
+                                                    <i class="fas fa-times"></i>
+                                                </div>
+                                            </div>`)
+                            $('.m-toast-box').append(toast)
+                            HideToastAfterShow(toast)
+                            $('#sumcart').text(response.sumitem)
+                        }
+                        else {
+                            var toast = $(`<div class="m-toast-message m-toast-error">
+                                                                <div class="m-toast-icon">
+                                                                    <i class="fas fa-check-circle"></i>
+                                                                </div>
+                                                                <div class="m-toast-text">${response.messageclient}</div>
+                                                                <div class="m-toast-close">
+                                                                    <i class="fas fa-times"></i>
+                                                                </div>
+                                                            </div>`)
+                            $('.m-toast-box').append(toast)
+                            HideToastAfterShow(toast)
+                            $('#sumcart').text(response.sumitem)
+                        }
+                    },
+                    error: function (response) {
+                        var toast = $(`<div class="m-toast-message m-toast-error">
+                                                                        <div class="m-toast-icon">
+                                                                            <i class="fas fa-check-circle"></i>
+                                                                        </div>
+                                                                        <div class="m-toast-text">${response.message}</div>
+                                                                        <div class="m-toast-close">
+                                                                            <i class="fas fa-times"></i>
+                                                                        </div>
+                                                                    </div>`)
+                        $('.m-toast-box').append(toast)
+                        HideToastAfterShow(toast)
+                    }
+                })
+            })
+            $('.btn-minus').click(function () {
+                if($('#Quantity').val() <= 0)
+                    $('#Quantity').val(1)
+            })
+        })
+        function HideToastAfterShow(toast) {
+            setTimeout(function () {
+                // tạo hiệu ứng
+                toast.addClass('hidden')
+                // sau đó ẩn
+                setTimeout(function () {
+                    toast.hide()
+                }, 1000)
+            }, 5000)
+        }
+    </script>
+    </script>
+}

@@ -1,0 +1,22 @@
+﻿@model IEnumerable<BrandVM>
+@{
+    var cssActive = Model.Any(b => b.IsActive) ? "show" : "";
+}
+<a class="d-flex justify-content-between sidebar-collapse @cssActive" data-toggle="collapse" href="#collapseSideBarBrand" role="button" aria-expanded="false" aria-controls="collapseExample">
+    <h5 class="font-weight-semi-bold mb-2">Thương hiệu</h5>
+    <i class="fas fa-sort-down"></i>
+</a>
+<div class="collapse @cssActive" id="collapseSideBarBrand">
+    <div class="card card-body">
+        @foreach (var item in Model)
+        {
+            var css = item.IsActive ? "item-sidebar-active" : "";
+            <div class="item-sidebar @css">
+                <a asp-action="GetByBrand" asp-controller="Products" asp-route-brandSlug="@item.BrandSlug" class="px-0">
+                    @item.BrandName
+                    <span class="">(@item.SumProduct)</span>
+                </a>
+            </div>
+        }
+    </div>
+</div>

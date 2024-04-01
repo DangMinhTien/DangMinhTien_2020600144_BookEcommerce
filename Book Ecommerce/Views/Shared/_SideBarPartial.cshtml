@@ -1,0 +1,4 @@
+﻿
+@await Component.InvokeAsync("SideBarCategory", ViewBag.categoryId as string ?? "")
+@await Component.InvokeAsync("SideBarBrand", ViewBag.brandId as string ?? "")
+@await Component.InvokeAsync("SideBarAuthor", ViewBag.authorId as string ?? "")

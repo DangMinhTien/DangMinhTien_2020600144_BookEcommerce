@@ -1,0 +1,236 @@
+﻿@model IEnumerable<CartVM>
+@{
+    CultureInfo cultureInfo = new CultureInfo("vi-VN");
+}
+<!-- Cart Start -->
+<div class="container-fluid pt-5">
+    <div class="row px-xl-5">
+        <div class="col-lg-8 table-responsive mb-5">
+            <table class="table table-bordered text-center mb-0">
+                <thead class="bg-secondary text-dark">
+                    <tr>
+                        <th>Tên sản phẩm</th>
+                        <th>Giá bán</th>
+                        <th>Số lượng</th>
+                        <th>Thành tiền</th>
+                        <th>Xóa</th>
+                    </tr>
+                </thead>
+                <tbody class="align-middle">
+                    @foreach(var item in Model)
+                    {
+                        <tr>
+                            <td class="align-middle"><img class="img-product" src="/contents/Photos/Products/@item.Image" alt="" style="width: 50px; object-fit: cover">
+                                @item.ProductName    
+                            </td>
+                            <td class="align-middle priceitem">@string.Format(cultureInfo, "{0:C0}", item.Price)</td>
+                            <td class="align-middle">
+                                <div class="input-group quantity mx-auto" style="width: 100px;">
+                                    <div class="input-group-btn">
+                                        <button data-productid="@item.ProductId" class="btn btn-sm btn-primary btn-minus">
+                                            <i class="fa fa-minus"></i>
+                                        </button>
+                                    </div>
+                                    <input readonly type="text" class="form-control form-control-sm bg-secondary text-center" value="@item.Quantity">
+                                    <div class="input-group-btn">
+                                        <button data-productid="@item.ProductId" class="btn btn-sm btn-primary btn-plus">
+                                            <i class="fa fa-plus"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="align-middle amountitem">@string.Format(cultureInfo, "{0:C0}", item.Amount)</td>
+                            <td class="align-middle"><a asp-action="RemoveCartItem" asp-controller="Cart" asp-route-productid="@item.ProductId" class="btn btn-sm btn-primary"><i class="fa fa-times"></i></a></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        <div class="col-lg-4">
+            <div class="card border-secondary mb-5">
+                <div class="card-header bg-secondary border-0">
+                    <h4 class="font-weight-semi-bold m-0">Giỏ hàng</h4>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex justify-content-between mb-3 pt-1">
+                        <h6 class="font-weight-medium">Thành tiền</h6>
+                        <h6 id ="amount" class="font-weight-medium">@string.Format(cultureInfo, "{0:C0}", Model.Sum(c => c.Amount))</h6>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                        <h6 class="font-weight-medium">Phí vận chuyển</h6>
+                        <h6 id="transportfee" class="font-weight-medium">@string.Format(cultureInfo, "{0:C0}", MyAppSetting.TRANSPORT_FEE)</h6>
+                    </div>
+                </div>
+                <div class="card-footer border-secondary bg-transparent">
+                    <div class="d-flex justify-content-between mt-2">
+                        <h5 class="font-weight-bold">Tổng tiền</h5>
+                        <h5 id ="total" class="font-weight-bold">@string.Format(cultureInfo, "{0:C0}", Model.Sum(c => c.Amount) + MyAppSetting.TRANSPORT_FEE)</h5>
+                    </div>
+                    <button class="btn btn-block btn-primary my-3 py-3">Đặt hàng</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Cart End -->
+@section Scripts {
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('.btn-plus').click(function () {
+                var productid = $(this).data('productid')
+                var formData = new FormData()
+                formData.append('productid', productid)
+                formData.append('quantity', 1)
+                var inputQuantity = $(this).closest('tr').find('input')
+                var priceitem = $(this).closest('tr').find('.priceitem')
+                var amountitem = $(this).closest('tr').find('.amountitem')
+                console.log(inputQuantity)
+                $.ajax({
+                    url: '@Url.Action("AlterTheCart", "Cart")',
+                    type: 'POST',
+                    data: formData,
+                    catch: false,
+                    contentType: false,
+                    processData: false,
+                    success: function (response) {
+                        if (response.state == true) {
+                            console.log(response)
+                            var toast = $(`<div class="m-toast-message m-toast-success">
+                                        <div class="m-toast-icon">
+                                            <i class="fas fa-check-circle"></i>
+                                        </div>
+                                                <div class="m-toast-text">${response.messageclient}</div>
+                                        <div class="m-toast-close">
+                                            <i class="fas fa-times"></i>
+                                        </div>
+                                    </div>`)
+                            $('.m-toast-box').append(toast)
+                            HideToastAfterShow(toast)
+                            $('#sumcart').text(response.sumitem)
+                            $('#amount').text(response.amount)
+                            $('#transportfee').text(response.transportfee)
+                            $('#total').text(response.total)
+                            priceitem.text(response.priceitem)
+                            amountitem.text(response.amountitem)
+                            inputQuantity.val(response.quantityitem)
+                        }
+                        else {
+                            var toast = $(`<div class="m-toast-message m-toast-error">
+                                                        <div class="m-toast-icon">
+                                                            <i class="fas fa-check-circle"></i>
+                                                        </div>
+                                                        <div class="m-toast-text">${response.messageclient}</div>
+                                                        <div class="m-toast-close">
+                                                            <i class="fas fa-times"></i>
+                                                        </div>
+                                                    </div>`)
+                            $('.m-toast-box').append(toast)
+                            HideToastAfterShow(toast)
+                            $('#sumcart').text(response.sumitem)
+                            inputQuantity.val(inputQuantity.val() - 1)
+                        }
+                    },
+                    error: function (response) {
+                        var toast = $(`<div class="m-toast-message m-toast-error">
+                                                                <div class="m-toast-icon">
+                                                                    <i class="fas fa-check-circle"></i>
+                                                                </div>
+                                                                <div class="m-toast-text">${response.message}</div>
+                                                                <div class="m-toast-close">
+                                                                    <i class="fas fa-times"></i>
+                                                                </div>
+                                                            </div>`)
+                        $('.m-toast-box').append(toast)
+                        HideToastAfterShow(toast)
+                        inputQuantity.val(inputQuantity.val() - 1)
+                    }
+                })
+            })
+            $('.btn-minus').click(function () {
+                var productid = $(this).data('productid')
+                var formData = new FormData()
+                formData.append('productid', productid)
+                formData.append('quantity', -1)
+                var inputQuantity = $(this).closest('tr').find('input')
+                var priceitem = $(this).closest('tr').find('.priceitem')
+                var amountitem = $(this).closest('tr').find('.amountitem')
+                console.log(inputQuantity.val())
+                if (inputQuantity.val() >= 1) {
+                    $.ajax({
+                        url: '@Url.Action("AlterTheCart", "Cart")',
+                        type: 'POST',
+                        data: formData,
+                        catch: false,
+                        contentType: false,
+                        processData: false,
+                        success: function (response) {
+                            if (response.state == true) {
+                                console.log(response.messagedev)
+                                var toast = $(`<div class="m-toast-message m-toast-success">
+                                                        <div class="m-toast-icon">
+                                                            <i class="fas fa-check-circle"></i>
+                                                        </div>
+                                                        <div class="m-toast-text">${response.messageclient}</div>
+                                                        <div class="m-toast-close">
+                                                            <i class="fas fa-times"></i>
+                                                        </div>
+                                                    </div>`)
+                                $('.m-toast-box').append(toast)
+                                HideToastAfterShow(toast)
+                                $('#sumcart').text(response.sumitem)
+                                $('#amount').text(response.amount)
+                                $('#transportfee').text(response.transportfee)
+                                $('#total').text(response.total)
+                                priceitem.text(response.priceitem)
+                                amountitem.text(response.amountitem)
+                                inputQuantity.val(response.quantityitem)
+                            }
+                            else {
+                                var toast = $(`<div class="m-toast-message m-toast-error">
+                                                                        <div class="m-toast-icon">
+                                                                            <i class="fas fa-check-circle"></i>
+                                                                        </div>
+                                                                        <div class="m-toast-text">${response.messageclient}</div>
+                                                                        <div class="m-toast-close">
+                                                                            <i class="fas fa-times"></i>
+                                                                        </div>
+                                                                    </div>`)
+                                $('.m-toast-box').append(toast)
+                                HideToastAfterShow(toast)
+                                $('#sumcart').text(response.sumitem)
+                                inputQuantity.val(inputQuantity.val() + 1)
+                            }
+                        },
+                        error: function (response) {
+                            var toast = $(`<div class="m-toast-message m-toast-error">
+                                                                                <div class="m-toast-icon">
+                                                                                    <i class="fas fa-check-circle"></i>
+                                                                                </div>
+                                                                                <div class="m-toast-text">${response.message}</div>
+                                                                                <div class="m-toast-close">
+                                                                                    <i class="fas fa-times"></i>
+                                                                                </div>
+                                                                            </div>`)
+                            $('.m-toast-box').append(toast)
+                            HideToastAfterShow(toast)
+                            inputQuantity.val(inputQuantity.val() + 1)
+                        }
+                    })
+                }
+                else {
+                    inputQuantity.val(1)
+                }
+            })
+        })
+        function HideToastAfterShow(toast) {
+            setTimeout(function () {
+                // tạo hiệu ứng
+                toast.addClass('hidden')
+                // sau đó ẩn
+                setTimeout(function () {
+                    toast.hide()
+                }, 1000)
+            }, 5000)
+        }
+    </script>
+}
