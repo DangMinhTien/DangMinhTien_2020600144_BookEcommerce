@@ -11,7 +11,7 @@ namespace Book_Ecommerce.Models
         public string CustomerId { get; set; } = null!;
         [Column(TypeName = "varchar(250)")]
         public string CustomerCode { get; set; } = null!;
-        public long MaxCodeNumber { get; set; }
+        public long CodeNumber { get; set; }
         [Column(TypeName = "nvarchar(250)")]
         public string FullName { get; set; } = null!;
         [DataType(DataType.Date)]
@@ -22,6 +22,7 @@ namespace Book_Ecommerce.Models
         public AppUser? User { get; set; }
         public IEnumerable<Order>? Orders { get; set; }
         public IEnumerable<Comment>? Comments { get; set; }
-        public IEnumerable<Favourite>? Favourites { get; set; }
+        public IEnumerable<FavouriteProduct> FavouriteProducts { get; set; } = null!;
+        public IEnumerable<CartItem> CartItems { get; set; } = null!;
     }
 }

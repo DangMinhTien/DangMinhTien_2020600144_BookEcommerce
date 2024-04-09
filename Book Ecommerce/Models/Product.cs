@@ -11,7 +11,7 @@ namespace Book_Ecommerce.Models
         public string ProductId { get; set; } = null!;
         [Column(TypeName = "varchar(250)")]
         public string ProductCode { get; set; } = null!;
-        public long MaxCodeNumber { get; set; }
+        public long CodeNumber { get; set; }
         [Column(TypeName = "nvarchar(250)")]
         public string ProductName { get; set; } = null!;
         [Column(TypeName = "varchar(250)")]
@@ -28,8 +28,9 @@ namespace Book_Ecommerce.Models
         public IEnumerable<CategoryProducts> CategoryProducts { get; set; } = null!;
         public IEnumerable<Image> Images { get; set; } = null!;
         public IEnumerable<OrderDetail> OrderDetails { get; set; } = null!;
-        public IEnumerable<Favourite>? Favourites { get; set; }
+        public IEnumerable<FavouriteProduct> FavouriteProducts { get; set; } = null!;
         public IEnumerable<Comment> Comments { get; set; } = null!;
         public IEnumerable<AuthorProduct> AuthorProducts { get; set; } = null!;
+        public IEnumerable<CartItem> CartItems { get; set; } = null!;
     }
 }

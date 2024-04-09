@@ -44,8 +44,14 @@ builder.Services.Configure<IdentityOptions>(options => {
     // Cấu hình đăng nhập.
     options.SignIn.RequireConfirmedEmail = true;            // Cấu hình xác thực địa chỉ email (email phải tồn tại)
     options.SignIn.RequireConfirmedPhoneNumber = false;     // Xác thực số điện thoại
-
 });
+builder.Services.ConfigureApplicationCookie(option =>
+{
+    option.LoginPath = "/login/";
+    option.LogoutPath = "/logout/";
+    option.AccessDeniedPath = "/accessdenied/";
+});
+builder.Services.AddSingleton<IdentityErrorDescriber, AppIdentityErrorDescriber>();
 //Đăng ký mail
 builder.Services.AddOptions();
 var mailSetting = builder.Configuration.GetSection("MailSetting");
@@ -79,8 +85,6 @@ app.UseSession();
 app.UseRouting();
 
 app.UseAuthentication();
-app.UseAuthorization();
-
 app.UseAuthorization();
 
 app.MapControllerRoute(

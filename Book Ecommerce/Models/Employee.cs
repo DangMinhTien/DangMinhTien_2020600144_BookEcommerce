@@ -11,6 +11,7 @@ namespace Book_Ecommerce.Models
         public string EmployeeId { get; set; } = null!;
         [Column(TypeName = "varchar(250)")]
         public string EmployeeCode { get; set; } = null!;
+        public long CodeNumber { get; set; }
         [Column(TypeName = "nvarchar(250)")]
         public string FullName { get; set; } = null!;
         [DataType(DataType.Date)]

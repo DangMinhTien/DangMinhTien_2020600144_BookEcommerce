@@ -6,6 +6,7 @@ using System.Diagnostics;
 using Book_Ecommerce.Helpers;
 using Book_Ecommerce.ViewModels;
 using System.Text.Json;
+using Microsoft.AspNetCore.Identity;
 
 namespace Book_Ecommerce.Controllers
 {
@@ -13,11 +14,13 @@ namespace Book_Ecommerce.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private readonly AppDbContext _context;
+        private readonly UserManager<AppUser> _userManage;
 
-        public HomeController(ILogger<HomeController> logger, AppDbContext context)
+        public HomeController(ILogger<HomeController> logger, AppDbContext context, UserManager<AppUser> userManager)
         {
             _logger = logger;
             _context = context;
+            _userManage = userManager;
         }
 
         public IActionResult Index()
@@ -25,9 +28,8 @@ namespace Book_Ecommerce.Controllers
             return View();
         }
 
-        public IActionResult Privacy()
+        public async Task<IActionResult> Privacy()
         {
-            
             return View();
         }
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

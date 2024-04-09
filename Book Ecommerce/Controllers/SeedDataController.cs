@@ -30,7 +30,7 @@ namespace Book_Ecommerce.Controllers
                     {
                         CategoryId = Guid.NewGuid().ToString(),
                         CategoryCode = "TL" + DateTime.Now.Year.ToString() + maxCodeCate,
-                        MaxCodeNumber = maxCodeCate++,
+                        CodeNumber = maxCodeCate++,
                         CategoryName = categoryNames[i],
                         CategorySlug = Book_Ecommerce.Helpers.Generation.GenerationSlug(categoryNames[i]),
                         Decription = "Thể loại thú vị"
@@ -39,7 +39,7 @@ namespace Book_Ecommerce.Controllers
                     {
                         BrandId = Guid.NewGuid().ToString(),
                         BrandCode = "TH" + DateTime.Now.Year.ToString() + maxCodeBrand,
-                        MaxCodeNumber = maxCodeBrand++,
+                        CodeNumber = maxCodeBrand++,
                         BrandName = brandNames[i],
                         BrandSlug = Book_Ecommerce.Helpers.Generation.GenerationSlug(brandNames[i]),
                         Decription = "Thương hiệu tuyệt vời",
@@ -49,7 +49,7 @@ namespace Book_Ecommerce.Controllers
                     {
                         AuthorId = Guid.NewGuid().ToString(),
                         AuthorCode = "TH" + DateTime.Now.Year.ToString() + maxCodeAuthor,
-                        MaxCodeNumber = maxCodeAuthor++,
+                        CodeNumber = maxCodeAuthor++,
                         AuthorName = authorNames[i],
                         AuthorSlug = Book_Ecommerce.Helpers.Generation.GenerationSlug(authorNames[i]),
                         Information = "Tác giả lừng danh",
@@ -64,7 +64,7 @@ namespace Book_Ecommerce.Controllers
                         {
                             ProductId = Guid.NewGuid().ToString(),
                             ProductCode = "SP" + DateTime.Now.Year.ToString() + maxCodeProduct,
-                            MaxCodeNumber = maxCodeProduct++,
+                            CodeNumber = maxCodeProduct++,
                             ProductName = categoryNames[i] + " " + (j + 1),
                             ProductSlug = Book_Ecommerce.Helpers.Generation.GenerationSlug(categoryNames[i] + " " + (j + 1)),
                             Quantity = 10,

@@ -1,0 +1,44 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using Book_Ecommerce.Models
+
+@inject SignInManager<AppUser> SignInManager
+@inject UserManager<AppUser> UserManager
+@{
+}
+<nav class="navbar navbar-expand-lg bg-light navbar-light py-3 py-lg-0 px-0">
+    <a href="" class="text-decoration-none d-block d-lg-none">
+        <h1 class="m-0 display-5 font-weight-semi-bold"><span class="text-primary font-weight-bold border px-3 mr-1">E</span>Shopper</h1>
+    </a>
+    <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbarCollapse">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse justify-content-between" id="navbarCollapse">
+        <div class="navbar-nav mr-auto py-0">
+            <a asp-action="Index" asp-controller="Home" class="nav-item nav-link active">Trang chủ</a>
+            <a asp-action="Index" asp-controller="Products" class="nav-item nav-link">Sản Phẩm</a>
+            <a href="detail.html" class="nav-item nav-link">Shop Detail</a>
+            <div class="nav-item dropdown">
+                <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Pages</a>
+                <div class="dropdown-menu rounded-0 m-0">
+                    <a href="cart.html" class="dropdown-item">Shopping Cart</a>
+                    <a href="checkout.html" class="dropdown-item">Checkout</a>
+                </div>
+            </div>
+            <a href="contact.html" class="nav-item nav-link">Contact</a>
+        </div>
+        @if (SignInManager.IsSignedIn(User))
+        {
+            <div class="navbar-nav ml-auto py-0">
+                <a asp-action="Logout" asp-controller="Accounts" class="nav-item nav-link">Đăng xuất</a>
+                <a asp-action="Register" asp-controller="Accounts" class="nav-item nav-link">Đăng ký</a>
+            </div>
+        }
+        else
+        {
+            <div class="navbar-nav ml-auto py-0">
+                <a asp-action="Login" asp-controller="Accounts" class="nav-item nav-link">Đăng nhập</a>
+                <a asp-action="Register" asp-controller="Accounts" class="nav-item nav-link">Đăng ký</a>
+            </div>
+        }
+    </div>
+</nav>

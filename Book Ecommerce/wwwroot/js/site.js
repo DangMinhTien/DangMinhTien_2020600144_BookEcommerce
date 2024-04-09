@@ -8,17 +8,16 @@ $(document).ready(function () {
         var toast = $(this).closest('.m-toast-message')
         toast.addClass('hidden')
         setTimeout(function () {
-            toast.hide()
-        }, 1000)
+            toast.remove()
+        }, 2000)
     })
     $('.m-toast-message').show(function () {
         var toast = $(this)
-        console.log("true")
         setTimeout(function () {
             toast.addClass('hidden')
             setTimeout(function () {
-                toast.hide()
-            }, 1000)
+                toast.remove()
+            }, 2000)
         }, 5000)
     })
     // Toast End

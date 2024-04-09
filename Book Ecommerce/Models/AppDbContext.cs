@@ -14,11 +14,15 @@ namespace Book_Ecommerce.Models
         public DbSet<Employee> Employees { get; set; } = null!;
         public DbSet<Order> Orders { get; set; } = null!;
         public DbSet<OrderDetail> OrderDetails { get; set; } = null!;
-        public DbSet<Favourite> Favourites { get; set; } = null!;
+        public DbSet<FavouriteProduct> Favourites { get; set; } = null!;
         public DbSet<Comment> Comments { get; set; } = null!;
-        public DbSet<CategoryProducts> CategoryProducts { get; set; }
+        public DbSet<CategoryProducts> CategoryProducts { get; set; } = null!;
         public DbSet<Author> Authors { get; set; } = null!;
-        public DbSet<AuthorProduct> AuthorProducts { get; set; }
+        public DbSet<AuthorProduct> AuthorProducts { get; set; } = null!;
+        public DbSet<CartItem> CartItems { get; set; } = null!;
+        public DbSet<Province> Provinces { get; set; } = null!;
+        public DbSet<District> Districts { get; set; } = null!;
+        public DbSet<Ward> Wards { get; set; } = null!;
 
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {
@@ -44,18 +48,21 @@ namespace Book_Ecommerce.Models
                 entity.HasIndex(c => c.CategoryCode).IsUnique();
                 entity.HasIndex(c => c.CategorySlug).IsUnique();
                 entity.HasIndex(c => c.CategoryName).IsUnique();
+                entity.HasIndex(c => c.CodeNumber).IsUnique();
             });
             modelBuilder.Entity<Brand>(entity =>
             {
                 entity.HasIndex(b => b.BrandCode).IsUnique();
                 entity.HasIndex(b => b.BrandSlug).IsUnique();
                 entity.HasIndex(b => b.BrandName).IsUnique();
+                entity.HasIndex(b => b.CodeNumber).IsUnique();
             });
             modelBuilder.Entity<Product>(entity =>
             {
                 entity.HasIndex(p => p.ProductCode).IsUnique();
                 entity.HasIndex(p => p.ProductSlug).IsUnique();
                 entity.HasIndex(p => p.ProductName).IsUnique();
+                entity.HasIndex(p => p.CodeNumber).IsUnique();
                 entity.HasOne(p => p.Brand)
                         .WithMany(b => b.Products)
                         .HasForeignKey(p => p.BrandId)
@@ -71,14 +78,17 @@ namespace Book_Ecommerce.Models
             modelBuilder.Entity<Customer>(entity =>
             {
                 entity.HasIndex(c => c.CustomerCode).IsUnique();
+                entity.HasIndex(c => c.CodeNumber).IsUnique();
             });
             modelBuilder.Entity<Employee>(entity =>
             {
                 entity.HasIndex(e => e.EmployeeCode).IsUnique();
+                entity.HasIndex(e => e.CodeNumber).IsUnique();
             });
             modelBuilder.Entity<Order>(entity =>
             {
                 entity.HasIndex(o => o.OrderCode).IsUnique();
+                entity.HasIndex(o => o.CodeNumber).IsUnique();
                 entity.HasOne(o => o.Customer)
                         .WithMany(c => c.Orders)
                         .HasForeignKey(o => o.CustomerId)
@@ -96,15 +106,15 @@ namespace Book_Ecommerce.Models
                         .HasForeignKey(od => od.ProductId)
                         .OnDelete(DeleteBehavior.Restrict);
             });
-            modelBuilder.Entity<Favourite>(entity =>
+            modelBuilder.Entity<FavouriteProduct>(entity =>
             {
                 entity.HasKey(f => new { f.CustomerId, f.ProductId });
                 entity.HasOne(f => f.Customer)
-                        .WithMany(c => c.Favourites)
+                        .WithMany(c => c.FavouriteProducts)
                         .HasForeignKey(f => f.CustomerId)
                         .OnDelete(DeleteBehavior.Cascade);
                 entity.HasOne(f => f.Product)
-                        .WithMany(p => p.Favourites)
+                        .WithMany(p => p.FavouriteProducts)
                         .HasForeignKey(f => f.ProductId)
                         .OnDelete(DeleteBehavior.Cascade);
             });
@@ -121,8 +131,6 @@ namespace Book_Ecommerce.Models
             });
             modelBuilder.Entity<AppUser>(entity =>
             {
-                entity.HasIndex(u => u.CustomerId).IsUnique();
-                entity.HasIndex(u => u.EmployeeId).IsUnique();
                 entity.HasOne(u => u.Customer)
                         .WithOne(c => c.User)
                         .HasForeignKey<AppUser>(u => u.CustomerId)
@@ -149,6 +157,7 @@ namespace Book_Ecommerce.Models
                 entity.HasIndex(a => a.AuthorCode).IsUnique();
                 entity.HasIndex(a => a.AuthorSlug).IsUnique();
                 entity.HasIndex(a => a.AuthorName).IsUnique();
+                entity.HasIndex(a => a.CodeNumber).IsUnique();
             });
             modelBuilder.Entity<AuthorProduct>(entity =>
             {
@@ -160,6 +169,32 @@ namespace Book_Ecommerce.Models
                 entity.HasOne(ap => ap.Product)
                         .WithMany(p => p.AuthorProducts)
                         .HasForeignKey(ap => ap.ProductId)
+                        .OnDelete(DeleteBehavior.Cascade);
+            });
+            modelBuilder.Entity<CartItem>(entity =>
+            {
+                entity.HasKey(c => new { c.CustomerId, c.ProductId });
+                entity.HasOne(c => c.Customer)
+                        .WithMany(cu => cu.CartItems)
+                        .HasForeignKey(c => c.CustomerId)
+                        .OnDelete(DeleteBehavior.Cascade);
+                entity.HasOne(c => c.Product)
+                        .WithMany(p => p.CartItems)
+                        .HasForeignKey(c => c.ProductId)
+                        .OnDelete(DeleteBehavior.Cascade);
+            });
+            modelBuilder.Entity<District>(entity =>
+            {
+                entity.HasOne(d => d.Province)
+                        .WithMany(p => p.Districts)
+                        .HasForeignKey(d => d.ProvinceCode)
+                        .OnDelete(DeleteBehavior.Cascade);
+            });
+            modelBuilder.Entity<Ward>(entity =>
+            {
+                entity.HasOne(w => w.District)
+                        .WithMany(d => d.Wards)
+                        .HasForeignKey(w => w.DistrictCode)
                         .OnDelete(DeleteBehavior.Cascade);
             });
         }

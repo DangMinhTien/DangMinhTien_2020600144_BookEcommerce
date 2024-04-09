@@ -2,8 +2,8 @@
 
 namespace Book_Ecommerce.Models
 {
-    [Table("Favourites")]
-    public class Favourite
+    [Table("FavouriteProducts")]
+    public class FavouriteProduct
     {
         [Column(TypeName = "char(36)")] 
         public string CustomerId { get; set; } = null!;

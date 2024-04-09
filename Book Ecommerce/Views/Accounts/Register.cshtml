@@ -1,0 +1,163 @@
+﻿@model Book_Ecommerce.ViewModels.RegisterVM
+@{
+    ViewData["Title"] = "Trang đăng ký";
+    Layout = "~/Views/Shared/_LayoutLoginRegister.cshtml";
+}
+<div class="row">
+    <div class="col-lg-4 col-md-2 col-sm-12"></div>
+    <div class="col-lg-4 col-md-8 col-sm-12" style="padding: 0 !important">
+        <div class="form-loin-register">
+            <h1 class="text-primary">Đăng ký</h1>
+            <form asp-action="Register" asp-controller="Accounts" method="post" asp-route-returnUrl="@ViewBag.ReturnUrl">
+                <div asp-validation-summary="All" class="text-danger"></div>
+                <div class="form-group">
+                    <label class="text-dark">Email<sup class="text-danger">(*)</sup></label>
+                    <input asp-for="Email" type="text" class="form-control" placeholder="Địa chỉ email">
+                </div>
+                <div class="form-group">
+                    <label class="text-dark">Mật khẩu<sup class="text-danger">(*)</sup></label>
+                    <input asp-for="Password" type="password" class="form-control" id="exampleInputPassword1" placeholder="Mật khẩu">
+                </div>
+                <div class="form-group">
+                    <label class="text-dark">Họ tên<sup class="text-danger">(*)</sup></label>
+                    <input asp-for="FullName" type="text" class="form-control" placeholder="Họ tên">
+                </div>
+                <div class="form-group">
+                    <label class="text-dark">Số điện thoại</label>
+                    <input asp-for="PhoneNumber" type="text" class="form-control" placeholder="Số điện thoại">
+                </div>
+                <div class="form-group">
+                    <label class="text-dark">Ngày sinh</label>
+                    <input asp-for="DateOfBirth" type="date" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label class="text-dark">Giới tính</label>
+                    <div class="form-group">
+                        <div class="custom-control custom-radio">
+                            <input type="radio" class="custom-control-input" value="true" name="Gender" id="men" checked>
+                            <label class="custom-control-label" for="men">Nam</label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="custom-control custom-radio">
+                            <input type="radio" class="custom-control-input" value="false" name="Gender" id="women">
+                            <label class="custom-control-label" for="women">Nữ</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="text-dark">Địa chỉ</label>
+                    <input asp-for="Address" type="text" class="form-control" placeholder="Địa chỉ">
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-4">
+                        <label class="text-dark">Tỉnh/thành</label>
+                        <select class="form-control" name="province" id="province">
+                            <option value="">Tỉnh/thành</option>
+                        </select>
+                    </div>
+                    <div class="form-group col-4">
+                        <label class="text-dark">quận/huyện</label>
+                        <select class="form-control" name="district" id="district">
+                            <option value="">quận huyện</option>
+                        </select>
+                    </div>
+                    <div class="form-group col-4">
+                        <label class="text-dark">phường/xã</label>
+                        <select class="form-control" name="ward" id="ward">
+                            <option value="">xã/phường</option>
+                        </select>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary w-100 rounded">Đăng ký</button>
+            </form>
+            <div class="mt-3">
+                <a asp-action="FogotPassword" asp-controller="Accounts" class="text-primary">Quên mật khẩu ?</a>
+            </div>
+            <div class="mt-2">
+                <a asp-action="Login" asp-controller="Accounts" class="text-primary">Đăng nhập</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-4 col-md-2 col-sm-12"></div>
+</div>
+@section Scripts {
+    <partial name="_ValidationScriptsPartial"></partial>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            RenderHtmlToAddress('@Url.Action("GetAllProvince", "ProvincesVietNam")', $('#province'), 'Tỉnh/thành')
+            
+            $('#province').change(function () {
+                var provinceCode = $(this).val()
+                RenderHtmlToAddress('@Url.Action("GetDistrictsByProvince", "ProvincesVietNam")' + `?provinceCode=${provinceCode}`,
+                    $('#district'), 'quận/huyện')
+                $('#ward').html(`<option value="">phường/xã</option>`)
+            })
+            $('#district').change(function () {
+                var districtCode = $(this).val()
+                RenderHtmlToAddress('@Url.Action("GetWardsByDistrict", "ProvincesVietNam")' + `?districtCode=${districtCode}`,
+                    $('#ward'), 'phường/xã')
+            })
+            $('#ward').change(function () {
+                DisplayOnAddress()
+            })
+        })
+        function HideToastAfterShow(toast) {
+            setTimeout(function () {
+                // tạo hiệu ứng
+                toast.addClass('hidden')
+                // sau đó ẩn
+                setTimeout(function () {
+                    toast.remove()
+                }, 2000)
+            }, 5000)
+        }
+        function RenderHtmlToastError(message) {
+            return `<div class="m-toast-message m-toast-error">
+                        <div class="m-toast-icon">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <div class="m-toast-text">${message}</div>
+                        <div class="m-toast-close">
+                            <i class="fas fa-times"></i>
+                        </div>
+                    </div>`
+        }
+        function DisplayOnAddress() {
+            var address = ''
+            if ($('#ward').val() != '') {
+                address += $("#ward option:selected").text() + ' - '
+            }
+            if ($('#district').val() != '') {
+                address += $("#district option:selected").text() + ' - '
+            }
+            if ($('#province').val() != '') {
+                address += $("#province option:selected").text()
+            }
+            $('#Address').val(address)
+        }
+        function RenderHtmlToAddress(url, select, selectfor) {
+            $.ajax({
+                url: url,
+                type: 'GET',
+                catch: false,
+                contentType: false,
+                processData: false,
+                success: function (response) {
+                    var row = `<option value="">${selectfor}</option>`
+                    $(response.data).each(function (index, element) {
+                        row += `<option value="${element.code}">${element.fullName}</option>`
+                    })
+                    select.html(row)
+                    DisplayOnAddress()
+                },
+                error: function (response) {
+                    var toast = $(RenderHtmlToastError('Không lấy được dữ liệu quận huyện'))
+                    $('.m-toast-box').append(toast)
+                    HideToastAfterShow(toast)
+                    DisplayOnAddress()
+                }
+            })
+        }
+    </script>
+}

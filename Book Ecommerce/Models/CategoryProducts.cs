@@ -2,7 +2,7 @@
 
 namespace Book_Ecommerce.Models
 {
-    [Table("CategoryProdcuts")]
+    [Table("CategoryProducts")]
     public class CategoryProducts
     {
         [Column(TypeName = "char(36)")]

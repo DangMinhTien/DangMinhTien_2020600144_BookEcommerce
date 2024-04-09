@@ -166,3 +166,29 @@
 // Grid Extension Start
 
 // Grid Extension End
+// form start
+.form-group input {
+    border-color: #ced4da !important;
+    border-radius: 0.25rem !important;
+}
+.form-group select {
+    border-color: #ced4da !important;
+    border-radius: 0.25rem !important;
+}
+//form end
+.form-loin-register {
+    padding: 20px 40px !important;
+    margin: 20px 0;
+    border: 1px solid #ced4da !important;
+    border-radius: 20px;
+    box-shadow: 5px 5px 10px gray;
+}
+.form-loin-register a:hover {
+    text-decoration: underline;
+}
+@media screen and (max-width: 770px) {
+    .form-loin-register {
+        border: none !important;
+        box-shadow: none;
+    }
+}

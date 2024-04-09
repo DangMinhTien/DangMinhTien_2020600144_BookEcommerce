@@ -18,8 +18,24 @@ build_property.GenerateRazorMetadataSourceChecksumAttributes =
 build_property.MSBuildProjectDirectory = C:\Users\LENOVO\OneDrive\Documents\Wordspace\DoAnTotNghiep\Code\Book Ecommerce\Book Ecommerce
 build_property._RazorSourceGeneratorDebug = 
 
-[C:/Users/LENOVO/OneDrive/Documents/Wordspace/DoAnTotNghiep/Code/Book Ecommerce/Book Ecommerce/Views/Cart/Index.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ2FydFxJbmRleC5jc2h0bWw=
+[C:/Users/LENOVO/OneDrive/Documents/Wordspace/DoAnTotNghiep/Code/Book Ecommerce/Book Ecommerce/Views/Accounts/AccessDenied.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWNjb3VudHNcQWNjZXNzRGVuaWVkLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/LENOVO/OneDrive/Documents/Wordspace/DoAnTotNghiep/Code/Book Ecommerce/Book Ecommerce/Views/Accounts/ConfirmEmail.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWNjb3VudHNcQ29uZmlybUVtYWlsLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/LENOVO/OneDrive/Documents/Wordspace/DoAnTotNghiep/Code/Book Ecommerce/Book Ecommerce/Views/Accounts/ErrorConfirmEmail.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWNjb3VudHNcRXJyb3JDb25maXJtRW1haWwuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/LENOVO/OneDrive/Documents/Wordspace/DoAnTotNghiep/Code/Book Ecommerce/Book Ecommerce/Views/Accounts/Login.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWNjb3VudHNcTG9naW4uY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/LENOVO/OneDrive/Documents/Wordspace/DoAnTotNghiep/Code/Book Ecommerce/Book Ecommerce/Views/Accounts/Register.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWNjb3VudHNcUmVnaXN0ZXIuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/LENOVO/OneDrive/Documents/Wordspace/DoAnTotNghiep/Code/Book Ecommerce/Book Ecommerce/Views/Home/Index.cshtml]
@@ -36,10 +52,6 @@ build_metadata.AdditionalFiles.CssScope =
 
 [C:/Users/LENOVO/OneDrive/Documents/Wordspace/DoAnTotNghiep/Code/Book Ecommerce/Book Ecommerce/Views/Products/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUHJvZHVjdHNcSW5kZXguY3NodG1s
-build_metadata.AdditionalFiles.CssScope = 
-
-[C:/Users/LENOVO/OneDrive/Documents/Wordspace/DoAnTotNghiep/Code/Book Ecommerce/Book Ecommerce/Views/Shared/Components/Cart/default.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXENvbXBvbmVudHNcQ2FydFxkZWZhdWx0LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/LENOVO/OneDrive/Documents/Wordspace/DoAnTotNghiep/Code/Book Ecommerce/Book Ecommerce/Views/Shared/Components/SideBarAuthor/default.cshtml]
@@ -62,12 +74,20 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9MYXlvdXRBZG1pbi5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
+[C:/Users/LENOVO/OneDrive/Documents/Wordspace/DoAnTotNghiep/Code/Book Ecommerce/Book Ecommerce/Views/Shared/_LayoutLoginRegister.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9MYXlvdXRMb2dpblJlZ2lzdGVyLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
 [C:/Users/LENOVO/OneDrive/Documents/Wordspace/DoAnTotNghiep/Code/Book Ecommerce/Book Ecommerce/Views/Shared/_LayoutProduct.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9MYXlvdXRQcm9kdWN0LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/LENOVO/OneDrive/Documents/Wordspace/DoAnTotNghiep/Code/Book Ecommerce/Book Ecommerce/Views/Shared/_LoginPartial.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9Mb2dpblBhcnRpYWwuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/LENOVO/OneDrive/Documents/Wordspace/DoAnTotNghiep/Code/Book Ecommerce/Book Ecommerce/Views/Shared/_NavbarPartial.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9OYXZiYXJQYXJ0aWFsLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/LENOVO/OneDrive/Documents/Wordspace/DoAnTotNghiep/Code/Book Ecommerce/Book Ecommerce/Views/Shared/_NotificationPartial.cshtml]

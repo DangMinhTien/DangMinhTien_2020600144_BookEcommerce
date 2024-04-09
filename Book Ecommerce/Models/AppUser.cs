@@ -5,12 +5,11 @@ namespace Book_Ecommerce.Models
 {
     public class AppUser : IdentityUser
     {
-        public bool IsActive { get; set; }
         [Column(TypeName = "char(36)")]
         public string? EmployeeId { get; set; }
-        public Employee Employee { set; get; } = null!;
+        public Employee? Employee { set; get; }
         [Column(TypeName = "char(36)")]
         public string? CustomerId { get; set; }
-        public Customer Customer { get; set; } = null!;
+        public Customer? Customer { get; set; }
     }
 }

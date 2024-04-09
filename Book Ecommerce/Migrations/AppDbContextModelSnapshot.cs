@@ -35,7 +35,6 @@ namespace Book_Ecommerce.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("CustomerId")
-                        .IsRequired()
                         .HasColumnType("char(36)");
 
                     b.Property<string>("Email")
@@ -46,11 +45,7 @@ namespace Book_Ecommerce.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("EmployeeId")
-                        .IsRequired()
                         .HasColumnType("char(36)");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
 
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("bit");
@@ -88,10 +83,12 @@ namespace Book_Ecommerce.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("CustomerId")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasFilter("[CustomerId] IS NOT NULL");
 
                     b.HasIndex("EmployeeId")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasFilter("[EmployeeId] IS NOT NULL");
 
                     b.HasIndex("NormalizedEmail")
                         .HasDatabaseName("EmailIndex");
@@ -121,11 +118,11 @@ namespace Book_Ecommerce.Migrations
                         .IsRequired()
                         .HasColumnType("varchar(250)");
 
+                    b.Property<long>("CodeNumber")
+                        .HasColumnType("bigint");
+
                     b.Property<string>("Information")
                         .HasColumnType("varchar(250)");
-
-                    b.Property<long>("MaxCodeNumber")
-                        .HasColumnType("bigint");
 
                     b.HasKey("AuthorId");
 
@@ -136,6 +133,9 @@ namespace Book_Ecommerce.Migrations
                         .IsUnique();
 
                     b.HasIndex("AuthorSlug")
+                        .IsUnique();
+
+                    b.HasIndex("CodeNumber")
                         .IsUnique();
 
                     b.ToTable("Authors");
@@ -161,7 +161,7 @@ namespace Book_Ecommerce.Migrations
                     b.Property<string>("BannerId")
                         .HasColumnType("char(36)");
 
-                    b.Property<string>("Decription")
+                    b.Property<string>("Content")
                         .IsRequired()
                         .HasColumnType("nvarchar(500)");
 
@@ -195,15 +195,15 @@ namespace Book_Ecommerce.Migrations
                         .IsRequired()
                         .HasColumnType("varchar(250)");
 
+                    b.Property<long>("CodeNumber")
+                        .HasColumnType("bigint");
+
                     b.Property<string>("Decription")
                         .HasColumnType("nvarchar(500)");
 
                     b.Property<string>("Image")
                         .IsRequired()
                         .HasColumnType("varchar(250)");
-
-                    b.Property<long>("MaxCodeNumber")
-                        .HasColumnType("bigint");
 
                     b.HasKey("BrandId");
 
@@ -216,7 +216,28 @@ namespace Book_Ecommerce.Migrations
                     b.HasIndex("BrandSlug")
                         .IsUnique();
 
+                    b.HasIndex("CodeNumber")
+                        .IsUnique();
+
                     b.ToTable("Brands");
+                });
+
+            modelBuilder.Entity("Book_Ecommerce.Models.CartItem", b =>
+                {
+                    b.Property<string>("CustomerId")
+                        .HasColumnType("char(36)");
+
+                    b.Property<string>("ProductId")
+                        .HasColumnType("char(36)");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
+                    b.HasKey("CustomerId", "ProductId");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("Cart");
                 });
 
             modelBuilder.Entity("Book_Ecommerce.Models.Category", b =>
@@ -236,11 +257,11 @@ namespace Book_Ecommerce.Migrations
                         .IsRequired()
                         .HasColumnType("varchar(250)");
 
+                    b.Property<long>("CodeNumber")
+                        .HasColumnType("bigint");
+
                     b.Property<string>("Decription")
                         .HasColumnType("nvarchar(500)");
-
-                    b.Property<long>("MaxCodeNumber")
-                        .HasColumnType("bigint");
 
                     b.HasKey("CategoryId");
 
@@ -251,6 +272,9 @@ namespace Book_Ecommerce.Migrations
                         .IsUnique();
 
                     b.HasIndex("CategorySlug")
+                        .IsUnique();
+
+                    b.HasIndex("CodeNumber")
                         .IsUnique();
 
                     b.ToTable("Categories");
@@ -268,7 +292,7 @@ namespace Book_Ecommerce.Migrations
 
                     b.HasIndex("CategoryId");
 
-                    b.ToTable("CategoryProdcuts");
+                    b.ToTable("CategoryProducts");
                 });
 
             modelBuilder.Entity("Book_Ecommerce.Models.Comment", b =>
@@ -314,6 +338,9 @@ namespace Book_Ecommerce.Migrations
                     b.Property<string>("Address")
                         .HasColumnType("nvarchar(250)");
 
+                    b.Property<long>("CodeNumber")
+                        .HasColumnType("bigint");
+
                     b.Property<string>("CustomerCode")
                         .IsRequired()
                         .HasColumnType("varchar(250)");
@@ -328,15 +355,48 @@ namespace Book_Ecommerce.Migrations
                     b.Property<bool>("Gender")
                         .HasColumnType("bit");
 
-                    b.Property<long>("MaxCodeNumber")
-                        .HasColumnType("bigint");
-
                     b.HasKey("CustomerId");
+
+                    b.HasIndex("CodeNumber")
+                        .IsUnique();
 
                     b.HasIndex("CustomerCode")
                         .IsUnique();
 
                     b.ToTable("Customers");
+                });
+
+            modelBuilder.Entity("Book_Ecommerce.Models.District", b =>
+                {
+                    b.Property<string>("Code")
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<string>("CodeName")
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<string>("FullName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<string>("FullNameEn")
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<string>("NameEn")
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<string>("ProvinceCode")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(20)");
+
+                    b.HasKey("Code");
+
+                    b.HasIndex("ProvinceCode");
+
+                    b.ToTable("Districts");
                 });
 
             modelBuilder.Entity("Book_Ecommerce.Models.Employee", b =>
@@ -347,6 +407,9 @@ namespace Book_Ecommerce.Migrations
                     b.Property<string>("Address")
                         .IsRequired()
                         .HasColumnType("nvarchar(500)");
+
+                    b.Property<long>("CodeNumber")
+                        .HasColumnType("bigint");
 
                     b.Property<DateTime>("DateOfBirth")
                         .HasColumnType("datetime2");
@@ -364,13 +427,16 @@ namespace Book_Ecommerce.Migrations
 
                     b.HasKey("EmployeeId");
 
+                    b.HasIndex("CodeNumber")
+                        .IsUnique();
+
                     b.HasIndex("EmployeeCode")
                         .IsUnique();
 
                     b.ToTable("Employees");
                 });
 
-            modelBuilder.Entity("Book_Ecommerce.Models.Favourite", b =>
+            modelBuilder.Entity("Book_Ecommerce.Models.FavouriteProduct", b =>
                 {
                     b.Property<string>("CustomerId")
                         .HasColumnType("char(36)");
@@ -382,7 +448,7 @@ namespace Book_Ecommerce.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("Favourites");
+                    b.ToTable("FavouriteProducts");
                 });
 
             modelBuilder.Entity("Book_Ecommerce.Models.Image", b =>
@@ -414,6 +480,9 @@ namespace Book_Ecommerce.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(250)");
 
+                    b.Property<long>("CodeNumber")
+                        .HasColumnType("bigint");
+
                     b.Property<string>("CustomerId")
                         .IsRequired()
                         .HasColumnType("char(36)");
@@ -424,8 +493,9 @@ namespace Book_Ecommerce.Migrations
                     b.Property<DateTime>("DateDelivery")
                         .HasColumnType("datetime2");
 
-                    b.Property<long>("MaxCodeNumber")
-                        .HasColumnType("bigint");
+                    b.Property<string>("FullName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(250)");
 
                     b.Property<string>("Note")
                         .HasColumnType("nvarchar(250)");
@@ -445,6 +515,9 @@ namespace Book_Ecommerce.Migrations
                         .HasColumnType("decimal(18,2)");
 
                     b.HasKey("OrderId");
+
+                    b.HasIndex("CodeNumber")
+                        .IsUnique();
 
                     b.HasIndex("CustomerId");
 
@@ -484,14 +557,14 @@ namespace Book_Ecommerce.Migrations
                         .IsRequired()
                         .HasColumnType("char(36)");
 
+                    b.Property<long>("CodeNumber")
+                        .HasColumnType("bigint");
+
                     b.Property<string>("Decription")
                         .HasColumnType("nvarchar(500)");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
-
-                    b.Property<long>("MaxCodeNumber")
-                        .HasColumnType("bigint");
 
                     b.Property<double?>("PercentDiscount")
                         .HasColumnType("float");
@@ -518,6 +591,9 @@ namespace Book_Ecommerce.Migrations
 
                     b.HasIndex("BrandId");
 
+                    b.HasIndex("CodeNumber")
+                        .IsUnique();
+
                     b.HasIndex("ProductCode")
                         .IsUnique();
 
@@ -528,6 +604,66 @@ namespace Book_Ecommerce.Migrations
                         .IsUnique();
 
                     b.ToTable("Products");
+                });
+
+            modelBuilder.Entity("Book_Ecommerce.Models.Province", b =>
+                {
+                    b.Property<string>("Code")
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<string>("CodeName")
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<string>("FullName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<string>("FullNameEn")
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<string>("NameEn")
+                        .HasColumnType("nvarchar(255)");
+
+                    b.HasKey("Code");
+
+                    b.ToTable("Provinces");
+                });
+
+            modelBuilder.Entity("Book_Ecommerce.Models.Ward", b =>
+                {
+                    b.Property<string>("Code")
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<string>("CodeName")
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<string>("DistrictCode")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<string>("FullName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<string>("FullNameEn")
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<string>("NameEn")
+                        .HasColumnType("nvarchar(255)");
+
+                    b.HasKey("Code");
+
+                    b.HasIndex("DistrictCode");
+
+                    b.ToTable("Wards");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -668,14 +804,12 @@ namespace Book_Ecommerce.Migrations
                     b.HasOne("Book_Ecommerce.Models.Customer", "Customer")
                         .WithOne("User")
                         .HasForeignKey("Book_Ecommerce.Models.AppUser", "CustomerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("Book_Ecommerce.Models.Employee", "Employee")
                         .WithOne("User")
                         .HasForeignKey("Book_Ecommerce.Models.AppUser", "EmployeeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("Customer");
 
@@ -697,6 +831,25 @@ namespace Book_Ecommerce.Migrations
                         .IsRequired();
 
                     b.Navigation("Author");
+
+                    b.Navigation("Product");
+                });
+
+            modelBuilder.Entity("Book_Ecommerce.Models.CartItem", b =>
+                {
+                    b.HasOne("Book_Ecommerce.Models.Customer", "Customer")
+                        .WithMany("CartItems")
+                        .HasForeignKey("CustomerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Book_Ecommerce.Models.Product", "Product")
+                        .WithMany("CartItems")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Customer");
 
                     b.Navigation("Product");
                 });
@@ -739,16 +892,27 @@ namespace Book_Ecommerce.Migrations
                     b.Navigation("Product");
                 });
 
-            modelBuilder.Entity("Book_Ecommerce.Models.Favourite", b =>
+            modelBuilder.Entity("Book_Ecommerce.Models.District", b =>
+                {
+                    b.HasOne("Book_Ecommerce.Models.Province", "Province")
+                        .WithMany("Districts")
+                        .HasForeignKey("ProvinceCode")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Province");
+                });
+
+            modelBuilder.Entity("Book_Ecommerce.Models.FavouriteProduct", b =>
                 {
                     b.HasOne("Book_Ecommerce.Models.Customer", "Customer")
-                        .WithMany("Favourites")
+                        .WithMany("FavouriteProducts")
                         .HasForeignKey("CustomerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Book_Ecommerce.Models.Product", "Product")
-                        .WithMany("Favourites")
+                        .WithMany("FavouriteProducts")
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -808,6 +972,17 @@ namespace Book_Ecommerce.Migrations
                         .IsRequired();
 
                     b.Navigation("Brand");
+                });
+
+            modelBuilder.Entity("Book_Ecommerce.Models.Ward", b =>
+                {
+                    b.HasOne("Book_Ecommerce.Models.District", "District")
+                        .WithMany("Wards")
+                        .HasForeignKey("DistrictCode")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("District");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -878,13 +1053,20 @@ namespace Book_Ecommerce.Migrations
 
             modelBuilder.Entity("Book_Ecommerce.Models.Customer", b =>
                 {
+                    b.Navigation("CartItems");
+
                     b.Navigation("Comments");
 
-                    b.Navigation("Favourites");
+                    b.Navigation("FavouriteProducts");
 
                     b.Navigation("Orders");
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Book_Ecommerce.Models.District", b =>
+                {
+                    b.Navigation("Wards");
                 });
 
             modelBuilder.Entity("Book_Ecommerce.Models.Employee", b =>
@@ -901,15 +1083,22 @@ namespace Book_Ecommerce.Migrations
                 {
                     b.Navigation("AuthorProducts");
 
+                    b.Navigation("CartItems");
+
                     b.Navigation("CategoryProducts");
 
                     b.Navigation("Comments");
 
-                    b.Navigation("Favourites");
+                    b.Navigation("FavouriteProducts");
 
                     b.Navigation("Images");
 
                     b.Navigation("OrderDetails");
+                });
+
+            modelBuilder.Entity("Book_Ecommerce.Models.Province", b =>
+                {
+                    b.Navigation("Districts");
                 });
 #pragma warning restore 612, 618
         }

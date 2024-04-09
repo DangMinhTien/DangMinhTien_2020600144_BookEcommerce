@@ -1,6 +1,7 @@
 ﻿using Book_Ecommerce.Data;
 using Book_Ecommerce.Models;
 using Book_Ecommerce.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Drawing;

@@ -7,17 +7,32 @@ namespace Book_Ecommerce.Services
   {
       public override IdentityError ConcurrencyFailure()
       {
-          return base.ConcurrencyFailure();
+            var er = base.ConcurrencyFailure();
+            return new IdentityError()
+            {
+                Code = er.Code,
+                Description = "Lỗi đồng thời trong hệ thống",
+            };
       }
 
       public override IdentityError DefaultError()
       {
-        return base.DefaultError();
+            var er = base.DefaultError();
+            return new IdentityError()
+            {
+                Code = er.Code,
+                Description = "Lỗi mặc định"
+            };
       }
 
       public override IdentityError DuplicateEmail(string email)
       {
-        return base.DuplicateEmail(email);
+            var er = base.DuplicateEmail(email);
+            return new IdentityError()
+            {
+                Code = er.Code,
+                Description = $"email {email} bị trùng với người dùng khác"
+            };
       }
 
       public override IdentityError DuplicateRoleName(string role)

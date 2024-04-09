@@ -11,7 +11,7 @@ namespace Book_Ecommerce.Models
         public string BrandId { get; set; } = null!;
         [Column(TypeName = "varchar(250)")]
         public string BrandCode { set; get; } = null!;
-        public long MaxCodeNumber { get; set; }
+        public long CodeNumber { get; set; }
         [Column(TypeName = "nvarchar(250)")]
         public string BrandName { set; get; } = null!;
         [Column(TypeName = "varchar(250)")]

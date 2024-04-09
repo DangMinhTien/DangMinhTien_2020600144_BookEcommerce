@@ -294,3 +294,4 @@ C:\Users\LENOVO\OneDrive\Documents\Wordspace\DoAnTotNghiep\Code\Book Ecommerce\B
 C:\Users\LENOVO\OneDrive\Documents\Wordspace\DoAnTotNghiep\Code\Book Ecommerce\Book Ecommerce\obj\Debug\net6.0\Book Ecommerce.pdb
 C:\Users\LENOVO\OneDrive\Documents\Wordspace\DoAnTotNghiep\Code\Book Ecommerce\Book Ecommerce\obj\Debug\net6.0\Book Ecommerce.genruntimeconfig.cache
 C:\Users\LENOVO\OneDrive\Documents\Wordspace\DoAnTotNghiep\Code\Book Ecommerce\Book Ecommerce\obj\Debug\net6.0\ref\Book Ecommerce.dll
+C:\Users\LENOVO\OneDrive\Documents\Wordspace\DoAnTotNghiep\Code\Book Ecommerce\Book Ecommerce\obj\Debug\net6.0\Book Ecommerce.sourcelink.json

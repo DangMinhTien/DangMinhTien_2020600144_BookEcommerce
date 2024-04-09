@@ -11,9 +11,11 @@ namespace Book_Ecommerce.Models
         public string OrderId { get; set; } = null!;
         [Column(TypeName = "varchar(250)")]
         public string OrderCode { get; set; } = null!;
-        public long MaxCodeNumber { get; set; }
+        public long CodeNumber { get; set; }
         [DataType(DataType.Date)]
         public DateTime DateCreated { get; set; }
+        [Column(TypeName = "nvarchar(250)")]
+        public string FullName { get; set; } = null!;
         [Column(TypeName = "varchar(250)")]
         public string PhoneNumber { get; set; } = null!;
         [Column(TypeName = "nvarchar(250)")]
