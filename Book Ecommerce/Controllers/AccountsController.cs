@@ -117,7 +117,7 @@ namespace Book_Ecommerce.Controllers
 
                         await _emailSender.SendEmailAsync(registerVM.Email,
                             "Xác nhận địa chỉ email",
-                            @$"Bạn đã đăng ký tài khoản trên Bool_Ecommerce, 
+                            @$"Bạn đã đăng ký tài khoản trên Book_Ecommerce, 
                            hãy <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>bấm vào đây</a> 
                            để kích hoạt tài khoản.");
                         var addToRoleResult = await _userManager.AddToRoleAsync(user, role.Name);
@@ -166,7 +166,8 @@ namespace Book_Ecommerce.Controllers
 
                 if (user == null)
                 {
-                    return View("ErrorConfirmEmail");
+                    TempData["error"] = $"Xác thực email không thành công";
+                    return RedirectToAction("Index", "Home");
                 }
                 else
                 {
@@ -175,7 +176,7 @@ namespace Book_Ecommerce.Controllers
                     if (result.Succeeded)
                         TempData["success"] = $"Xác thực email thành công cho tài khoản {user.UserName}";
                     else
-                        TempData["error"] = $"Xác thực email thành công cho tài khoản {user.UserName}";
+                        TempData["error"] = $"Xác thực email không thành công cho tài khoản {user.UserName}";
                     return RedirectToAction("Index", "Home");
                 }
             }
@@ -186,7 +187,7 @@ namespace Book_Ecommerce.Controllers
             }
         }
         [HttpGet("/login")]
-        public async Task<IActionResult> Login(string? returnUrl = null)
+        public IActionResult Login(string? returnUrl = null)
         {
             ViewBag.ReturnUrl = returnUrl;
             return View();

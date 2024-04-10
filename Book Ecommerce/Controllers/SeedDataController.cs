@@ -1,4 +1,6 @@
-﻿using Book_Ecommerce.Models;
+﻿using Book_Ecommerce.Data;
+using Book_Ecommerce.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -7,9 +9,15 @@ namespace Book_Ecommerce.Controllers
     public class SeedDataController : Controller
     {
         private readonly AppDbContext _context;
+        private readonly UserManager<AppUser> _userManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
 
-        public SeedDataController(AppDbContext context)
+        public SeedDataController(UserManager<AppUser> userManager,
+                                    RoleManager<IdentityRole> roleManager,
+                                    AppDbContext context)
         {
+            _userManager = userManager;
+            _roleManager = roleManager;
             _context = context;
         }
         public async Task<IActionResult> Index()
@@ -111,13 +119,116 @@ namespace Book_Ecommerce.Controllers
                         }
                     }
                 }
+                TempData["success"] = "Tự động tạo dữ liệu thành công";
             }
             catch (Exception ex)
             {
                 TempData["error"] = ex.Message.ToString();
             }
-            TempData["success"] = "Tự động tạo dữ liệu thành công";
             return RedirectToAction("Index","Home");
+        }
+        public async Task<IActionResult> RenderUserRole()
+        {
+            try
+            {
+                await _context.Database.BeginTransactionAsync();
+                var roleNames = new string[] { MyRole.CUSTOMER, MyRole.EMPLOYEE, MyRole.ADMIN };
+                var roles = await _context.Roles.Select(r => r.Name.ToUpper()).ToListAsync();
+                var roleAdd = roleNames.Where(r => !roles.Contains(r.ToUpper())) ?? new string[] { };
+                foreach (var roleName in roleAdd)
+                {
+                    var resultRole = await _roleManager.CreateAsync(new IdentityRole { Name = roleName });
+                    if(!resultRole.Succeeded)
+                    {
+                        await _context.Database.RollbackTransactionAsync();
+                        TempData["error"] = "Tạo dữ liệu thất bại do không tạo được quyền";
+                        return RedirectToAction("Index","Home");
+                    }
+                }
+                // tao customer 
+                var customerCode = _context.Customers.Count() == 0 ? 1000
+                    : _context.Customers.Max(c => c.CodeNumber) + 1;
+                var customer = new Customer
+                {
+                    CustomerId = Guid.NewGuid().ToString(),
+                    FullName = "Đặng Tiến",
+                    CodeNumber = customerCode,
+                    CustomerCode = "KH" + customerCode,
+                    Gender = true,
+                    DateOfBirth = DateTime.Now,
+                };
+                _context.Customers.Add(customer);
+                var userCustomer = new AppUser
+                {
+                    UserName = "customer@gmail.com",
+                    Email = "customer@gmail.com",
+                    EmailConfirmed = true,
+                    CustomerId = customer.CustomerId
+                };
+                var resultCustomerAccount = await _userManager.CreateAsync(userCustomer, "@Tien2801");
+                if (!resultCustomerAccount.Succeeded)
+                {
+                    await _context.Database.RollbackTransactionAsync();
+                    TempData["error"] = "Tạo dữ liệu thất bại do không tạo được tài khoản khách hàng";
+                    return RedirectToAction("Index", "Home");
+                }
+                // add role customer
+                var resultAddRoleCustomer = await _userManager
+                    .AddToRoleAsync(userCustomer, MyRole.CUSTOMER);
+                if (!resultAddRoleCustomer.Succeeded)
+                {
+                    await _context.Database.RollbackTransactionAsync();
+                    TempData["error"] = "Tạo dữ liệu thất bại do không thêm được quyền tài khoản khách hàng";
+                    return RedirectToAction("Index", "Home");
+                }
+                // tạo employee
+                var employeeCode = _context.Employees.Count() == 0 ? 1000 :
+                    _context.Employees.Max(e => e.CodeNumber) + 1;
+                var employee = new Employee
+                {
+                    EmployeeId = Guid.NewGuid().ToString(),
+                    FullName = "Đặng Minh Tiến",
+                    DateOfBirth = DateTime.Now,
+                    Gender = true,
+                    CodeNumber = employeeCode,
+                    EmployeeCode = "NV" + employeeCode,
+                    Address = "AD-HP-VN"
+                };
+                _context.Employees.Add(employee);
+                var userEmployee = new AppUser
+                {
+                    UserName = "admin@gmail.com",
+                    Email = "admin@gmail.com",
+                    EmailConfirmed = true,
+                    EmployeeId = employee.EmployeeId
+                };
+                var resultUserEmployee = await _userManager.CreateAsync(userEmployee, "@Tien2801");
+                if (!resultUserEmployee.Succeeded)
+                {
+                    await _context.Database.RollbackTransactionAsync();
+                    TempData["error"] = "Tạo dữ liệu thất bại do không tạo được tài khoản nhân viên";
+                    return RedirectToAction("Index", "Home");
+                }
+                // add role employee
+                var addRoleEmployee = new string[] { MyRole.EMPLOYEE, MyRole.ADMIN };
+                foreach(var role in addRoleEmployee)
+                {
+                    var resultAddRoleEmployee = await _userManager.AddToRoleAsync(userEmployee, role);
+                    if(!resultAddRoleEmployee.Succeeded)
+                    {
+                        await _context.Database.RollbackTransactionAsync();
+                        TempData["error"] = "Tạo dữ liệu thất bại do không thêm được quyền vào tài khoản nhân viên";
+                        return RedirectToAction("Index", "Home");
+                    }
+                }
+                await _context.Database.CommitTransactionAsync();
+                TempData["success"] = "Tạo dữ liệu thành công";
+            }
+            catch (Exception ex)
+            {
+                TempData["error"] = $"{ex.Message}";
+            }
+            return RedirectToAction("Index", "Home");
         }
     }
 }

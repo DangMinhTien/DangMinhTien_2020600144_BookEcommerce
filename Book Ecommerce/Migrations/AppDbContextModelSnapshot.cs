@@ -422,8 +422,8 @@ namespace Book_Ecommerce.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(250)");
 
-                    b.Property<float>("Gender")
-                        .HasColumnType("real");
+                    b.Property<bool>("Gender")
+                        .HasColumnType("bit");
 
                     b.HasKey("EmployeeId");
 

@@ -16,7 +16,7 @@ namespace Book_Ecommerce.Models
         public string FullName { get; set; } = null!;
         [DataType(DataType.Date)]
         public DateTime DateOfBirth { get; set; }
-        public float Gender { get; set; }
+        public bool Gender { get; set; }
         [Column(TypeName = "nvarchar(500)")]
         public string Address { set; get; } = null!;
         public AppUser? User { get; set; }
