@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
 using System.Configuration;
+using Book_Ecommerce.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -50,6 +51,14 @@ builder.Services.ConfigureApplicationCookie(option =>
     option.LoginPath = "/login/";
     option.LogoutPath = "/logout/";
     option.AccessDeniedPath = "/accessdenied/";
+});
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("IsCustomer", policyBuilder =>
+    {
+        policyBuilder.RequireAuthenticatedUser();
+        policyBuilder.RequireRole(MyRole.CUSTOMER);
+    });
 });
 builder.Services.AddSingleton<IdentityErrorDescriber, AppIdentityErrorDescriber>();
 //Đăng ký mail

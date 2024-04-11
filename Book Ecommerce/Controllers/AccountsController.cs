@@ -12,6 +12,7 @@ using Book_Ecommerce.ExtendMethods;
 using Microsoft.EntityFrameworkCore;
 using Book_Ecommerce.Utilities;
 using Book_Ecommerce.Data;
+using Book_Ecommerce.Helpers;
 
 namespace Book_Ecommerce.Controllers
 {
@@ -117,7 +118,7 @@ namespace Book_Ecommerce.Controllers
 
                         await _emailSender.SendEmailAsync(registerVM.Email,
                             "Xác nhận địa chỉ email",
-                            @$"Bạn đã đăng ký tài khoản trên Book_Ecommerce, 
+                            @$"Bạn đã đăng ký tài khoản trên Book_Ecommerce,
                            hãy <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>bấm vào đây</a> 
                            để kích hoạt tài khoản.");
                         var addToRoleResult = await _userManager.AddToRoleAsync(user, role.Name);
@@ -254,6 +255,78 @@ namespace Book_Ecommerce.Controllers
         public IActionResult AccessDenied()
         {
             return View();
+        }
+        [HttpGet("/forgotpassword")]
+        public IActionResult ForgotPassword()
+        {
+            return View();
+        }
+        [HttpPost("/forgotpassword")]
+        [AllowAnonymous]
+        public async Task<IActionResult> ForgotPassword(ForgotPasswordVM model)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = await _userManager.FindByEmailAsync(model.Email);
+                if (user == null)
+                {
+                    ModelState.AddModelError(string.Empty, $"không có tài khoản nào sử dụng email {model.Email}");
+                    return View(model);
+                }
+                if(!(await _userManager.IsEmailConfirmedAsync(user)))
+                {
+                    ModelState.AddModelError(string.Empty, $"Tài khoản của bạn chưa được xác thực email nên không thể đổi mật khẩu");
+                    return View(model);
+                }
+                var key = Encription.GenerateKey();
+                var passwordHash = Encription.Encrypt(model.Password, key);
+                var code = await _userManager.GeneratePasswordResetTokenAsync(user);
+                code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
+                var callbackUrl = Url.ActionLink(
+                    action: nameof(ResetPassword),
+                    values: new { userId = user.Id, code = code, key = key, passwordHash = passwordHash},
+                    protocol: Request.Scheme);
+
+
+                await _emailSender.SendEmailAsync(
+                    model.Email,
+                    "Xác nhận thay đổi mật khẩu",
+                    $"Hãy bấm <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>vào đây</a> để xác nhận thay đổi mật khẩu.");
+                TempData["infor"] = "Hãy xác nhận thay đổi mật khẩu trong email của bạn";
+                return View(model);
+            }
+            return View(model);
+        }
+        [HttpGet]
+        [AllowAnonymous]
+        public async Task<IActionResult> ResetPassword(string userId, string code, string key, string passwordHash)
+        {
+            try
+            {
+                var user = await _userManager.FindByIdAsync(userId);
+                if (user == null)
+                {
+                    TempData["error"] = "Xác nhận thay đổi mật khẩu thất bại do không tìm thấy tài khoản của bạn";
+                    return View("ForgotPassword");
+                }
+                code = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(code));
+                var password = Encription.Decrypt(passwordHash, key);
+
+                var result = await _userManager.ResetPasswordAsync(user, code, password);
+                if (result.Succeeded)
+                {
+                    TempData["success"] = "Xác nhận thay đổi mật khẩu thành công";
+                    return RedirectToAction("Index", "Home");
+                }
+                TempData["error"] = "Xác nhận thay đổi mật khẩu thất bại";
+                return View("ForgotPassword");
+
+            }
+            catch
+            {
+                TempData["error"] = "Xác nhận thay đổi mật khẩu thất bại";
+                return View("ForgotPassword");
+            }
         }
     }
 }
