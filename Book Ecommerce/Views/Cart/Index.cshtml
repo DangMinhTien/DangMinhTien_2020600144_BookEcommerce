@@ -1,161 +1,80 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@model IEnumerable<Book_Ecommerce.ViewModels.CartItemVM>
 @{
     ViewData["Title"] = "Trang giỏ hàng";
+    CultureInfo cultureInfo = new CultureInfo("vi-VN");
 }
 <!-- Cart Start -->
-<div class="container-fluid pt-5">
+<div class="container-fluid">
     <div class="row px-xl-5">
         <div class="col-lg-8 table-responsive mb-5">
             <table class="table table-bordered text-center mb-0">
                 <thead class="bg-secondary text-dark">
                     <tr>
-                        <th>Products</th>
-                        <th>Price</th>
-                        <th>Quantity</th>
-                        <th>Total</th>
-                        <th>Remove</th>
+                        <th>Sản phẩm</th>
+                        <th>Ảnh</th>
+                        <th>Giá bán</th>
+                        <th>Số lượng</th>
+                        <th>Thành tiền</th>
+                        <th>Xóa</th>
                     </tr>
                 </thead>
                 <tbody class="align-middle">
-                    <tr>
-                        <td class="align-middle"><img src="img/product-1.jpg" alt="" style="width: 50px;"> Colorful Stylish Shirt</td>
-                        <td class="align-middle">$150</td>
-                        <td class="align-middle">
-                            <div class="input-group quantity mx-auto" style="width: 100px;">
-                                <div class="input-group-btn">
-                                    <button class="btn btn-sm btn-primary btn-minus">
-                                        <i class="fa fa-minus"></i>
-                                    </button>
+                    @foreach(var item in Model)
+                    {
+                        var srcImg = $"/contents/Photos/Products/{item.Image}";
+                        if (string.IsNullOrEmpty(srcImg))
+                            srcImg = "/contents/Photos/No_Image_Available.jpg";
+                        <tr>
+                            <td><a class="link-decoration" asp-action="Detail" asp-controller="Products" asp-route-productSlug="@item.ProductSlug">@item.ProductName</a></td>
+                            <td class="align-middle">
+                                <a asp-action="Detail" asp-controller="Products" asp-route-productSlug="@item.ProductSlug">
+                                    <img src="@srcImg" class="img-product" alt="" style="width: 50px; object-fit:cover;" />
+                                </a>
+                            </td>
+                            <td class="align-middle price-item">@string.Format(cultureInfo, "{0:C0}", item.Price)</td>
+                            <td class="align-middle">
+                                <div class="input-group quantity mx-auto" style="width: 100px;">
+                                    <div class="input-group-btn">
+                                        <button data-productid="@item.ProductId" class="btn btn-sm btn-primary btn-minus">
+                                            <i class="fa fa-minus"></i>
+                                        </button>
+                                    </div>
+                                    <input type="text" class="quantity-item form-control form-control-sm bg-secondary text-center" value="@item.Quantity">
+                                    <div class="input-group-btn">
+                                        <button data-productid="@item.ProductId" class="btn btn-sm btn-primary btn-plus">
+                                            <i class="fa fa-plus"></i>
+                                        </button>
+                                    </div>
                                 </div>
-                                <input type="text" class="form-control form-control-sm bg-secondary text-center" value="1">
-                                <div class="input-group-btn">
-                                    <button class="btn btn-sm btn-primary btn-plus">
-                                        <i class="fa fa-plus"></i>
-                                    </button>
-                                </div>
-                            </div>
-                        </td>
-                        <td class="align-middle">$150</td>
-                        <td class="align-middle"><button class="btn btn-sm btn-primary"><i class="fa fa-times"></i></button></td>
-                    </tr>
-                    <tr>
-                        <td class="align-middle"><img src="img/product-2.jpg" alt="" style="width: 50px;"> Colorful Stylish Shirt</td>
-                        <td class="align-middle">$150</td>
-                        <td class="align-middle">
-                            <div class="input-group quantity mx-auto" style="width: 100px;">
-                                <div class="input-group-btn">
-                                    <button class="btn btn-sm btn-primary btn-minus">
-                                        <i class="fa fa-minus"></i>
-                                    </button>
-                                </div>
-                                <input type="text" class="form-control form-control-sm bg-secondary text-center" value="1">
-                                <div class="input-group-btn">
-                                    <button class="btn btn-sm btn-primary btn-plus">
-                                        <i class="fa fa-plus"></i>
-                                    </button>
-                                </div>
-                            </div>
-                        </td>
-                        <td class="align-middle">$150</td>
-                        <td class="align-middle"><button class="btn btn-sm btn-primary"><i class="fa fa-times"></i></button></td>
-                    </tr>
-                    <tr>
-                        <td class="align-middle"><img src="img/product-3.jpg" alt="" style="width: 50px;"> Colorful Stylish Shirt</td>
-                        <td class="align-middle">$150</td>
-                        <td class="align-middle">
-                            <div class="input-group quantity mx-auto" style="width: 100px;">
-                                <div class="input-group-btn">
-                                    <button class="btn btn-sm btn-primary btn-minus">
-                                        <i class="fa fa-minus"></i>
-                                    </button>
-                                </div>
-                                <input type="text" class="form-control form-control-sm bg-secondary text-center" value="1">
-                                <div class="input-group-btn">
-                                    <button class="btn btn-sm btn-primary btn-plus">
-                                        <i class="fa fa-plus"></i>
-                                    </button>
-                                </div>
-                            </div>
-                        </td>
-                        <td class="align-middle">$150</td>
-                        <td class="align-middle"><button class="btn btn-sm btn-primary"><i class="fa fa-times"></i></button></td>
-                    </tr>
-                    <tr>
-                        <td class="align-middle"><img src="img/product-4.jpg" alt="" style="width: 50px;"> Colorful Stylish Shirt</td>
-                        <td class="align-middle">$150</td>
-                        <td class="align-middle">
-                            <div class="input-group quantity mx-auto" style="width: 100px;">
-                                <div class="input-group-btn">
-                                    <button class="btn btn-sm btn-primary btn-minus">
-                                        <i class="fa fa-minus"></i>
-                                    </button>
-                                </div>
-                                <input type="text" class="form-control form-control-sm bg-secondary text-center" value="1">
-                                <div class="input-group-btn">
-                                    <button class="btn btn-sm btn-primary btn-plus">
-                                        <i class="fa fa-plus"></i>
-                                    </button>
-                                </div>
-                            </div>
-                        </td>
-                        <td class="align-middle">$150</td>
-                        <td class="align-middle"><button class="btn btn-sm btn-primary"><i class="fa fa-times"></i></button></td>
-                    </tr>
-                    <tr>
-                        <td class="align-middle"><img src="img/product-5.jpg" alt="" style="width: 50px;"> Colorful Stylish Shirt</td>
-                        <td class="align-middle">$150</td>
-                        <td class="align-middle">
-                            <div class="input-group quantity mx-auto" style="width: 100px;">
-                                <div class="input-group-btn">
-                                    <button class="btn btn-sm btn-primary btn-minus">
-                                        <i class="fa fa-minus"></i>
-                                    </button>
-                                </div>
-                                <input type="text" class="form-control form-control-sm bg-secondary text-center" value="1">
-                                <div class="input-group-btn">
-                                    <button class="btn btn-sm btn-primary btn-plus">
-                                        <i class="fa fa-plus"></i>
-                                    </button>
-                                </div>
-                            </div>
-                        </td>
-                        <td class="align-middle">$150</td>
-                        <td class="align-middle"><button class="btn btn-sm btn-primary"><i class="fa fa-times"></i></button></td>
-                    </tr>
+                            </td>
+                            <td class="align-middle amount-item">@string.Format(cultureInfo, "{0:C0}", item.Amount)</td>
+                            <td class="align-middle">
+                                <form asp-action="RemoveCart" asp-controller="Cart" asp-route-productId="@item.ProductId">
+                                    <button type="submit" class="btn btn-sm btn-primary"><i class="fa fa-times"></i></button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
                 </tbody>
             </table>
         </div>
         <div class="col-lg-4">
-            <form class="mb-5" action="">
-                <div class="input-group">
-                    <input type="text" class="form-control p-4" placeholder="Coupon Code">
-                    <div class="input-group-append">
-                        <button class="btn btn-primary">Apply Coupon</button>
-                    </div>
-                </div>
-            </form>
             <div class="card border-secondary mb-5">
                 <div class="card-header bg-secondary border-0">
-                    <h4 class="font-weight-semi-bold m-0">Cart Summary</h4>
+                    <h4 class="font-weight-semi-bold m-0">Giỏ hàng</h4>
                 </div>
                 <div class="card-body">
                     <div class="d-flex justify-content-between mb-3 pt-1">
-                        <h6 class="font-weight-medium">Subtotal</h6>
-                        <h6 class="font-weight-medium">$150</h6>
-                    </div>
-                    <div class="d-flex justify-content-between">
-                        <h6 class="font-weight-medium">Shipping</h6>
-                        <h6 class="font-weight-medium">$10</h6>
+                        <h6 class="font-weight-medium">Thành tiền</h6>
+                        <h6 class="font-weight-medium amount">@string.Format(cultureInfo, "{0:C0}", Model.Sum(c => c.Amount))</h6>
                     </div>
                 </div>
                 <div class="card-footer border-secondary bg-transparent">
                     <div class="d-flex justify-content-between mt-2">
-                        <h5 class="font-weight-bold">Total</h5>
-                        <h5 class="font-weight-bold">$160</h5>
+                        <h5 class="font-weight-bold">Tổng tiền</h5>
+                        <h5 class="font-weight-bold amount">@string.Format(cultureInfo, "{0:C0}", Model.Sum(c => c.Amount))</h5>
                     </div>
-                    <button class="btn btn-block btn-primary my-3 py-3">Proceed To Checkout</button>
+                    <a class="btn btn-block btn-primary my-3 py-3" asp-action="Index" asp-controller="Checkout">Đặt hàng</a>
                 </div>
             </div>
         </div>
@@ -163,5 +82,126 @@
 </div>
 <!-- Cart End -->
 @section Scripts {
-
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('.btn-plus').click(function(){
+                var productId = $(this).data('productid')
+                var formData = new FormData()
+                var tr = $(this).closest('tr')
+                formData.append('productId',productId)
+                $('#loader').show()
+                $.ajax({
+                    url: '@Url.Action("PlusCart","Cart")',
+                    method: 'POST',
+                    data: formData,
+                    catch: false,
+                    contentType: false,
+                    processData: false,
+                    success: function (response) {
+                        $('#loader').hide()
+                        var toast = $(RenderHtmlToastSuccess(response.mesClient))
+                        $('.m-toast-box').append(toast)
+                        HideToastAfterShow(toast)
+                        $('#sumcart').text(response.sumItem)
+                        tr.find('.price-item').text(response.priceItem)
+                        tr.find('.quantity-item').val(response.quantityItem)
+                        tr.find('.amount-item').text(response.amountItem)
+                        $('.amount').text(response.amount)
+                    },
+                    error: function (response) {
+                        console.log(response)
+                        $('#loader').hide()
+                        var quantityInput = tr.find('.quantity-item')
+                        quantityInput.val(quantityInput.val() - 1)
+                        var message = ""
+                        if (response.status == 401)
+                            message = "Yêu cầu bạn đăng nhập để thực hiện chức năng này";
+                        else if (response.status == 403)
+                            message = "Tài khoản của bạn không thể thực hiện chức năng này";
+                        else
+                            message = response.responseJSON.mesClient
+                        console.log(response.responseJSON.mesDev)
+                        var toast = $(RenderHtmlToastError(message))
+                        $('.m-toast-box').append(toast)
+                        HideToastAfterShow(toast)
+                    }
+                })
+            })
+            $('.btn-minus').click(function () {
+                var productId = $(this).data('productid')
+                var formData = new FormData()
+                var tr = $(this).closest('tr')
+                formData.append('productId', productId)
+                $('#loader').show()
+                $.ajax({
+                    url: '@Url.Action("MinusCart", "Cart")',
+                    method: 'POST',
+                    data: formData,
+                    catch: false,
+                    contentType: false,
+                    processData: false,
+                    success: function (response) {
+                        $('#loader').hide()
+                        var toast = $(RenderHtmlToastSuccess(response.mesClient))
+                        $('.m-toast-box').append(toast)
+                        HideToastAfterShow(toast)
+                        $('#sumcart').text(response.sumItem)
+                        tr.find('.price-item').text(response.priceItem)
+                        tr.find('.quantity-item').val(response.quantityItem)
+                        tr.find('.amount-item').text(response.amountItem)
+                        $('.amount').text(response.amount)
+                    },
+                    error: function (response) {
+                        console.log(response)
+                        $('#loader').hide()
+                        var quantityInput = tr.find('.quantity-item')
+                        quantityInput.val(parseInt(quantityInput.val()) + 1)
+                        var message = ""
+                        if (response.status == 401)
+                            message = "Yêu cầu bạn đăng nhập để thực hiện chức năng này";
+                        else if (response.status == 403)
+                            message = "Tài khoản của bạn không thể thực hiện chức năng này";
+                        else
+                            message = response.responseJSON.mesClient
+                        console.log(response.responseJSON.mesDev)
+                        var toast = $(RenderHtmlToastError(message))
+                        $('.m-toast-box').append(toast)
+                        HideToastAfterShow(toast)
+                    }
+                })
+            })
+        })
+        function HideToastAfterShow(toast) {
+            setTimeout(function () {
+                // tạo hiệu ứng
+                toast.addClass('hidden')
+                // sau đó ẩn
+                setTimeout(function () {
+                    toast.remove()
+                }, 2000)
+            }, 5000)
+        }
+        function RenderHtmlToastError(message) {
+            return `<div class="m-toast-message m-toast-error">
+                                <div class="m-toast-icon">
+                                    <i class="fas fa-check-circle"></i>
+                                </div>
+                                <div class="m-toast-text">${message}</div>
+                                <div class="m-toast-close">
+                                    <i class="fas fa-times"></i>
+                                </div>
+                            </div>`
+        }
+        function RenderHtmlToastSuccess(message) {
+            return `<div class="m-toast-message m-toast-success">
+                                <div class="m-toast-icon">
+                                    <i class="fas fa-check-circle"></i>
+                                </div>
+                                        <div class="m-toast-text">${message}</div>
+                                <div class="m-toast-close">
+                                    <i class="fas fa-times"></i>
+                                </div>
+                            </div>`
+        }
+    </script>
 }

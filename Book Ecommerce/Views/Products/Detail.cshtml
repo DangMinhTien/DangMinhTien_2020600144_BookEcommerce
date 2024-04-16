@@ -276,6 +276,7 @@
                 var formData = new FormData()
                 formData.append('productid', productid)
                 formData.append('quantity', 1)
+                $('#loader').show()
                 $.ajax({
                     url: '@Url.Action("AddToCart", "Cart")',
                     type: 'POST',
@@ -284,46 +285,25 @@
                     contentType: false,
                     processData: false,
                     success: function (response) {
-                        if (response.state == true) {
-                            console.log(response.messagedev)
-                            var toast = $(`<div class="m-toast-message m-toast-success">
-                                        <div class="m-toast-icon">
-                                            <i class="fas fa-check-circle"></i>
-                                        </div>
-                                                <div class="m-toast-text">${response.messageclient}</div>
-                                        <div class="m-toast-close">
-                                            <i class="fas fa-times"></i>
-                                        </div>
-                                    </div>`)
-                            $('.m-toast-box').append(toast)
-                            HideToastAfterShow(toast)
-                            $('#sumcart').text(response.sumitem)
-                        }
-                        else {
-                            var toast = $(`<div class="m-toast-message m-toast-error">
-                                                        <div class="m-toast-icon">
-                                                            <i class="fas fa-check-circle"></i>
-                                                        </div>
-                                                        <div class="m-toast-text">${response.messageclient}</div>
-                                                        <div class="m-toast-close">
-                                                            <i class="fas fa-times"></i>
-                                                        </div>
-                                                    </div>`)
-                            $('.m-toast-box').append(toast)
-                            HideToastAfterShow(toast)
-                            $('#sumcart').text(response.sumitem)
-                        }
+                        $('#loader').hide()
+                        console.log(response.mesDev)
+                        var toast = $(RenderHtmlToastSuccess(response.mesClient))
+                        $('.m-toast-box').append(toast)
+                        HideToastAfterShow(toast)
+                        $('#sumcart').text(response.sumItem)
                     },
                     error: function (response) {
-                        var toast = $(`<div class="m-toast-message m-toast-error">
-                                                                <div class="m-toast-icon">
-                                                                    <i class="fas fa-check-circle"></i>
-                                                                </div>
-                                                                <div class="m-toast-text">${response.message}</div>
-                                                                <div class="m-toast-close">
-                                                                    <i class="fas fa-times"></i>
-                                                                </div>
-                                                            </div>`)
+                        console.log(response)
+                        $('#loader').hide()
+                        var message = ""
+                        if (response.status == 401)
+                            message = "Yêu cầu bạn đăng nhập để thực hiện chức năng này";
+                        else if (response.status == 403)
+                            message = "Tài khoản của bạn không thể thực hiện chức năng này";
+                        else
+                            message = response.responseJSON.mesClient
+                        console.log(response.responseJSON.mesDev)
+                        var toast = $(RenderHtmlToastError(message))
                         $('.m-toast-box').append(toast)
                         HideToastAfterShow(toast)
                     }
@@ -335,6 +315,7 @@
                 var formData = new FormData()
                 formData.append('productid', productid)
                 formData.append('quantity', quantity)
+                $('#loader').show()
                 $.ajax({
                     url: '@Url.Action("AddToCart", "Cart")',
                     type: 'POST',
@@ -343,46 +324,25 @@
                     contentType: false,
                     processData: false,
                     success: function (response) {
-                        if (response.state == true) {
-                            console.log(response.messagedev)
-                            var toast = $(`<div class="m-toast-message m-toast-success">
-                                                <div class="m-toast-icon">
-                                                    <i class="fas fa-check-circle"></i>
-                                                </div>
-                                                        <div class="m-toast-text">${response.messageclient}</div>
-                                                <div class="m-toast-close">
-                                                    <i class="fas fa-times"></i>
-                                                </div>
-                                            </div>`)
-                            $('.m-toast-box').append(toast)
-                            HideToastAfterShow(toast)
-                            $('#sumcart').text(response.sumitem)
-                        }
-                        else {
-                            var toast = $(`<div class="m-toast-message m-toast-error">
-                                                                <div class="m-toast-icon">
-                                                                    <i class="fas fa-check-circle"></i>
-                                                                </div>
-                                                                <div class="m-toast-text">${response.messageclient}</div>
-                                                                <div class="m-toast-close">
-                                                                    <i class="fas fa-times"></i>
-                                                                </div>
-                                                            </div>`)
-                            $('.m-toast-box').append(toast)
-                            HideToastAfterShow(toast)
-                            $('#sumcart').text(response.sumitem)
-                        }
+                        $('#loader').hide()
+                        console.log(response.mesDev)
+                        var toast = $(RenderHtmlToastSuccess(response.mesClient))
+                        $('.m-toast-box').append(toast)
+                        HideToastAfterShow(toast)
+                        $('#sumcart').text(response.sumItem)
                     },
                     error: function (response) {
-                        var toast = $(`<div class="m-toast-message m-toast-error">
-                                                                        <div class="m-toast-icon">
-                                                                            <i class="fas fa-check-circle"></i>
-                                                                        </div>
-                                                                        <div class="m-toast-text">${response.message}</div>
-                                                                        <div class="m-toast-close">
-                                                                            <i class="fas fa-times"></i>
-                                                                        </div>
-                                                                    </div>`)
+                        console.log(response)
+                        $('#loader').hide()
+                        var message = ""
+                        if (response.status == 401)
+                            message = "Yêu cầu bạn đăng nhập để thực hiện chức năng này";
+                        else if (response.status == 403)
+                            message = "Tài khoản của bạn không thể thực hiện chức năng này";
+                        else
+                            message = response.responseJSON.mesClient
+                        console.log(response.responseJSON.mesDev)
+                        var toast = $(RenderHtmlToastError(message))
                         $('.m-toast-box').append(toast)
                         HideToastAfterShow(toast)
                     }
@@ -402,6 +362,28 @@
                     toast.remove()
                 }, 2000)
             }, 5000)
+        }
+        function RenderHtmlToastError(message) {
+            return `<div class="m-toast-message m-toast-error">
+                        <div class="m-toast-icon">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <div class="m-toast-text">${message}</div>
+                        <div class="m-toast-close">
+                            <i class="fas fa-times"></i>
+                        </div>
+                    </div>`
+        }
+        function RenderHtmlToastSuccess(message) {
+            return `<div class="m-toast-message m-toast-success">
+                        <div class="m-toast-icon">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                                <div class="m-toast-text">${message}</div>
+                        <div class="m-toast-close">
+                            <i class="fas fa-times"></i>
+                        </div>
+                    </div>`
         }
     </script>
 }

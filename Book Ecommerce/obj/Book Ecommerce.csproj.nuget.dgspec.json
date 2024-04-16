@@ -112,6 +112,10 @@
               "target": "Package",
               "version": "[4.4.0, )"
             },
+            "PayPal": {
+              "target": "Package",
+              "version": "[2.0.0-rc2, )"
+            },
             "bootstrap": {
               "target": "Package",
               "version": "[4.4.1, )"

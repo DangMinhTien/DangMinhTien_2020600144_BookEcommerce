@@ -48,6 +48,7 @@ namespace Book_Ecommerce.Controllers
                 ViewBag.search = search;
             }
             var products = await query.ToListAsync();
+            
             #region Bắt đầu phân trang
             var totalItem = products.Count();
             var totalPage = (int)Math.Ceiling((double)totalItem / pagesize);

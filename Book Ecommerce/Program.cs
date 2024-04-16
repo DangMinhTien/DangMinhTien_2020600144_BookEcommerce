@@ -66,10 +66,18 @@ builder.Services.AddOptions();
 var mailSetting = builder.Configuration.GetSection("MailSetting");
 builder.Services.Configure<MailSettings>(mailSetting);
 builder.Services.AddSingleton<IEmailSender, SendMailService>();
+// đăng ký session
 builder.Services.AddSession(options =>
 {
     options.IdleTimeout = TimeSpan.FromMinutes(30);
     // Cấu hình các tùy chọn khác cho Session
+});
+// đăng ký vn pay
+builder.Services.AddSingleton<IVnPayService, VnPayService>();
+// đăng ký logging
+builder.Services.AddLogging(builder =>
+{
+    builder.AddConsole();
 });
 var app = builder.Build();
 

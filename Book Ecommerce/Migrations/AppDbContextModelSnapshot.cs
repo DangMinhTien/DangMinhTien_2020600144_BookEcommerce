@@ -504,6 +504,10 @@ namespace Book_Ecommerce.Migrations
                         .IsRequired()
                         .HasColumnType("varchar(250)");
 
+                    b.Property<string>("PaymentType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(500)");
+
                     b.Property<string>("PhoneNumber")
                         .IsRequired()
                         .HasColumnType("varchar(250)");

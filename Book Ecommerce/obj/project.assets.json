@@ -22,6 +22,15 @@
           }
         }
       },
+      "BraintreeHttp-Dotnet/0.3.0": {
+        "type": "package",
+        "compile": {
+          "lib/netstandard2.0/BraintreeHttp-Dotnet.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard2.0/BraintreeHttp-Dotnet.dll": {}
+        }
+      },
       "Humanizer/2.14.1": {
         "type": "package",
         "dependencies": {
@@ -2635,6 +2644,18 @@
           "lib/netstandard2.0/NuGet.Versioning.dll": {}
         }
       },
+      "PayPal/2.0.0-rc2": {
+        "type": "package",
+        "dependencies": {
+          "BraintreeHttp-Dotnet": "0.3.0"
+        },
+        "compile": {
+          "lib/netstandard2.0/Source.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard2.0/Source.dll": {}
+        }
+      },
       "popper.js/1.16.0": {
         "type": "package"
       },
@@ -4560,6 +4581,18 @@
         "lib/netstandard2.0/BouncyCastle.Cryptography.dll",
         "lib/netstandard2.0/BouncyCastle.Cryptography.xml",
         "packageIcon.png"
+      ]
+    },
+    "BraintreeHttp-Dotnet/0.3.0": {
+      "sha512": "ARHcstlJ2uRxqJVAxhJ7PJbzsDD9us+docpKHuay6psUVpQJo4cH0negfo8rv/iEakGhx0Rxgp/HUu6ZLa+lsA==",
+      "type": "package",
+      "path": "braintreehttp-dotnet/0.3.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "braintreehttp-dotnet.0.3.0.nupkg.sha512",
+        "braintreehttp-dotnet.nuspec",
+        "lib/netstandard2.0/BraintreeHttp-Dotnet.dll"
       ]
     },
     "Humanizer/2.14.1": {
@@ -8222,6 +8255,18 @@
         "lib/netstandard2.0/NuGet.Versioning.dll",
         "nuget.versioning.6.6.1.nupkg.sha512",
         "nuget.versioning.nuspec"
+      ]
+    },
+    "PayPal/2.0.0-rc2": {
+      "sha512": "QmsC08dT2Bp4zxsWAXYnnYDL3x870LbC81Hodlmm3Df/WGUOVkcyMSFcTdZ8l0Xw823WW6WgZVl2ZIx7phWuCw==",
+      "type": "package",
+      "path": "paypal/2.0.0-rc2",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "lib/netstandard2.0/Source.dll",
+        "paypal.2.0.0-rc2.nupkg.sha512",
+        "paypal.nuspec"
       ]
     },
     "popper.js/1.16.0": {
@@ -12494,6 +12539,7 @@
       "Microsoft.VisualStudio.Azure.Containers.Tools.Targets >= 1.19.5",
       "Microsoft.VisualStudio.Web.CodeGeneration.Design >= 6.0.16",
       "MimeKit >= 4.4.0",
+      "PayPal >= 2.0.0-rc2",
       "bootstrap >= 4.4.1"
     ]
   },
@@ -12608,6 +12654,10 @@
           "MimeKit": {
             "target": "Package",
             "version": "[4.4.0, )"
+          },
+          "PayPal": {
+            "target": "Package",
+            "version": "[2.0.0-rc2, )"
           },
           "bootstrap": {
             "target": "Package",

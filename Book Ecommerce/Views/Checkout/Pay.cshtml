@@ -1,0 +1,115 @@
+﻿@model Book_Ecommerce.ViewModels.PayVM
+@{
+    ViewData["Title"] = "Trang thanh toán";
+    CultureInfo cultureInfo = new CultureInfo("vi-VN");
+}
+<!-- Checkout Start -->
+<div class="container-fluid pt-5">
+    <div class="row px-xl-5">
+        <div class="col-3"></div>
+        <div class="col-lg-6">
+            <div class="card border-secondary">
+                <div class="card-header bg-secondary border-0">
+                    <h4 class="font-weight-semi-bold m-0">Đơn hàng</h4>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex justify-content-between mb-3 pt-1">
+                        <h6 class="font-weight-bold">Người nhận: </h6>
+                        <h6 class="font-weight-medium">@Model.FullName</h6>
+                    </div>
+                    <div class="d-flex justify-content-between mb-3 pt-1">
+                        <h6 class="font-weight-bold">Số điện thoại: </h6>
+                        <h6 class="font-weight-medium">@Model.PhoneNumber</h6>
+                    </div>
+                    <div class="d-flex justify-content-between mb-3 pt-1">
+                        <h6 class="font-weight-bold">Địa chỉ: </h6>
+                        <h6 class="font-weight-medium">@Model.Address</h6>
+                    </div>
+                    <div class="d-flex justify-content-between mb-3 pt-1">
+                        <h6 class="font-weight-bold">Ghi chú: </h6>
+                        <h6 class="font-weight-medium">@Model.Note</h6>
+                    </div>
+                    <hr class="mt-0">
+                    <table class="table text-dark">
+                        <tr>
+                            <th class="pl-0">Sản phẩm</th>
+                            <th class="text-center">Ảnh</th>
+                            <th class="text-right">Số lượng</th>
+                            <th class="pr-0 text-right">Thành tiền</th>
+                        </tr>
+                        @foreach (var item in Model.CartItemVMs ?? new List<CartItemVM>())
+                        {
+                            var srcImg = $"/contents/Photos/Products/{item.Image}";
+                            if (string.IsNullOrEmpty(srcImg))
+                                srcImg = "/contents/Photos/No_Image_Available.jpg";
+                            <tr>
+                                <td class="pl-0">
+                                    <a class="link-decoration" asp-action="Detail" asp-controller="Products" asp-route-productSlug="@item.ProductSlug">@item.ProductName</a>
+                                </td>
+                                <td class="text-center">
+                                    <a asp-action="Detail" asp-controller="Products" asp-route-productSlug="@item.ProductSlug">
+                                        <img src="@srcImg" class="img-product" alt="" style="width: 50px; object-fit:cover;" />
+                                    </a>
+                                </td>
+                                <td class="text-right">@item.Quantity</td>
+                                <td class="pr-0 text-right">@string.Format(cultureInfo, "{0:C0}", item.Amount)</td>
+                            </tr>
+                        }
+                    </table>
+                    <hr class="mt-0">
+                    <div class="d-flex justify-content-between mb-3 pt-1">
+                        <h6 class="font-weight-medium">Thành tiền</h6>
+                        <h6 class="font-weight-medium">@string.Format(cultureInfo, "{0:C0}", Model.CartItemVMs?.Sum(c => c.Amount))</h6>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                        <h6 class="font-weight-medium">Phí vận chuyển</h6>
+                        <h6 class="font-weight-medium">@string.Format(cultureInfo, "{0:C0}", Model.TransportFee)</h6>
+                    </div>
+                </div>
+                <div class="card-footer border-secondary bg-transparent">
+                    <div class="d-flex justify-content-between mt-2">
+                        <h5 class="font-weight-bold">Tổng tiền</h5>
+                        <h5 class="font-weight-bold">@string.Format(cultureInfo, "{0:C0}", Model.CartItemVMs?.Sum(c => c.Amount) + Model.TransportFee)</h5>
+                    </div>
+                </div>
+            </div>
+            <div class="card border-secondary mb-5">
+                <form asp-action="Pay" asp-controller="Checkout" method="post">
+                    <div class="card-header bg-secondary border-0">
+                        <h4 class="font-weight-semi-bold m-0">Phương thức thanh toán</h4>
+                    </div>
+                    <input type="hidden" name="FullName" value="@Model.FullName" />
+                    <input type="hidden" name="PhoneNumber" value="@Model.PhoneNumber" />
+                    <input type="hidden" name="Address" value="@Model.Address" />
+                    <input type="hidden" name="TransportFee" value="@Model.TransportFee" />
+                    <input type="hidden" name="Note" value="@Model.Note" />
+                    <div class="card-body">
+                        <div class="form-group">
+                            <div class="custom-control custom-radio">
+                                <input type="radio" value="@MyPayment.COD" class="custom-control-input" name="PaymentType" id="cod" checked>
+                                <label class="custom-control-label" for="cod">COD (Thanh toán khi nhận hàng)</label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="custom-control custom-radio">
+                                <input type="radio" value="@MyPayment.VnPay" class="custom-control-input" name="PaymentType" id="vnpay">
+                                <label class="custom-control-label" for="vnpay">Ví VN Pay</label>
+                            </div>
+                        </div>
+                        <div class="">
+                            <div class="custom-control custom-radio">
+                                <input type="radio" class="custom-control-input" value="@MyPayment.PayPal" name="PaymentType" id="paypal">
+                                <label class="custom-control-label" for="paypal">Ví PayPal</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer border-secondary bg-transparent">
+                        <button type="submit" class="btn btn-lg btn-block btn-primary font-weight-bold my-3 py-3">Thanh toán</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="col-3"></div>
+    </div>
+</div>
+<!-- Checkout End -->

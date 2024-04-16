@@ -77,7 +77,7 @@ namespace Book_Ecommerce.Controllers
                             ProductSlug = Book_Ecommerce.Helpers.Generation.GenerationSlug(categoryNames[i] + " " + (j + 1)),
                             Quantity = 10,
                             Price = 200000,
-                            PercentDiscount = 0,
+                            PercentDiscount = (j == 0) ? 10 : 0,
                             IsActive = true,
                             Decription = "Sản phẩm chất lượng cao",
                             BrandId = brand.BrandId

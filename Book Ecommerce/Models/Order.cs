@@ -22,6 +22,8 @@ namespace Book_Ecommerce.Models
         public string Address { get; set; } = null!;
         public int Status { get; set; }
         public decimal TransportFee { get; set; }
+        [Column(TypeName = "nvarchar(500)")]
+        public string PaymentType { get; set; } = null!;
         [Column(TypeName = "nvarchar(250)")]
         public string? Note { get; set; }
         [DataType(DataType.Date)]

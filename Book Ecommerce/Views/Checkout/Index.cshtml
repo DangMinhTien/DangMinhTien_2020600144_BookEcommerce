@@ -1,0 +1,168 @@
+﻿@model Book_Ecommerce.ViewModels.CheckoutVM
+@{
+    ViewData["Title"] = "Trang đặt hàng";
+    CultureInfo cultureInfo = new CultureInfo("vi-VN");
+}
+<!-- Checkout Start -->
+<div class="container-fluid">
+    <div class="row px-xl-5">
+        <div class="col-lg-1"></div>
+        <div class="col-lg-5">
+            <div class="mb-4">
+                <h4 class="font-weight-semi-bold mb-4">Đặt hàng</h4>
+                <form asp-action="Index" asp-controller="Checkout" method="post">
+                    <div asp-validation-summary="All" class="text-danger"></div>
+                    <div class="row">
+                        <div class="col-md-12 form-group">
+                            <label class="text-dark">Người nhận</label>
+                            <input class="form-control" type="text" asp-for="FullName">
+                        </div>
+                        <div class="col-md-12 form-group">
+                            <label class="text-dark">Số điện thoại</label>
+                            <input class="form-control" type="text" asp-for="PhoneNumber">
+                        </div>
+                        <div class="col-md-12 form-group">
+                            <label class="text-dark">Số nhà - Tên đường</label>
+                            <input class="form-control" type="text" asp-for="AddressDetail">
+                        </div>
+                        <div class="col-md-12 form-row">
+                            <div class="form-group col-4">
+                                <label class="text-dark">Tỉnh/thành</label>
+                                <select class="form-control" asp-for="Province" id="province">
+                                    <option value="">Tỉnh/thành</option>
+                                </select>
+                            </div>
+                            <div class="form-group col-4">
+                                <label class="text-dark">quận/huyện</label>
+                                <select class="form-control" asp-for="District" id="district">
+                                    <option value="">quận huyện</option>
+                                </select>
+                            </div>
+                            <div class="form-group col-4">
+                                <label class="text-dark">phường/xã</label>
+                                <select class="form-control" asp-for="Ward" id="ward">
+                                    <option value="">xã/phường</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-12 form-group">
+                            <label class="text-dark">Ghi chú</label>
+                            <textarea class="form-control" name="Note" rows="2"></textarea>
+                        </div>
+                    </div>
+                    <div class="card-footer border-secondary bg-transparent">
+                        <button class="btn btn-lg btn-block btn-primary font-weight-bold my-3 py-3">Chuyển đến thanh toán</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="col-lg-5">
+            <div class="card border-secondary mb-5">
+                <div class="card-header bg-secondary border-0">
+                    <h4 class="font-weight-semi-bold m-0">Chi tiết đơn hàng</h4>
+                </div>
+                <div class="card-body">
+                    <table class="table text-dark">
+                        <tr>
+                            <th class="pl-0">Sản phẩm</th>
+                            <th>Ảnh</th>
+                            <th class="text-right">Số lượng</th>
+                            <th class="pr-0 text-right">Thành tiền</th>
+                        </tr>
+                        @foreach(var item in Model.CartItemVMs ?? new List<CartItemVM>())
+                        {
+                            var srcImg = $"/contents/Photos/Products/{item.Image}";
+                            if (string.IsNullOrEmpty(srcImg))
+                                srcImg = "/contents/Photos/No_Image_Available.jpg";
+                            <tr>
+                                <td class="pl-0">
+                                    <a class="link-decoration" asp-action="Detail" asp-controller="Products" asp-route-productSlug="@item.ProductSlug">@item.ProductName</a>
+                                </td>
+                                <td>
+                                    <a asp-action="Detail" asp-controller="Products" asp-route-productSlug="@item.ProductSlug">
+                                        <img src="@srcImg" class="img-product" alt="" style="width: 50px; object-fit:cover;" />
+                                    </a>
+                                </td>
+                                <td class="text-right">@item.Quantity</td>
+                                <td class="pr-0 text-right">@string.Format(cultureInfo, "{0:C0}", item.Amount)</td>
+                            </tr>
+                        }
+                    </table>
+                </div>
+                <div class="card-footer border-secondary bg-transparent">
+                    <div class="d-flex justify-content-between mt-2">
+                        <h5 class="font-weight-bold">Tổng tiền</h5>
+                        <h5 class="font-weight-bold">@string.Format(cultureInfo, "{0:C0}", Model.CartItemVMs?.Sum(c => c.Amount))</h5>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-1"></div>
+    </div>
+</div>
+<!-- Checkout End -->
+@section Scripts {
+    <partial name="_ValidationScriptsPartial"></partial>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            RenderHtmlToAddress('@Url.Action("GetAllProvince", "ProvincesVietNam")', $('#province'), 'Tỉnh/thành')
+
+            $('#province').change(function () {
+                var provinceCode = $(this).val()
+                RenderHtmlToAddress('@Url.Action("GetDistrictsByProvince", "ProvincesVietNam")' + `?provinceCode=${provinceCode}`,
+                    $('#district'), 'quận/huyện')
+                $('#ward').html(`<option value="">phường/xã</option>`)
+            })
+            $('#district').change(function () {
+                var districtCode = $(this).val()
+                RenderHtmlToAddress('@Url.Action("GetWardsByDistrict", "ProvincesVietNam")' + `?districtCode=${districtCode}`,
+                    $('#ward'), 'phường/xã')
+            })
+        })
+        function HideToastAfterShow(toast) {
+            setTimeout(function () {
+                // tạo hiệu ứng
+                toast.addClass('hidden')
+                // sau đó ẩn
+                setTimeout(function () {
+                    toast.remove()
+                }, 2000)
+            }, 5000)
+        }
+        function RenderHtmlToastError(message) {
+            return `<div class="m-toast-message m-toast-error">
+                                <div class="m-toast-icon">
+                                    <i class="fas fa-check-circle"></i>
+                                </div>
+                                <div class="m-toast-text">${message}</div>
+                                <div class="m-toast-close">
+                                    <i class="fas fa-times"></i>
+                                </div>
+                            </div>`
+        }
+        function RenderHtmlToAddress(url, select, selectfor) {
+            $('#loader').show()
+            $.ajax({
+                url: url,
+                type: 'GET',
+                catch: false,
+                contentType: false,
+                processData: false,
+                success: function (response) {
+                    $('#loader').hide()
+                    var row = `<option value="">${selectfor}</option>`
+                    $(response.data).each(function (index, element) {
+                        row += `<option value="${element.code}">${element.fullName}</option>`
+                    })
+                    select.html(row)
+                },
+                error: function (response) {
+                    $('#loader').hide()
+                    var toast = $(RenderHtmlToastError(`Không lấy được dữ liệu ${selectfor}`))
+                    $('.m-toast-box').append(toast)
+                    HideToastAfterShow(toast)
+                }
+            })
+        }
+    </script>
+}

@@ -1,11 +1,12 @@
 {
   "version": 2,
-  "dgSpecHash": "9I6tDPYWCLqFffsEG9X8PMv7LREYbBh/Tpvd0wJ/OyDpks05RA/ZeuISBmSjwod/WVN5EwcA1MniHUzLn6NOMA==",
+  "dgSpecHash": "pkMf0gLh/DVS+cjKhbfZ6865YDjbKbgaQHPbyslu2WfuMOJ1xM2PFQTZHGYp7LwBg4x77DJrE+HAS9KvbFUXZQ==",
   "success": true,
   "projectFilePath": "C:\\Users\\LENOVO\\OneDrive\\Documents\\Wordspace\\DoAnTotNghiep\\Code\\Book Ecommerce\\Book Ecommerce\\Book Ecommerce.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\LENOVO\\.nuget\\packages\\bootstrap\\4.4.1\\bootstrap.4.4.1.nupkg.sha512",
     "C:\\Users\\LENOVO\\.nuget\\packages\\bouncycastle.cryptography\\2.3.0\\bouncycastle.cryptography.2.3.0.nupkg.sha512",
+    "C:\\Users\\LENOVO\\.nuget\\packages\\braintreehttp-dotnet\\0.3.0\\braintreehttp-dotnet.0.3.0.nupkg.sha512",
     "C:\\Users\\LENOVO\\.nuget\\packages\\humanizer\\2.14.1\\humanizer.2.14.1.nupkg.sha512",
     "C:\\Users\\LENOVO\\.nuget\\packages\\humanizer.core\\2.14.1\\humanizer.core.2.14.1.nupkg.sha512",
     "C:\\Users\\LENOVO\\.nuget\\packages\\humanizer.core.af\\2.14.1\\humanizer.core.af.2.14.1.nupkg.sha512",
@@ -159,6 +160,7 @@
     "C:\\Users\\LENOVO\\.nuget\\packages\\nuget.projectmodel\\6.6.1\\nuget.projectmodel.6.6.1.nupkg.sha512",
     "C:\\Users\\LENOVO\\.nuget\\packages\\nuget.protocol\\6.6.1\\nuget.protocol.6.6.1.nupkg.sha512",
     "C:\\Users\\LENOVO\\.nuget\\packages\\nuget.versioning\\6.6.1\\nuget.versioning.6.6.1.nupkg.sha512",
+    "C:\\Users\\LENOVO\\.nuget\\packages\\paypal\\2.0.0-rc2\\paypal.2.0.0-rc2.nupkg.sha512",
     "C:\\Users\\LENOVO\\.nuget\\packages\\popper.js\\1.16.0\\popper.js.1.16.0.nupkg.sha512",
     "C:\\Users\\LENOVO\\.nuget\\packages\\runtime.debian.8-x64.runtime.native.system.security.cryptography.openssl\\4.3.0\\runtime.debian.8-x64.runtime.native.system.security.cryptography.openssl.4.3.0.nupkg.sha512",
     "C:\\Users\\LENOVO\\.nuget\\packages\\runtime.fedora.23-x64.runtime.native.system.security.cryptography.openssl\\4.3.0\\runtime.fedora.23-x64.runtime.native.system.security.cryptography.openssl.4.3.0.nupkg.sha512",

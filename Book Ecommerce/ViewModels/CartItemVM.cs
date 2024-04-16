@@ -1,6 +1,6 @@
 ﻿namespace Book_Ecommerce.ViewModels
 {
-    public class CartVM
+    public class CartItemVM
     {
         public string ProductId { get; set; } = null!;
         public string ProductName { get; set; } = null!;

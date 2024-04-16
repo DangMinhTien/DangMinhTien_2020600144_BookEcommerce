@@ -143,6 +143,7 @@
             $('#Address').val(address)
         }
         function RenderHtmlToAddress(url, select, selectfor) {
+            $('#loader').show()
             $.ajax({
                 url: url,
                 type: 'GET',
@@ -150,6 +151,7 @@
                 contentType: false,
                 processData: false,
                 success: function (response) {
+                    $('#loader').hide()
                     var row = `<option value="">${selectfor}</option>`
                     $(response.data).each(function (index, element) {
                         row += `<option value="${element.code}">${element.fullName}</option>`
@@ -158,6 +160,7 @@
                     DisplayOnAddress()
                 },
                 error: function (response) {
+                    $('#loader').hide()
                     var toast = $(RenderHtmlToastError(`Không lấy được dữ liệu ${selectfor}`))
                     $('.m-toast-box').append(toast)
                     HideToastAfterShow(toast)
