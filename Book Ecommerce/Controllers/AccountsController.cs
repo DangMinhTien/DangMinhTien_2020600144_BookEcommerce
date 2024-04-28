@@ -11,8 +11,9 @@ using Microsoft.AspNetCore.Authorization;
 using Book_Ecommerce.ExtendMethods;
 using Microsoft.EntityFrameworkCore;
 using Book_Ecommerce.Utilities;
-using Book_Ecommerce.Data;
+using Book_Ecommerce.MySettings;
 using Book_Ecommerce.Helpers;
+using Book_Ecommerce.Data;
 
 namespace Book_Ecommerce.Controllers
 {

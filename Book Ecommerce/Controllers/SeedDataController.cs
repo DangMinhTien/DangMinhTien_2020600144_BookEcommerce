@@ -1,8 +1,9 @@
-﻿using Book_Ecommerce.Data;
+﻿using Book_Ecommerce.MySettings;
 using Book_Ecommerce.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Book_Ecommerce.Data;
 
 namespace Book_Ecommerce.Controllers
 {
@@ -31,7 +32,6 @@ namespace Book_Ecommerce.Controllers
                 var maxCodeBrand = 1000;
                 var maxCodeAuthor = 1000;
                 var maxCodeProduct = 1000;
-                var countImage = 1;
                 for (int i = 0; i < 3; i++)
                 {
                     var category = new Category
@@ -77,7 +77,7 @@ namespace Book_Ecommerce.Controllers
                             ProductSlug = Book_Ecommerce.Helpers.Generation.GenerationSlug(categoryNames[i] + " " + (j + 1)),
                             Quantity = 10,
                             Price = 200000,
-                            PercentDiscount = (j == 0) ? 10 : 0,
+                            PercentDiscount = (j == 0) ? 10 : null,
                             IsActive = true,
                             Decription = "Sản phẩm chất lượng cao",
                             BrandId = brand.BrandId
@@ -86,10 +86,12 @@ namespace Book_Ecommerce.Controllers
                         await _context.SaveChangesAsync();
                         for (int z = 0; z < 3; z++)
                         {
+                            int randomNumber = new Random().Next(1, 9);
                             var image = new Image
                             {
                                 ImageId = Guid.NewGuid().ToString(),
-                                ImageName = $"image{countImage++}.png",
+                                ImageName = $"{MyAppSetting.FOLDER_NAME_CLOUDINARY}/image{randomNumber}",
+                                Url = $"https://res.cloudinary.com/dpnabmdzr/image/upload/v1714063590/{MyAppSetting.FOLDER_NAME_CLOUDINARY}/image{randomNumber}.jpg",
                                 ProductId = product.ProductId,
                             };
                             _context.Images.Add(image);

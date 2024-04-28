@@ -4,13 +4,14 @@ using Book_Ecommerce.ViewModels;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Book_Ecommerce.Data;
+using Book_Ecommerce.MySettings;
 using Microsoft.AspNetCore.Authorization;
 using Book_Ecommerce.Services;
 using System.Text.Encodings.Web;
 using PayPal.Core;
 using PayPal.v1.Payments;
 using BraintreeHttp;
+using Book_Ecommerce.Data;
 
 namespace Book_Ecommerce.Controllers
 {
@@ -83,7 +84,7 @@ namespace Book_Ecommerce.Controllers
                     ProductSlug = c.Product.ProductSlug,
                     Price = (c.Product.PercentDiscount == null || c.Product.PercentDiscount == 0) ? c.Product.Price 
                                     : c.Product.Price - (c.Product.Price * (decimal)c.Product.PercentDiscount/100),
-                    Image = c.Product.Images.FirstOrDefault()?.ImageName ?? "",
+                    Image = c.Product.Images.FirstOrDefault()?.Url ?? "",
                     ProductCode = c.Product.ProductCode,
                     Quantity = c.Quantity
                 }).ToList();
@@ -235,7 +236,7 @@ namespace Book_Ecommerce.Controllers
                             OrderId = order.OrderCode,
                             Amount = OrderDetails.Sum(od => od.Quantity * (double)od.Price) + (double)order.TransportFee,
                             CreatedDate = DateTime.Now,
-                            Decription = $"Thanh toán đơn hàng {order.OrderCode}",
+                            Decription = $"Thanh toán đơn hàng {order.OrderCode} từ Minh Tiến BookStore",
                             FullName = customer.FullName
                         };
                         var paymentBackUrl = Url.ActionLink(nameof(VnPaymentCallBack), values: new
@@ -296,7 +297,7 @@ namespace Book_Ecommerce.Controllers
                 return View("Failure");
             }
         }
-        public async Task<IActionResult> PaypalPayment(string orderId, string customerId)
+        public async System.Threading.Tasks.Task<IActionResult> PaypalPayment(string orderId, string customerId)
         {
             try
             {
@@ -366,8 +367,8 @@ namespace Book_Ecommerce.Controllers
                     },
                     RedirectUrls = new RedirectUrls()
                     {
-                        CancelUrl = $"{hostName}/Checkout/PaypalPaymentFail?orderId={orderId}&customerId={customerId}",
-                        ReturnUrl = $"{hostName}/Checkout/PayPalPaymentSuccess?orderId={orderId}&customerId={customerId}"
+                        CancelUrl = $"{hostName}/Checkout/PaypalPaymentFail?orderId={orderId}",
+                        ReturnUrl = $"{hostName}/Checkout/PayPalPaymentSuccess?customerId={customerId}"
                     },
                     Payer = new Payer()
                     {
@@ -381,7 +382,7 @@ namespace Book_Ecommerce.Controllers
                 Payment result = response.Result<Payment>();
 
                 var links = result.Links.GetEnumerator();
-                string paypalRedirectUrl = null;
+                string? paypalRedirectUrl = null;
                 while (links.MoveNext())
                 {
                     LinkDescriptionObject lnk = links.Current;
@@ -392,7 +393,7 @@ namespace Book_Ecommerce.Controllers
                     }
                 }
 
-                return Redirect(paypalRedirectUrl);
+                return Redirect(paypalRedirectUrl ?? "");
             }
             catch (HttpException httpException)
             {
@@ -405,7 +406,7 @@ namespace Book_Ecommerce.Controllers
             }
         }
         [HttpGet]
-        public async Task<IActionResult> PaypalPaymentFail(string orderId, string customerId)
+        public async Task<IActionResult> PaypalPaymentFail(string orderId)
         {
             try
             {
@@ -424,7 +425,7 @@ namespace Book_Ecommerce.Controllers
             return View("Failure");
         }
         [HttpGet]
-        public async Task<IActionResult> PayPalPaymentSuccess(string orderId, string customerId)
+        public async Task<IActionResult> PayPalPaymentSuccess(string customerId)
         {
             try
             {

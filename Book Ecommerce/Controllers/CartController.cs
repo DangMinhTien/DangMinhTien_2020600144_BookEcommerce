@@ -1,4 +1,4 @@
-﻿using Book_Ecommerce.Data;
+﻿using Book_Ecommerce.MySettings;
 using Book_Ecommerce.Helpers;
 using Book_Ecommerce.Models;
 using Book_Ecommerce.ViewModels;
@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Globalization;
 using System.Linq;
+using Book_Ecommerce.Data;
 
 namespace Book_Ecommerce.Controllers
 {
@@ -58,7 +59,7 @@ namespace Book_Ecommerce.Controllers
                     ProductSlug = c.Product.ProductSlug,
                     Price = (c.Product.PercentDiscount == null || c.Product.PercentDiscount == 0) ? c.Product.Price 
                                     : c.Product.Price - (c.Product.Price * (decimal)c.Product.PercentDiscount/100),
-                    Image = c.Product.Images.FirstOrDefault()?.ImageName ?? "",
+                    Image = c.Product.Images.FirstOrDefault()?.Url ?? "",
                     ProductCode = c.Product.ProductCode,
                     Quantity = c.Quantity
                 }).ToList();

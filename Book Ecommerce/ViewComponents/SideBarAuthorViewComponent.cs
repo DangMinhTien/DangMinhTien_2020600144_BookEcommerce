@@ -1,7 +1,7 @@
-﻿using Book_Ecommerce.Models;
-using Book_Ecommerce.ViewModels;
+﻿using Book_Ecommerce.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Book_Ecommerce.Data;
 
 namespace Book_Ecommerce.ViewComponents
 {

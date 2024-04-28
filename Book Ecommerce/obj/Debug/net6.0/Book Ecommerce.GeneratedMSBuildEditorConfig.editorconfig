@@ -18,6 +18,34 @@ build_property.GenerateRazorMetadataSourceChecksumAttributes =
 build_property.MSBuildProjectDirectory = C:\Users\LENOVO\OneDrive\Documents\Wordspace\DoAnTotNghiep\Code\Book Ecommerce\Book Ecommerce
 build_property._RazorSourceGeneratorDebug = 
 
+[C:/Users/LENOVO/OneDrive/Documents/Wordspace/DoAnTotNghiep/Code/Book Ecommerce/Book Ecommerce/Areas/Admin/Views/Home/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQWRtaW5cVmlld3NcSG9tZVxJbmRleC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/LENOVO/OneDrive/Documents/Wordspace/DoAnTotNghiep/Code/Book Ecommerce/Book Ecommerce/Areas/Admin/Views/Products/Create.cshtml]
+build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQWRtaW5cVmlld3NcUHJvZHVjdHNcQ3JlYXRlLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/LENOVO/OneDrive/Documents/Wordspace/DoAnTotNghiep/Code/Book Ecommerce/Book Ecommerce/Areas/Admin/Views/Products/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQWRtaW5cVmlld3NcUHJvZHVjdHNcSW5kZXguY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/LENOVO/OneDrive/Documents/Wordspace/DoAnTotNghiep/Code/Book Ecommerce/Book Ecommerce/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml]
+build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQWRtaW5cVmlld3NcU2hhcmVkXF9MYXlvdXRBZG1pbi5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/LENOVO/OneDrive/Documents/Wordspace/DoAnTotNghiep/Code/Book Ecommerce/Book Ecommerce/Areas/Admin/Views/Shared/_PageSizeAdminPartial.cshtml]
+build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQWRtaW5cVmlld3NcU2hhcmVkXF9QYWdlU2l6ZUFkbWluUGFydGlhbC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/LENOVO/OneDrive/Documents/Wordspace/DoAnTotNghiep/Code/Book Ecommerce/Book Ecommerce/Areas/Admin/Views/_ViewImports.cshtml]
+build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQWRtaW5cVmlld3NcX1ZpZXdJbXBvcnRzLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/LENOVO/OneDrive/Documents/Wordspace/DoAnTotNghiep/Code/Book Ecommerce/Book Ecommerce/Areas/Admin/Views/_ViewStart.cshtml]
+build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQWRtaW5cVmlld3NcX1ZpZXdTdGFydC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
 [C:/Users/LENOVO/OneDrive/Documents/Wordspace/DoAnTotNghiep/Code/Book Ecommerce/Book Ecommerce/Views/Accounts/AccessDenied.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWNjb3VudHNcQWNjZXNzRGVuaWVkLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
@@ -96,10 +124,6 @@ build_metadata.AdditionalFiles.CssScope =
 
 [C:/Users/LENOVO/OneDrive/Documents/Wordspace/DoAnTotNghiep/Code/Book Ecommerce/Book Ecommerce/Views/Shared/_CartPartial.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9DYXJ0UGFydGlhbC5jc2h0bWw=
-build_metadata.AdditionalFiles.CssScope = 
-
-[C:/Users/LENOVO/OneDrive/Documents/Wordspace/DoAnTotNghiep/Code/Book Ecommerce/Book Ecommerce/Views/Shared/_LayoutAdmin.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9MYXlvdXRBZG1pbi5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/LENOVO/OneDrive/Documents/Wordspace/DoAnTotNghiep/Code/Book Ecommerce/Book Ecommerce/Views/Shared/_LayoutLoginRegister.cshtml]

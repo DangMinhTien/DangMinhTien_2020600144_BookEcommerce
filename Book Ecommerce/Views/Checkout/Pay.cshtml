@@ -39,7 +39,7 @@
                         </tr>
                         @foreach (var item in Model.CartItemVMs ?? new List<CartItemVM>())
                         {
-                            var srcImg = $"/contents/Photos/Products/{item.Image}";
+                            var srcImg = item.Image;
                             if (string.IsNullOrEmpty(srcImg))
                                 srcImg = "/contents/Photos/No_Image_Available.jpg";
                             <tr>

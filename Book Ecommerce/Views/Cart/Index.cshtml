@@ -21,7 +21,7 @@
                 <tbody class="align-middle">
                     @foreach(var item in Model)
                     {
-                        var srcImg = $"/contents/Photos/Products/{item.Image}";
+                        var srcImg = item.Image;
                         if (string.IsNullOrEmpty(srcImg))
                             srcImg = "/contents/Photos/No_Image_Available.jpg";
                         <tr>
@@ -178,7 +178,7 @@
                 // sau đó ẩn
                 setTimeout(function () {
                     toast.remove()
-                }, 2000)
+                }, 1000)
             }, 5000)
         }
         function RenderHtmlToastError(message) {

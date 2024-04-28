@@ -1,17 +1,17 @@
-﻿using Book_Ecommerce.Data;
+﻿using Book_Ecommerce.MySettings;
 using Book_Ecommerce.Models;
 using Book_Ecommerce.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Drawing;
+using Book_Ecommerce.Data;
 
 namespace Book_Ecommerce.Controllers
 {
     public class ProductsController : Controller
     {
         private readonly AppDbContext _context;
-        private readonly int PageSize = MyAppSetting.PAGE_SIZE;
         private readonly List<PageSize> lstPageSize;
 
         public ProductsController(AppDbContext context)
@@ -25,7 +25,7 @@ namespace Book_Ecommerce.Controllers
                 },
                 new PageSize
                 {
-                    Size = 20,
+                    Size = 30,
                 },
                 new PageSize
                 {

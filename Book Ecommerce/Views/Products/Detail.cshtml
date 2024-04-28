@@ -15,7 +15,7 @@
                     {
                         var css = (image == imageFirst) ? "active" : "";
                         <div class="carousel-item h-100 @css">
-                            <img style="object-fit: contain;" class="w-100 h-100 img-product" src="/contents/Photos/Products/@image.ImageName" alt="Image">
+                            <img style="object-fit: contain;" class="w-100 h-100 img-product" src="@image.Url" alt="Image">
                         </div>
                     }
                 </div>
@@ -229,7 +229,7 @@
                                 <div class="card-header product-img position-relative overflow-hidden bg-transparent border p-0">
                                     @if (image != null)
                                     {
-                                        <img style="object-fit:cover" class="w-100 img-product" src="/contents/Photos/Products/@image.ImageName" alt="">
+                                        <img style="object-fit:cover" class="w-100 img-product" src="@image.Url" alt="">
                                     }
                                     else
                                     {
@@ -300,9 +300,10 @@
                             message = "Yêu cầu bạn đăng nhập để thực hiện chức năng này";
                         else if (response.status == 403)
                             message = "Tài khoản của bạn không thể thực hiện chức năng này";
-                        else
+                        else {
                             message = response.responseJSON.mesClient
-                        console.log(response.responseJSON.mesDev)
+                            console.log(response.responseJSON.mesDev)
+                        }
                         var toast = $(RenderHtmlToastError(message))
                         $('.m-toast-box').append(toast)
                         HideToastAfterShow(toast)
@@ -339,9 +340,10 @@
                             message = "Yêu cầu bạn đăng nhập để thực hiện chức năng này";
                         else if (response.status == 403)
                             message = "Tài khoản của bạn không thể thực hiện chức năng này";
-                        else
+                        else {
                             message = response.responseJSON.mesClient
-                        console.log(response.responseJSON.mesDev)
+                            console.log(response.responseJSON.mesDev)
+                        }
                         var toast = $(RenderHtmlToastError(message))
                         $('.m-toast-box').append(toast)
                         HideToastAfterShow(toast)
@@ -360,7 +362,7 @@
                 // sau đó ẩn
                 setTimeout(function () {
                     toast.remove()
-                }, 2000)
+                }, 1000)
             }, 5000)
         }
         function RenderHtmlToastError(message) {

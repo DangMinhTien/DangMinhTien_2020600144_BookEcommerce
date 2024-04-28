@@ -9,7 +9,7 @@ $(document).ready(function () {
         toast.addClass('hidden')
         setTimeout(function () {
             toast.remove()
-        }, 2000)
+        }, 1000)
     })
     $('.m-toast-message').show(function () {
         var toast = $(this)
@@ -17,7 +17,7 @@ $(document).ready(function () {
             toast.addClass('hidden')
             setTimeout(function () {
                 toast.remove()
-            }, 2000)
+            }, 1000)
         }, 5000)
     })
     // Toast End

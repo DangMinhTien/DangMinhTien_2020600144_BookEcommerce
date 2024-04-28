@@ -14,6 +14,7 @@ namespace Book_Ecommerce.ViewModels
         public double? PercentDiscount { get; set; }
         public string? Decription { get; set; }
         public int Quantity { get; set; }
+        public bool IsActive { get; set; }
         public Brand Brand { set; get; } = null!;
         public IEnumerable<Category> Categories { set; get; } = null!;
         public IEnumerable<Author> Authors { set; get; } = null!;

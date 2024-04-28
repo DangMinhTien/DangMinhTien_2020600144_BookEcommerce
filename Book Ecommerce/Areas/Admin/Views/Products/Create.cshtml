@@ -1,0 +1,115 @@
+﻿
+@{
+    ViewData["Title"] = "Tạo mới sản phẩm";
+}
+<h2 class="text-center text-primary py-2">Thêm sản phẩm</h2>
+<div class="row">
+    <div class="col-md-2"></div>
+    <div class="col-md-8 row">
+        <div class="col-md-6">
+            <div class="form-group">
+                <label class="text-dark">Tên sản phẩm<sup class="text-danger">(*)</sup></label>
+                <input id="productName" type="text" class="form-control">
+            </div>
+            <div class="form-group">
+                <label class="text-dark">Slug</label>
+                <input id="productSlug" type="text" class="form-control">
+            </div>
+            <div class="form-group">
+                <label class="text-dark">Giá bán<sup class="text-danger">(*)</sup></label>
+                <input id="productPrice" type="number" class="form-control">
+            </div>
+            <div class="form-group">
+                <label class="text-dark">Phầm trăm giảm giá</label>
+                <input id="productPercentDiscount" type="number" class="form-control">
+            </div>
+            <div class="form-group">
+                <label class="text-dark">Hình ảnh<sup class="text-danger">(*)</sup></label>
+                <input id="imageFiles" class="form-control" type="file" multiple="multiple" />
+            </div>
+            <div id="imagePreview" class="row">
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="form-group">
+                <label class="text-dark">Trạng thái<sup class="text-danger">(*)</sup></label>
+                <select class="form-control" id="status">
+                    <option value="true">Hiện</option>
+                    <option value="false">Ẩn</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="text-dark">Thương hiệu<sup class="text-danger">(*)</sup></label>
+                <select class="form-control" id="brandId" asp-items="@ViewBag.brands"></select>
+            </div>
+            <div class="form-group">
+                <label class="control-label text-dark">Thể loại<sup class="text-danger">(*)</sup></label>
+                <select class="w-100 multiple-select-item" id="categoryIds" multiple="multiple" asp-items="@ViewBag.categories"></select>
+            </div>
+            <div class="form-group">
+                <label class="control-label text-dark">Tác giả</label>
+                <select class="w-100 multiple-select-item" id="authorIds" multiple="multiple" asp-items="@ViewBag.authors"></select>
+            </div>
+            <div class="form-group">
+                <label class="text-dark">Mô tả<sup class="text-danger">(*)</sup></label>
+                <textarea id="decription" rows="3" class="form-control"></textarea>
+            </div>
+            <div class="form-group">
+                <label class="text-dark">Số lượng<sup class="text-danger">(*)</sup></label>
+                <input id="quantity" type="number" class="form-control">
+            </div>
+        </div>
+        <div class="col-12 d-flex justify-content-between py-2">
+            <a href="@ViewBag.returnUrl" class="btn btn-outline-primary">
+                <i class="fas fa-arrow-circle-left"></i>
+                Quay lại danh sách
+            </a>
+            <button class="btn btn-primary">Thêm mới</button>
+        </div>
+    </div>
+    <div class="col-md-2"></div>
+</div>
+@section Scripts{
+    <link rel="stylesheet" href="~/lib/multiple-select/multiple-select.min.css"/>
+    <script src="~/lib/multiple-select/multiple-select.min.js"></script>
+    <script>
+        $(".multiple-select-item").multipleSelect({
+            selectAll: false,
+            keepOpen: false,
+            isOpen: false
+        });
+    </script>
+    <script>
+        $(document).ready(function () {
+            $('#imageFiles').on('change', function () {
+                var files = $(this)[0].files; // Lấy danh sách các file đã chọn
+
+                $('#imagePreview').empty(); // Xóa hết ảnh hiện có trước đó
+
+                // Duyệt qua từng file
+                for (var i = 0; i < files.length; i++) {
+                    var file = files[i];
+                    // Kiểm tra nếu file là ảnh
+                    if (file.type.match('image.*')) {
+                        var reader = new FileReader();
+                        reader.onload = function (e) {
+                            // Hiển thị ảnh trong một thẻ img
+                            element = $(`<div class= "col-lg-4 col-sm-6 mb-3" ><img class="preview-image" src="` + 
+                                    e.target.result + `"></div>`)
+                            $('#imagePreview').append(element);
+                            SetImage()
+                        }
+                        reader.readAsDataURL(file); // Đọc file ảnh dưới dạng URL data
+                    }
+                }
+            });
+        });
+        function SetImage(){
+            $('.preview-image').each(function (index, element) {
+                console.log('let-go')
+                var width = $(element).width()
+                $(element).height(width * 1.2)
+            })
+        }
+    </script>
+}

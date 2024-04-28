@@ -1,6 +1,7 @@
 ﻿using Book_Ecommerce.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Book_Ecommerce.Data;
 
 namespace Book_Ecommerce.Controllers
 {

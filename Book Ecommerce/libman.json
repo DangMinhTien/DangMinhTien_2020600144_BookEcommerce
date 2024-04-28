@@ -3,34 +3,8 @@
   "defaultProvider": "cdnjs",
   "libraries": [
     {
-      "library": "bootstrap@4.5.3",
-      "destination": "wwwroot/lib/bootstrap-4.5.3/"
-    },
-    {
-      "provider": "jsdelivr",
-      "library": "bootstrap@4.4.1",
-      "destination": "wwwroot/lib/bootstrap-4.4.1/bootstrap/"
-    },
-    {
-      "library": "gulp@3.8.5",
-      "destination": "wwwroot/lib/gulp/"
-    },
-    {
-      "library": "sass.js@0.11.1",
-      "destination": "wwwroot/sass.js/"
-    },
-    {
-      "library": "font-awesome@5.10.0",
-      "destination": "wwwroot/lib/font-awesome/"
-    },
-    {
-      "library": "summernote@0.8.20",
-      "destination": "wwwroot/summernote/"
-    },
-    {
-      "provider": "cdnjs",
-      "library": "font-awesome@5.10.0",
-      "destination": "wwwroot/lib/font-awesome/"
+      "library": "multiple-select@1.2.3",
+      "destination": "wwwroot/lib/multiple-select/"
     }
   ]
 }

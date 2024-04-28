@@ -159,15 +159,17 @@
 .sidebar-collapse:hover i {
     color: #28a745 !important;
 }
-.sidebar-collapse.show {
+.sidebar-collapse.active {
     color: #28a745 !important;
 }
-.sidebar-collapse.show h5 {
+.sidebar-collapse.active h5 {
     color: #28a745 !important;
+}
+.group-item-sidebar {
+    border-radius: 5px;
 }
 // SideBar End
 // Grid Extension Start
-
 // Grid Extension End
 // form start
 .form-group input {

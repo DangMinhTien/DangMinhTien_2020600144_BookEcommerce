@@ -7,6 +7,7 @@ using Book_Ecommerce.Helpers;
 using Book_Ecommerce.ViewModels;
 using System.Text.Json;
 using Microsoft.AspNetCore.Identity;
+using Book_Ecommerce.Data;
 
 namespace Book_Ecommerce.Controllers
 {
@@ -28,7 +29,7 @@ namespace Book_Ecommerce.Controllers
             return View();
         }
 
-        public async Task<IActionResult> Privacy()
+        public IActionResult Privacy()
         {
             return View();
         }

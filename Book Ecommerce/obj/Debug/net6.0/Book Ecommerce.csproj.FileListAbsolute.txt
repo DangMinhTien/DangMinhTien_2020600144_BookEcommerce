@@ -297,3 +297,4 @@ C:\Users\LENOVO\OneDrive\Documents\Wordspace\DoAnTotNghiep\Code\Book Ecommerce\B
 C:\Users\LENOVO\OneDrive\Documents\Wordspace\DoAnTotNghiep\Code\Book Ecommerce\Book Ecommerce\obj\Debug\net6.0\Book Ecommerce.sourcelink.json
 C:\Users\LENOVO\OneDrive\Documents\Wordspace\DoAnTotNghiep\Code\Book Ecommerce\Book Ecommerce\bin\Debug\net6.0\BraintreeHttp-Dotnet.dll
 C:\Users\LENOVO\OneDrive\Documents\Wordspace\DoAnTotNghiep\Code\Book Ecommerce\Book Ecommerce\bin\Debug\net6.0\Source.dll
+C:\Users\LENOVO\OneDrive\Documents\Wordspace\DoAnTotNghiep\Code\Book Ecommerce\Book Ecommerce\bin\Debug\net6.0\bundleconfig.json

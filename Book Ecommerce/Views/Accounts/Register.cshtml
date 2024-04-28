@@ -108,27 +108,6 @@
                 DisplayOnAddress()
             })
         })
-        function HideToastAfterShow(toast) {
-            setTimeout(function () {
-                // tạo hiệu ứng
-                toast.addClass('hidden')
-                // sau đó ẩn
-                setTimeout(function () {
-                    toast.remove()
-                }, 2000)
-            }, 5000)
-        }
-        function RenderHtmlToastError(message) {
-            return `<div class="m-toast-message m-toast-error">
-                        <div class="m-toast-icon">
-                            <i class="fas fa-check-circle"></i>
-                        </div>
-                        <div class="m-toast-text">${message}</div>
-                        <div class="m-toast-close">
-                            <i class="fas fa-times"></i>
-                        </div>
-                    </div>`
-        }
         function DisplayOnAddress() {
             var address = ''
             if ($('#ward').val() != '') {
