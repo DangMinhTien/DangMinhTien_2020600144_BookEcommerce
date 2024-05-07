@@ -1,0 +1,13 @@
+C:\Users\LENOVO\OneDrive\Documents\Wordspace\DoAnTotNghiep\Code\Book Ecommerce\Book_Ecommerce.Domain\obj\Debug\net6.0\Book_Ecommerce.Domain.csproj.AssemblyReference.cache
+C:\Users\LENOVO\OneDrive\Documents\Wordspace\DoAnTotNghiep\Code\Book Ecommerce\Book_Ecommerce.Domain\obj\Debug\net6.0\Book_Ecommerce.Domain.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\LENOVO\OneDrive\Documents\Wordspace\DoAnTotNghiep\Code\Book Ecommerce\Book_Ecommerce.Domain\obj\Debug\net6.0\Book_Ecommerce.Domain.AssemblyInfoInputs.cache
+C:\Users\LENOVO\OneDrive\Documents\Wordspace\DoAnTotNghiep\Code\Book Ecommerce\Book_Ecommerce.Domain\obj\Debug\net6.0\Book_Ecommerce.Domain.AssemblyInfo.cs
+C:\Users\LENOVO\OneDrive\Documents\Wordspace\DoAnTotNghiep\Code\Book Ecommerce\Book_Ecommerce.Domain\obj\Debug\net6.0\Book_Ecommerce.Domain.csproj.CoreCompileInputs.cache
+C:\Users\LENOVO\OneDrive\Documents\Wordspace\DoAnTotNghiep\Code\Book Ecommerce\Book_Ecommerce.Domain\obj\Debug\net6.0\Book_Ecommerce.Domain.sourcelink.json
+C:\Users\LENOVO\OneDrive\Documents\Wordspace\DoAnTotNghiep\Code\Book Ecommerce\Book_Ecommerce.Domain\bin\Debug\net6.0\Book_Ecommerce.Domain.deps.json
+C:\Users\LENOVO\OneDrive\Documents\Wordspace\DoAnTotNghiep\Code\Book Ecommerce\Book_Ecommerce.Domain\bin\Debug\net6.0\Book_Ecommerce.Domain.dll
+C:\Users\LENOVO\OneDrive\Documents\Wordspace\DoAnTotNghiep\Code\Book Ecommerce\Book_Ecommerce.Domain\bin\Debug\net6.0\Book_Ecommerce.Domain.pdb
+C:\Users\LENOVO\OneDrive\Documents\Wordspace\DoAnTotNghiep\Code\Book Ecommerce\Book_Ecommerce.Domain\obj\Debug\net6.0\Book_Ecommerce.Domain.dll
+C:\Users\LENOVO\OneDrive\Documents\Wordspace\DoAnTotNghiep\Code\Book Ecommerce\Book_Ecommerce.Domain\obj\Debug\net6.0\refint\Book_Ecommerce.Domain.dll
+C:\Users\LENOVO\OneDrive\Documents\Wordspace\DoAnTotNghiep\Code\Book Ecommerce\Book_Ecommerce.Domain\obj\Debug\net6.0\Book_Ecommerce.Domain.pdb
+C:\Users\LENOVO\OneDrive\Documents\Wordspace\DoAnTotNghiep\Code\Book Ecommerce\Book_Ecommerce.Domain\obj\Debug\net6.0\ref\Book_Ecommerce.Domain.dll

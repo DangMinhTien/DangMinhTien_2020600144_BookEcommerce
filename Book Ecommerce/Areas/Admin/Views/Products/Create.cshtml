@@ -6,22 +6,23 @@
 <div class="row">
     <div class="col-md-2"></div>
     <div class="col-md-8 row">
+        <div id="errorMessage" class="col-12 text-danger"></div>
         <div class="col-md-6">
             <div class="form-group">
                 <label class="text-dark">Tên sản phẩm<sup class="text-danger">(*)</sup></label>
                 <input id="productName" type="text" class="form-control">
             </div>
             <div class="form-group">
-                <label class="text-dark">Slug</label>
-                <input id="productSlug" type="text" class="form-control">
+                <label class="text-dark">Số lượng<sup class="text-danger">(*)</sup></label>
+                <input id="quantity" type="number" class="form-control">
             </div>
             <div class="form-group">
                 <label class="text-dark">Giá bán<sup class="text-danger">(*)</sup></label>
-                <input id="productPrice" type="number" class="form-control">
+                <input id="price" type="number" class="form-control">
             </div>
             <div class="form-group">
                 <label class="text-dark">Phầm trăm giảm giá</label>
-                <input id="productPercentDiscount" type="number" class="form-control">
+                <input id="percentDiscount" type="number" class="form-control">
             </div>
             <div class="form-group">
                 <label class="text-dark">Hình ảnh<sup class="text-danger">(*)</sup></label>
@@ -33,30 +34,26 @@
         <div class="col-md-6">
             <div class="form-group">
                 <label class="text-dark">Trạng thái<sup class="text-danger">(*)</sup></label>
-                <select class="form-control" id="status">
+                <select id="isActive" class="form-control">
                     <option value="true">Hiện</option>
                     <option value="false">Ẩn</option>
                 </select>
             </div>
             <div class="form-group">
                 <label class="text-dark">Thương hiệu<sup class="text-danger">(*)</sup></label>
-                <select class="form-control" id="brandId" asp-items="@ViewBag.brands"></select>
+                <select id="brandId" name="BrandId" class="form-control" asp-items="@ViewBag.brands"></select>
             </div>
             <div class="form-group">
                 <label class="control-label text-dark">Thể loại<sup class="text-danger">(*)</sup></label>
-                <select class="w-100 multiple-select-item" id="categoryIds" multiple="multiple" asp-items="@ViewBag.categories"></select>
+                <select class="w-100 multiple-select-item" name="CategoryIds" id="categoryIds" multiple="multiple" asp-items="@ViewBag.categories"></select>
             </div>
             <div class="form-group">
                 <label class="control-label text-dark">Tác giả</label>
-                <select class="w-100 multiple-select-item" id="authorIds" multiple="multiple" asp-items="@ViewBag.authors"></select>
+                <select class="w-100 multiple-select-item" name="AuthorIds" id="authorIds" multiple="multiple" asp-items="@ViewBag.authors"></select>
             </div>
             <div class="form-group">
                 <label class="text-dark">Mô tả<sup class="text-danger">(*)</sup></label>
-                <textarea id="decription" rows="3" class="form-control"></textarea>
-            </div>
-            <div class="form-group">
-                <label class="text-dark">Số lượng<sup class="text-danger">(*)</sup></label>
-                <input id="quantity" type="number" class="form-control">
+                <textarea id="description" rows="3" class="form-control"></textarea>
             </div>
         </div>
         <div class="col-12 d-flex justify-content-between py-2">
@@ -64,7 +61,7 @@
                 <i class="fas fa-arrow-circle-left"></i>
                 Quay lại danh sách
             </a>
-            <button class="btn btn-primary">Thêm mới</button>
+            <button id="addProduct" class="btn btn-primary">Thêm mới</button>
         </div>
     </div>
     <div class="col-md-2"></div>
@@ -110,6 +107,105 @@
                 var width = $(element).width()
                 $(element).height(width * 1.2)
             })
+        }
+    </script>
+    <script type="text/javascript">
+        $(document).ready(function(){
+            $('#addProduct').click(function(){
+                var formData = new FormData()
+                formData.append('ProductName', $('#productName').val())
+                formData.append('Price', $('#price').val())
+                formData.append('PercentDiscount', $('#percentDiscount').val())
+                var files = $('#imageFiles')[0].files
+                for (var i = 0; i < files.length; i++) {
+                    formData.append('ImageFiles', files[i]);
+                }
+                formData.append('IsActive', $('#isActive').val())
+                formData.append('BrandId', $('#brandId').val())
+                var categoryIds = $('#categoryIds').val()
+                for (var i = 0; i < categoryIds.length; i++) {
+                    formData.append('CategoryIds', categoryIds[i]);
+                }
+                var authorIds = $('#authorIds').val()
+                for (var i = 0; i < authorIds.length; i++) {
+                    formData.append('AuthorIds', authorIds[i]);
+                }
+                formData.append('Description', $('#description').val())
+                formData.append('Quantity', $('#quantity').val())
+                $('#loader').show()
+                $.ajax({
+                    url: '@Url.Action("Create", "Products", new { area = "Admin" })',
+                    type: "POST",
+                    data: formData,
+                    catch: false,
+                    contentType: false,
+                    processData: false,
+                    success: function (response) {
+                        $('#loader').hide()
+                        $('#errorMessage').html("")
+                        console.log(response)
+                        var toast = $(RenderHtmlToastSuccess(response.mesClient))
+                        $('.m-toast-box').append(toast)
+                        HideToastAfterShow(toast)
+                    },
+                    error: function (response) {
+                        console.log(response)
+                        $('#loader').hide()
+                        var message = ""
+                        if (response.status == 401)
+                            message = "Yêu cầu bạn đăng nhập để thực hiện chức năng này";
+                        else if (response.status == 403)
+                            message = "Tài khoản của bạn không thể thực hiện chức năng này";
+                        else {
+                            if (response.responseJSON.isvalid == false) {
+                                var err = ""
+                                for (var i = 0; i < response.responseJSON.error.length; i++) {
+                                    err += `<p>${response.responseJSON.error[i]}</p>`
+                                }
+                                $('#errorMessage').html(err)
+                                message = "Có lỗi nhập dữ liệu"
+                            } else {
+                                message = response.responseJSON.mesClient
+                            }
+                        }
+                        var toast = $(RenderHtmlToastError(message))
+                        $('.m-toast-box').append(toast)
+                        HideToastAfterShow(toast)
+                    }
+                })
+            })
+        })
+        function HideToastAfterShow(toast) {
+            setTimeout(function () {
+                // tạo hiệu ứng
+                toast.addClass('hidden')
+                // sau đó ẩn
+                setTimeout(function () {
+                    toast.remove()
+                }, 1000)
+            }, 5000)
+        }
+        function RenderHtmlToastError(message) {
+            return `<div class="m-toast-message m-toast-error">
+                                <div class="m-toast-icon">
+                                    <i class="fas fa-check-circle"></i>
+                                </div>
+                                <div class="m-toast-text">${message}</div>
+                                <div class="m-toast-close">
+                                    <i class="fas fa-times"></i>
+                                </div>
+                            </div>`
+        }
+        function RenderHtmlToastSuccess(message) {
+            return `<div class="m-toast-message m-toast-success">
+                                <div class="m-toast-icon">
+                                    <i class="fas fa-check-circle"></i>
+                                </div>
+                                        <div class="m-toast-text">${message}</div>
+                                <div class="m-toast-close">
+                                    <i class="fas fa-times"></i>
+                                </div>
+                            </div>`
         }
     </script>
 }

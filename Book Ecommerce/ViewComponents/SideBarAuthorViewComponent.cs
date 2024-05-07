@@ -1,23 +1,23 @@
-﻿using Book_Ecommerce.ViewModels;
+﻿using Book_Ecommerce.Domain.ViewModels.AuthorViewModel;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Book_Ecommerce.Data;
+using Book_Ecommerce.Service.Abstract;
+using Book_Ecommerce.Service;
 
 namespace Book_Ecommerce.ViewComponents
 {
     public class SideBarAuthorViewComponent : ViewComponent
     {
-        private readonly AppDbContext _context;
+        private readonly IAuthorService _authorService;
 
-        public SideBarAuthorViewComponent(AppDbContext context)
+        public SideBarAuthorViewComponent(IAuthorService authorService)
         {
-            _context = context;
+            _authorService = authorService;
         }
         public async Task<IViewComponentResult> InvokeAsync(string? AuthorId)
         {
-            var authors = await _context.Authors.Include(b => b.AuthorProducts)
-                                                .ThenInclude(ap => ap.Product)            
-                                                .ToListAsync();
+            var authors = await _authorService.GetToViewComponentAsync();
             var result = authors.Select(a => new AuthorVM
             {
                 AuthorId = a.AuthorId,

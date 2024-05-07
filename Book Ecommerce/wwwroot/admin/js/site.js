@@ -19,7 +19,10 @@
     // Product Quantity Start
 
     // Product Quantity End
-    
+    $('.preview-image').each(function (index, element) {
+        var width = $(element).width()
+        $(element).height(width * 1.2)
+    })
     $(window).resize(function () {
         $('.preview-image').each(function (index, element) {
             var width = $(element).width()

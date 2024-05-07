@@ -1,9 +1,10 @@
-﻿using Book_Ecommerce.MySettings;
-using Book_Ecommerce.Models;
+﻿using Book_Ecommerce.Domain.MySettings;
+using Book_Ecommerce.Domain.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Book_Ecommerce.Data;
+using Book_Ecommerce.Domain.Helpers;
 
 namespace Book_Ecommerce.Controllers
 {
@@ -32,6 +33,7 @@ namespace Book_Ecommerce.Controllers
                 var maxCodeBrand = 1000;
                 var maxCodeAuthor = 1000;
                 var maxCodeProduct = 1000;
+                var numImage = 1;
                 for (int i = 0; i < 3; i++)
                 {
                     var category = new Category
@@ -40,7 +42,7 @@ namespace Book_Ecommerce.Controllers
                         CategoryCode = "TL" + DateTime.Now.Year.ToString() + maxCodeCate,
                         CodeNumber = maxCodeCate++,
                         CategoryName = categoryNames[i],
-                        CategorySlug = Book_Ecommerce.Helpers.Generation.GenerationSlug(categoryNames[i]),
+                        CategorySlug = Generation.GenerationSlug(categoryNames[i]),
                         Decription = "Thể loại thú vị"
                     };
                     var brand = new Brand
@@ -49,17 +51,18 @@ namespace Book_Ecommerce.Controllers
                         BrandCode = "TH" + DateTime.Now.Year.ToString() + maxCodeBrand,
                         CodeNumber = maxCodeBrand++,
                         BrandName = brandNames[i],
-                        BrandSlug = Book_Ecommerce.Helpers.Generation.GenerationSlug(brandNames[i]),
+                        BrandSlug = Generation.GenerationSlug(brandNames[i]),
                         Decription = "Thương hiệu tuyệt vời",
-                        Image = Book_Ecommerce.Helpers.Generation.GenerationSlug(brandNames[i]) + ".png"
+                        ImageName = $"{MyAppSetting.FOLDER_NAME_CLOUDINARY}/brand",
+                        UrlImage = $"https://res.cloudinary.com/dpnabmdzr/image/upload/v1714063590/{MyAppSetting.FOLDER_NAME_CLOUDINARY}/SeedData/brand.jpg"
                     };
                     var author = new Author
                     {
                         AuthorId = Guid.NewGuid().ToString(),
-                        AuthorCode = "TH" + DateTime.Now.Year.ToString() + maxCodeAuthor,
+                        AuthorCode = "TG" + DateTime.Now.Year.ToString() + maxCodeAuthor,
                         CodeNumber = maxCodeAuthor++,
                         AuthorName = authorNames[i],
-                        AuthorSlug = Book_Ecommerce.Helpers.Generation.GenerationSlug(authorNames[i]),
+                        AuthorSlug = Generation.GenerationSlug(authorNames[i]),
                         Information = "Tác giả lừng danh",
                     };
                     _context.Categories.Add(category);
@@ -74,12 +77,12 @@ namespace Book_Ecommerce.Controllers
                             ProductCode = "SP" + DateTime.Now.Year.ToString() + maxCodeProduct,
                             CodeNumber = maxCodeProduct++,
                             ProductName = categoryNames[i] + " " + (j + 1),
-                            ProductSlug = Book_Ecommerce.Helpers.Generation.GenerationSlug(categoryNames[i] + " " + (j + 1)),
+                            ProductSlug = Generation.GenerationSlug(categoryNames[i] + " " + (j + 1)),
                             Quantity = 10,
                             Price = 200000,
                             PercentDiscount = (j == 0) ? 10 : null,
                             IsActive = true,
-                            Decription = "Sản phẩm chất lượng cao",
+                            Description = "Sản phẩm chất lượng cao",
                             BrandId = brand.BrandId
                         };
                         _context.Products.Add(product);
@@ -90,12 +93,13 @@ namespace Book_Ecommerce.Controllers
                             var image = new Image
                             {
                                 ImageId = Guid.NewGuid().ToString(),
-                                ImageName = $"{MyAppSetting.FOLDER_NAME_CLOUDINARY}/image{randomNumber}",
-                                Url = $"https://res.cloudinary.com/dpnabmdzr/image/upload/v1714063590/{MyAppSetting.FOLDER_NAME_CLOUDINARY}/image{randomNumber}.jpg",
+                                ImageName = $"{MyAppSetting.FOLDER_NAME_CLOUDINARY}/image{numImage}",
+                                Url = $"https://res.cloudinary.com/dpnabmdzr/image/upload/v1714063590/{MyAppSetting.FOLDER_NAME_CLOUDINARY}/SeedData/image{numImage}.jpg",
                                 ProductId = product.ProductId,
                             };
                             _context.Images.Add(image);
                             await _context.SaveChangesAsync();
+                            numImage++;
                         }
                         var categories = await _context.Categories.ToListAsync();
                         foreach(var cate in  categories)
@@ -148,79 +152,87 @@ namespace Book_Ecommerce.Controllers
                     }
                 }
                 // tao customer 
-                var customerCode = _context.Customers.Count() == 0 ? 1000
+                if(await _userManager.FindByNameAsync("customer@gmail.com") == null &&
+                    await _userManager.FindByEmailAsync("customer@gmail.com") == null)
+                {
+                    var customerCode = _context.Customers.Count() == 0 ? 1000
                     : _context.Customers.Max(c => c.CodeNumber) + 1;
-                var customer = new Customer
-                {
-                    CustomerId = Guid.NewGuid().ToString(),
-                    FullName = "Đặng Tiến",
-                    CodeNumber = customerCode,
-                    CustomerCode = "KH" + customerCode,
-                    Gender = true,
-                    DateOfBirth = DateTime.Now,
-                };
-                _context.Customers.Add(customer);
-                var userCustomer = new AppUser
-                {
-                    UserName = "customer@gmail.com",
-                    Email = "customer@gmail.com",
-                    EmailConfirmed = true,
-                    CustomerId = customer.CustomerId
-                };
-                var resultCustomerAccount = await _userManager.CreateAsync(userCustomer, "@Tien2801");
-                if (!resultCustomerAccount.Succeeded)
-                {
-                    await _context.Database.RollbackTransactionAsync();
-                    TempData["error"] = "Tạo dữ liệu thất bại do không tạo được tài khoản khách hàng";
-                    return RedirectToAction("Index", "Home");
-                }
-                // add role customer
-                var resultAddRoleCustomer = await _userManager
-                    .AddToRoleAsync(userCustomer, MyRole.CUSTOMER);
-                if (!resultAddRoleCustomer.Succeeded)
-                {
-                    await _context.Database.RollbackTransactionAsync();
-                    TempData["error"] = "Tạo dữ liệu thất bại do không thêm được quyền tài khoản khách hàng";
-                    return RedirectToAction("Index", "Home");
-                }
-                // tạo employee
-                var employeeCode = _context.Employees.Count() == 0 ? 1000 :
-                    _context.Employees.Max(e => e.CodeNumber) + 1;
-                var employee = new Employee
-                {
-                    EmployeeId = Guid.NewGuid().ToString(),
-                    FullName = "Đặng Minh Tiến",
-                    DateOfBirth = DateTime.Now,
-                    Gender = true,
-                    CodeNumber = employeeCode,
-                    EmployeeCode = "NV" + employeeCode,
-                    Address = "AD-HP-VN"
-                };
-                _context.Employees.Add(employee);
-                var userEmployee = new AppUser
-                {
-                    UserName = "admin@gmail.com",
-                    Email = "admin@gmail.com",
-                    EmailConfirmed = true,
-                    EmployeeId = employee.EmployeeId
-                };
-                var resultUserEmployee = await _userManager.CreateAsync(userEmployee, "@Tien2801");
-                if (!resultUserEmployee.Succeeded)
-                {
-                    await _context.Database.RollbackTransactionAsync();
-                    TempData["error"] = "Tạo dữ liệu thất bại do không tạo được tài khoản nhân viên";
-                    return RedirectToAction("Index", "Home");
-                }
-                // add role employee
-                var addRoleEmployee = new string[] { MyRole.EMPLOYEE, MyRole.ADMIN };
-                foreach(var role in addRoleEmployee)
-                {
-                    var resultAddRoleEmployee = await _userManager.AddToRoleAsync(userEmployee, role);
-                    if(!resultAddRoleEmployee.Succeeded)
+                    var customer = new Customer
+                    {
+                        CustomerId = Guid.NewGuid().ToString(),
+                        FullName = "Đặng Tiến",
+                        CodeNumber = customerCode,
+                        CustomerCode = "KH" + customerCode,
+                        Gender = true,
+                        DateOfBirth = DateTime.Now,
+                    };
+                    _context.Customers.Add(customer);
+                    var userCustomer = new AppUser
+                    {
+                        UserName = "customer@gmail.com",
+                        Email = "customer@gmail.com",
+                        EmailConfirmed = true,
+                        CustomerId = customer.CustomerId
+                    };
+                    var resultCustomerAccount = await _userManager.CreateAsync(userCustomer, "@Tien2801");
+                    if (!resultCustomerAccount.Succeeded)
                     {
                         await _context.Database.RollbackTransactionAsync();
-                        TempData["error"] = "Tạo dữ liệu thất bại do không thêm được quyền vào tài khoản nhân viên";
+                        TempData["error"] = "Tạo dữ liệu thất bại do không tạo được tài khoản khách hàng";
                         return RedirectToAction("Index", "Home");
+                    }
+                    // add role customer
+                    var resultAddRoleCustomer = await _userManager
+                        .AddToRoleAsync(userCustomer, MyRole.CUSTOMER);
+                    if (!resultAddRoleCustomer.Succeeded)
+                    {
+                        await _context.Database.RollbackTransactionAsync();
+                        TempData["error"] = "Tạo dữ liệu thất bại do không thêm được quyền tài khoản khách hàng";
+                        return RedirectToAction("Index", "Home");
+                    }
+                }
+                // tạo employee
+                if (await _userManager.FindByNameAsync("admin@gmail.com") == null &&
+                    await _userManager.FindByEmailAsync("admin@gmail.com") == null)
+                {
+                    var employeeCode = _context.Employees.Count() == 0 ? 1000 :
+                    _context.Employees.Max(e => e.CodeNumber) + 1;
+                    var employee = new Employee
+                    {
+                        EmployeeId = Guid.NewGuid().ToString(),
+                        FullName = "Đặng Minh Tiến",
+                        DateOfBirth = DateTime.Now,
+                        Gender = true,
+                        CodeNumber = employeeCode,
+                        EmployeeCode = "NV" + employeeCode,
+                        Address = "AD-HP-VN"
+                    };
+                    _context.Employees.Add(employee);
+                    var userEmployee = new AppUser
+                    {
+                        UserName = "admin@gmail.com",
+                        Email = "admin@gmail.com",
+                        EmailConfirmed = true,
+                        EmployeeId = employee.EmployeeId
+                    };
+                    var resultUserEmployee = await _userManager.CreateAsync(userEmployee, "@Tien2801");
+                    if (!resultUserEmployee.Succeeded)
+                    {
+                        await _context.Database.RollbackTransactionAsync();
+                        TempData["error"] = "Tạo dữ liệu thất bại do không tạo được tài khoản nhân viên";
+                        return RedirectToAction("Index", "Home");
+                    }
+                    // add role employee
+                    var addRoleEmployee = new string[] { MyRole.EMPLOYEE, MyRole.ADMIN };
+                    foreach (var role in addRoleEmployee)
+                    {
+                        var resultAddRoleEmployee = await _userManager.AddToRoleAsync(userEmployee, role);
+                        if (!resultAddRoleEmployee.Succeeded)
+                        {
+                            await _context.Database.RollbackTransactionAsync();
+                            TempData["error"] = "Tạo dữ liệu thất bại do không thêm được quyền vào tài khoản nhân viên";
+                            return RedirectToAction("Index", "Home");
+                        }
                     }
                 }
                 await _context.Database.CommitTransactionAsync();

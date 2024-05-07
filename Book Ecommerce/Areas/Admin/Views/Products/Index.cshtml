@@ -3,7 +3,7 @@
     ViewData["Title"] = "Quản trị sản phẩm";
     CultureInfo cultureInfo = new CultureInfo("vi-VN");
     var pagingModel = ViewBag.pagingModel as PagingModel;
-    var pageSizes = ViewBag.pageSizes as List<Book_Ecommerce.ViewModels.PageSize>;
+    var pageSizes = ViewBag.pageSizes as List<PageSizeModel>;
 }
 <!-- DataTales Example -->
 <div class="card shadow">
@@ -80,7 +80,10 @@
                             <td>
                                 <img class="img-product-admin" src="@srcImg"/>
                             </td>
-                            <td></td>
+                            <td>
+                                <a href="#">Sửa</a>
+                                <a href="#">Xóa</a>
+                            </td>
                         </tr>
                     }
                 </tbody>

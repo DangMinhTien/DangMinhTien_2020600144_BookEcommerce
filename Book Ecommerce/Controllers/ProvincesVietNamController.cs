@@ -1,4 +1,4 @@
-﻿using Book_Ecommerce.Models;
+﻿using Book_Ecommerce.Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Book_Ecommerce.Data;

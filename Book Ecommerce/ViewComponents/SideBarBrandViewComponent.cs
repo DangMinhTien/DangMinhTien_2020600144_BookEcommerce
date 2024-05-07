@@ -1,21 +1,23 @@
-﻿using Book_Ecommerce.ViewModels;
+﻿using Book_Ecommerce.Domain.ViewModels.BrandViewModel;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Book_Ecommerce.Data;
+using Book_Ecommerce.Service.Abstract;
+using Book_Ecommerce.Service;
 
 namespace Book_Ecommerce.ViewComponents
 {
     public class SideBarBrandViewComponent : ViewComponent
     {
-        private readonly AppDbContext _context;
+        private readonly IBrandService _brandService;
 
-        public SideBarBrandViewComponent(AppDbContext context)
+        public SideBarBrandViewComponent(IBrandService brandService)
         {
-            _context = context;
+            _brandService = brandService;
         }
         public async Task<IViewComponentResult> InvokeAsync(string? BrandId)
         {
-            var brands = await _context.Brands.Include(b => b.Products).ToListAsync();
+            var brands = await _brandService.GetToViewComponentAsync();
             var result = brands.Select(b => new BrandVM
             {
                 BrandId = b.BrandId,

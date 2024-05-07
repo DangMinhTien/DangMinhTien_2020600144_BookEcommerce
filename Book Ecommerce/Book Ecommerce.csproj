@@ -11,37 +11,27 @@
 
   <ItemGroup>
     <PackageReference Include="bootstrap" Version="4.4.1" />
-    <PackageReference Include="MailKit" Version="4.4.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication" Version="2.1.2" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.Cookies" Version="2.1.34" />
     <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.1.1" />
-    <PackageReference Include="Microsoft.AspNetCore.Identity" Version="2.1.39" />
-    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="6.0.28" />
-    <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="6.0.28" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.28" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.28">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="6.0.28" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0.28" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="6.0.28">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="6.0.1" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.19.5" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="6.0.16" />
-    <PackageReference Include="MimeKit" Version="4.4.0" />
     <PackageReference Include="PayPal" Version="2.0.0-rc2" />
   </ItemGroup>
 
   <ItemGroup>
     <Folder Include="Areas\Admin\Data\" />
+    <Folder Include="Areas\Admin\Models\Product\" />
     <Folder Include="Areas\Admin\ViewModels\" />
     <Folder Include="Controllers\" />
-    <Folder Include="MySettings\" />
-    <Folder Include="Models\" />
     <Folder Include="Uploads\Photos\Products\" />
     <Folder Include="Views\Shared\" />
     <Folder Include="wwwroot\css\" />
@@ -53,6 +43,13 @@
     <Folder Include="wwwroot\lib\jquery-validation\dist\" />
     <Folder Include="wwwroot\lib\jquery\" />
     <Folder Include="wwwroot\lib\jquery\dist\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Book_Ecommerce.Data\Book_Ecommerce.Data.csproj" />
+    <ProjectReference Include="..\Book_Ecommerce.Domain\Book_Ecommerce.Domain.csproj" />
+    <ProjectReference Include="..\Book_Ecommerce.Infrastructure\Book_Ecommerce.Infrastructure.csproj" />
+    <ProjectReference Include="..\Book_Ecommerce.Service\Book_Ecommerce.Service.csproj" />
   </ItemGroup>
 
 </Project>

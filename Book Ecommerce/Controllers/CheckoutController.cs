@@ -1,10 +1,9 @@
-﻿using Book_Ecommerce.Helpers;
-using Book_Ecommerce.Models;
-using Book_Ecommerce.ViewModels;
+﻿using Book_Ecommerce.Domain.Entities;
+using Book_Ecommerce.Domain.ViewModels;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Book_Ecommerce.MySettings;
+using Book_Ecommerce.Domain.MySettings;
 using Microsoft.AspNetCore.Authorization;
 using Book_Ecommerce.Services;
 using System.Text.Encodings.Web;
@@ -12,6 +11,12 @@ using PayPal.Core;
 using PayPal.v1.Payments;
 using BraintreeHttp;
 using Book_Ecommerce.Data;
+using Book_Ecommerce.Domain.Models;
+using Book_Ecommerce.Domain.ExtendMethods;
+using Book_Ecommerce.Domain.ViewModels.CheckoutViewModel;
+using Book_Ecommerce.Service.Abstract;
+using Book_Ecommerce.Service;
+using Microsoft.AspNetCore.Http;
 
 namespace Book_Ecommerce.Controllers
 {
@@ -24,10 +29,13 @@ namespace Book_Ecommerce.Controllers
         private readonly RoleManager<IdentityRole> _roleManage;
         private readonly IVnPayService _vnPayService;
         private readonly IConfiguration _config;
-        private readonly string _clientId;
-        private readonly string _secretKey;
         private readonly ILogger<CheckoutController> _logger;
-        private double _usdExchangeRate = 24500;
+        private readonly ICartService _cartService;
+        private readonly ICustomerService _customerService;
+        private readonly IProductService _productService;
+        private readonly IProvinceService _provinceService;
+        private readonly ICheckoutService _checkoutService;
+        private readonly IPayPalService _payPalService;
         private IEnumerable<CartItemVM> _cart 
         {
             get
@@ -41,7 +49,13 @@ namespace Book_Ecommerce.Controllers
                 RoleManager<IdentityRole> roleManager,
                 IVnPayService vnPayService,
                 IConfiguration config,
-                ILogger<CheckoutController> logger)
+                ILogger<CheckoutController> logger,
+                ICartService cartService,
+                ICustomerService customerService,
+                IProductService productService,
+                IProvinceService provinceService,
+                ICheckoutService checkoutService,
+                IPayPalService payPalService)
         {
             _context = context;
             _signInManage = signInManager;
@@ -49,9 +63,13 @@ namespace Book_Ecommerce.Controllers
             _roleManage = roleManager;
             _vnPayService = vnPayService;
             _config = config;
-            _clientId = config["PaypalSettings:ClientId"];
-            _secretKey = config["PaypalSettings:SecretKey"];
             _logger = logger;
+            _cartService = cartService;
+            _customerService = customerService;
+            _productService = productService;
+            _provinceService = provinceService;
+            _checkoutService = checkoutService;
+            _payPalService = payPalService;
         }
         public async Task<IActionResult> Index()
         {
@@ -63,37 +81,24 @@ namespace Book_Ecommerce.Controllers
                     TempData["error"] = "Không thể mở được phần đặt hàng do không tìm thấy tài khoản đăng nhập";
                     return RedirectToAction("Index", "Home");
                 }
-                var customer = await _context.Customers.Include(c => c.CartItems)
-                                                        .ThenInclude(c => c.Product)
-                                                        .ThenInclude(p => p.Images)
-                                                        .FirstOrDefaultAsync(c => c.CustomerId == user.CustomerId);
+                var customer = await _customerService.GetSingleByConditionAsync(c => c.CustomerId == user.CustomerId);
                 if (customer == null)
                 {
                     TempData["error"] = "Không thể mở được phần đặt hàng do không tìm thấy khách hàng đăng nhập";
                     return RedirectToAction("Index", "Home");
                 }
-                if(customer.CartItems.Count() == 0)
+                var cartItemVMs = await _cartService.GetByCustomerToViewAsync(customer.CustomerId);
+                if(cartItemVMs ==  null || cartItemVMs.Count() == 0)
                 {
                     TempData["infor"] = "Không thể mở phần đặt hàng do giỏ hàng của bạn chưa có sản phẩm nào";
                     return RedirectToAction("Index", "Products");
                 }
-                var cartItemVM = customer.CartItems.Select(c => new CartItemVM
-                {
-                    ProductId = c.ProductId,
-                    ProductName = c.Product.ProductName,
-                    ProductSlug = c.Product.ProductSlug,
-                    Price = (c.Product.PercentDiscount == null || c.Product.PercentDiscount == 0) ? c.Product.Price 
-                                    : c.Product.Price - (c.Product.Price * (decimal)c.Product.PercentDiscount/100),
-                    Image = c.Product.Images.FirstOrDefault()?.Url ?? "",
-                    ProductCode = c.Product.ProductCode,
-                    Quantity = c.Quantity
-                }).ToList();
-                HttpContext.Session.Set<List<CartItemVM>>(MyAppSetting.CART_KEY, cartItemVM);
+                HttpContext.Session.Set<List<CartItemVM>>(MyAppSetting.CART_KEY, (List<CartItemVM>)cartItemVMs);
                 var checkoutVM = new CheckoutVM
                 {
                     FullName = customer.FullName,
                     PhoneNumber = user.PhoneNumber,
-                    CartItemVMs = cartItemVM,
+                    CartItemVMs = cartItemVMs,
                 };
                 return View(checkoutVM);
             }
@@ -114,7 +119,7 @@ namespace Book_Ecommerce.Controllers
                     TempData["error"] = "Không thể đặt hàng do giỏ hàng của bạn trống";
                     return RedirectToAction("Index", "Home");
                 }
-                if(cartItemVMs.Any(c => _context.Products.FirstOrDefault(p => p.ProductId == c.ProductId) == null))
+                if(cartItemVMs.Any(c => _productService.GetSingleByCondition(p => p.ProductId == c.ProductId) == null))
                 {
                     HttpContext.Session.Set<List<CartItemVM>>(MyAppSetting.CART_KEY, new List<CartItemVM>());
                     TempData["error"] = "Không thể đặt hàng do không thể tìm thấy sản phẩm bạn đặt";
@@ -123,9 +128,9 @@ namespace Book_Ecommerce.Controllers
                 checkout.CartItemVMs = cartItemVMs;
                 if(ModelState.IsValid)
                 {
-                    var provinceName = (await _context.Provinces.FirstOrDefaultAsync(p => p.Code == checkout.Province))?.FullName ?? "";
-                    var districtName = (await _context.Districts.FirstOrDefaultAsync(d => d.Code == checkout.District))?.FullName ?? "";
-                    var wardName = (await _context.Wards.FirstOrDefaultAsync(w => w.Code == checkout.Ward))?.FullName ?? "";
+                    var provinceName = (await _provinceService.GetSingleProvinceByConditionAsync(p => p.Code == checkout.Province))?.FullName;
+                    var districtName = (await _provinceService.GetSingleDistrictByConditionAsync(d => d.Code == checkout.District))?.FullName;
+                    var wardName = (await _provinceService.GetSingleWardByConditionAsync(w => w.Code == checkout.Ward))?.FullName;
                     var payVM = new PayVM
                     {
                         FullName = checkout.FullName,
@@ -156,7 +161,7 @@ namespace Book_Ecommerce.Controllers
                     TempData["error"] = "Không thể đặt hàng do không tìm thấy tài khoản đăng nhập";
                     return View("Failure");
                 }
-                var customer = await _context.Customers.Include(c => c.CartItems)
+                var customer = await _customerService.Table().Include(c => c.CartItems)
                                                         .FirstOrDefaultAsync(c => c.CustomerId == user.CustomerId);
                 if (customer == null)
                 {
@@ -169,7 +174,7 @@ namespace Book_Ecommerce.Controllers
                     TempData["error"] = "Không thể đặt hàng do giỏ hàng của bạn trống";
                     return View("Failure");
                 }
-                if (cartItemVMs.Any(c => _context.Products.FirstOrDefault(p => p.ProductId == c.ProductId) == null))
+                if (cartItemVMs.Any(c => _productService.GetSingleByCondition(p => p.ProductId == c.ProductId) == null))
                 {
                     HttpContext.Session.Set<List<CartItemVM>>(MyAppSetting.CART_KEY, new List<CartItemVM>());
                     TempData["error"] = "Không thể đặt hàng do không thể tìm thấy sản phẩm bạn đặt";
@@ -180,10 +185,11 @@ namespace Book_Ecommerce.Controllers
                     int statusOrder = (int)StatusOrder.DaDatHang;
                     if (paymentType != MyPayment.COD)
                         statusOrder = (int)StatusOrder.DaThanhToan;
-                    var maxNumber = _context.Orders.Count() == 0 ? 1000 : _context.Orders.Max(o => o.CodeNumber) + 1;
-                    var order = new Book_Ecommerce.Models.Order
+                    var maxNumber = _checkoutService.OrderTable().Count() == 0 ? 
+                        1000 : _checkoutService.OrderTable().Max(o => o.CodeNumber) + 1;
+                    var order = new Book_Ecommerce.Domain.Entities.Order
                     {
-                        OrderId = Guid.NewGuid().ToString(),
+                        OrderId = Guid.NewGuid().ToString() ,
                         CodeNumber = maxNumber,
                         OrderCode = $"DH{maxNumber}{DateTime.Now.ToString("yyyyMMddHHmmss")}",
                         Status = statusOrder,
@@ -197,7 +203,7 @@ namespace Book_Ecommerce.Controllers
                         PaymentType = paymentType,
                         CustomerId = customer.CustomerId
                     };
-                    var OrderDetails = new List<OrderDetail>();
+                    var orderDetails = new List<OrderDetail>();
                     foreach (var item in cartItemVMs)
                     {
                         var product = await _context.Products.FirstOrDefaultAsync(p => p.ProductId == item.ProductId);
@@ -212,7 +218,7 @@ namespace Book_Ecommerce.Controllers
                                 $"chỉ là {product.Quantity} nên không đủ";
                             return View("Failure");
                         }
-                        OrderDetails.Add(new OrderDetail
+                        orderDetails.Add(new OrderDetail
                         {
                             ProductId = item.ProductId,
                             OrderId = order.OrderId,
@@ -221,20 +227,18 @@ namespace Book_Ecommerce.Controllers
                         });
                     }
                     await _context.Database.BeginTransactionAsync();
-                    _context.Orders.Add(order);
-                    await _context.OrderDetails.AddRangeAsync(OrderDetails);
-                    if(paymentType == MyPayment.COD)
+                    await _checkoutService.AddOrderAsync(order, orderDetails);
+                    if (paymentType == MyPayment.COD)
                     {
-                        _context.CartItems.RemoveRange(customer.CartItems);
+                        await _cartService.RemoveRangeAsync(customer.CartItems);
                     }
-                    await _context.SaveChangesAsync();
                     await _context.Database.CommitTransactionAsync();
                     if(paymentType == MyPayment.VnPay)
                     {
                         var vnpayModel = new VnPaymentRequestModel
                         {
                             OrderId = order.OrderCode,
-                            Amount = OrderDetails.Sum(od => od.Quantity * (double)od.Price) + (double)order.TransportFee,
+                            Amount = orderDetails.Sum(od => od.Quantity * (double)od.Price) + (double)order.TransportFee,
                             CreatedDate = DateTime.Now,
                             Decription = $"Thanh toán đơn hàng {order.OrderCode} từ Minh Tiến BookStore",
                             FullName = customer.FullName
@@ -272,20 +276,18 @@ namespace Book_Ecommerce.Controllers
                 var response = _vnPayService.PaymentExcute(Request.Query);
                 if (response == null || response.VnPayResponseCode != "00")
                 {
-                    var order = _context.Orders.FirstOrDefault(o => o.OrderId == orderId);
+                    var order = await _checkoutService.GetSingleOrderByConditionAsync(o => o.OrderId == orderId);
                     if(order != null)
                     {
-                        _context.Orders.Remove(order);
-                        await _context.SaveChangesAsync();
+                        await _checkoutService.RemoveOrderAsync(order);
                     }
                     TempData["error"] = "Thanh toán bằng VnPay thất bại";
                     return View("Failure");
                 }
-                var cartItems = await _context.CartItems.Where(c => c.CustomerId == customerId).ToListAsync();
-                if(cartItems.Count > 0)
+                var cartItems = await _cartService.GetDataAsync(c => c.CustomerId == customerId);
+                if(cartItems.Count() > 0)
                 {
-                    _context.CartItems.RemoveRange(cartItems);
-                    await _context.SaveChangesAsync();
+                    await _cartService.RemoveRangeAsync(cartItems);
                 }
                 TempData["success"] = "Thanh toán bằng VnPay thành công";
                 return View("Success");
@@ -301,99 +303,27 @@ namespace Book_Ecommerce.Controllers
         {
             try
             {
-                var environment = new SandboxEnvironment(_clientId, _secretKey);
-                var client = new PayPalHttpClient(environment);
-                var order = await _context.Orders
-                                            .Include(o => o.OrderDetails)
-                                            .ThenInclude(od => od.Product)
-                                            .FirstOrDefaultAsync(c => c.OrderId == orderId);
+                var order = await _checkoutService.OrderTable()
+                                        .Include(o => o.OrderDetails)
+                                        .ThenInclude(od => od.Product)
+                                        .FirstOrDefaultAsync(c => c.OrderId == orderId);
                 if (order == null)
                 {
                     TempData["error"] = "Đặt hàng thất bại do thanh toán Paypal không thành công";
                     return View("Failure");
                 }
-                if (order.OrderDetails.Any(od => _context.Products.FirstOrDefault(p => p.ProductId == od.ProductId) == null))
+                if (order.OrderDetails.Any(od => _productService.GetSingleByCondition(p => p.ProductId == od.ProductId) == null))
                 {
-                    _context.Orders.Remove(order);
-                    await _context.SaveChangesAsync();
+                    await _checkoutService.RemoveOrderAsync(order);
                     TempData["error"] = "Đặt hàng thất bại do không tìm thấy sản phẩm";
                     return View("Failure");
                 }
-                var orderDetails = order.OrderDetails.ToList();
-                #region Create paypal Order
-                var itemList = new ItemList()
+                var paypalRedirectUrl = await _payPalService.CreateUrlPayment(order, orderId, customerId);
+                if (string.IsNullOrEmpty(paypalRedirectUrl))
                 {
-                    Items = new List<Item>()
-                };
-                double amount = 0;
-                foreach (var item in orderDetails)
-                {
-                    itemList.Items.Add(new Item()
-                    {
-                        Name = item.Product.ProductName,
-                        Currency = "USD",
-                        Price = Math.Round((double)item.Price / _usdExchangeRate, 2).ToString(),
-                        Quantity = item.Quantity.ToString(),
-                        Sku = "sku",
-                        Tax = "0"
-                    });
-                    amount += Math.Round(((double)item.Price)/ _usdExchangeRate, 2) * item.Quantity;
+                    return RedirectToAction("PaypalPaymentFail", "Checkout", new { orderId = orderId });
                 }
-                #endregion
-                var hostName = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}";
-                var paymentOrderId = DateTime.Now.Ticks;
-                var payment = new Payment()
-                {
-                    Intent = "sale",
-                    Transactions = new List<Transaction>()
-                    {
-                        new Transaction()
-                        {
-                            Amount = new Amount()
-                            {
-                                Total = (amount + Math.Round(((double)order.TransportFee / _usdExchangeRate), 2)).ToString(),
-                                Currency = "USD",
-                                Details = new AmountDetails
-                                {
-                                    Tax = "0",
-                                    Shipping = Math.Round(((double)order.TransportFee / _usdExchangeRate), 2).ToString(),
-                                    Subtotal = amount.ToString()
-                                }
-                            },
-                            ItemList = itemList,
-                            Description = $"Invoice #{paymentOrderId}",
-                            InvoiceNumber = paymentOrderId.ToString()
-                        }
-                    },
-                    RedirectUrls = new RedirectUrls()
-                    {
-                        CancelUrl = $"{hostName}/Checkout/PaypalPaymentFail?orderId={orderId}",
-                        ReturnUrl = $"{hostName}/Checkout/PayPalPaymentSuccess?customerId={customerId}"
-                    },
-                    Payer = new Payer()
-                    {
-                        PaymentMethod = "paypal"
-                    }
-                };
-                PaymentCreateRequest request = new PaymentCreateRequest();
-                request.RequestBody(payment);
-                var response = await client.Execute(request);
-                var statusCode = response.StatusCode;
-                Payment result = response.Result<Payment>();
-
-                var links = result.Links.GetEnumerator();
-                string? paypalRedirectUrl = null;
-                while (links.MoveNext())
-                {
-                    LinkDescriptionObject lnk = links.Current;
-                    if (lnk.Rel.ToLower().Trim().Equals("approval_url"))
-                    {
-                        //saving the payapalredirect URL to which user will be redirected for payment  
-                        paypalRedirectUrl = lnk.Href;
-                    }
-                }
-
-                return Redirect(paypalRedirectUrl ?? "");
+                return Redirect(paypalRedirectUrl);
             }
             catch (HttpException httpException)
             {
@@ -402,7 +332,7 @@ namespace Book_Ecommerce.Controllers
 
                 //Process when Checkout with Paypal fails
                 TempData["error"] = "Đặt hàng thất bại do thanh toán Paypal không thành công" + httpException.Message;
-                return View("Failure");
+                return RedirectToAction(nameof(PaypalPaymentFail), new {orderId = orderId});
             }
         }
         [HttpGet]
@@ -410,11 +340,10 @@ namespace Book_Ecommerce.Controllers
         {
             try
             {
-                var order = await _context.Orders.FirstOrDefaultAsync(o => o.OrderId == orderId);
+                var order = await _checkoutService.GetSingleOrderByConditionAsync(o => o.OrderId == orderId);
                 if(order != null)
                 {
-                    _context.Orders.Remove(order);
-                    await _context.SaveChangesAsync();
+                    await _checkoutService.RemoveOrderAsync(order);
                 }
             }
             catch(Exception ex)
@@ -429,11 +358,10 @@ namespace Book_Ecommerce.Controllers
         {
             try
             {
-                var cartItems = await _context.CartItems.Where(c => c.CustomerId == customerId).ToListAsync();
-                if(cartItems.Count > 0)
+                var cartItems = await _cartService.GetDataAsync(c => c.CustomerId == customerId);
+                if(cartItems.Count() > 0)
                 {
-                    _context.CartItems.RemoveRange(cartItems);
-                    await _context.SaveChangesAsync();
+                    await _cartService.RemoveRangeAsync(cartItems);
                 }
             }
             catch(Exception ex)

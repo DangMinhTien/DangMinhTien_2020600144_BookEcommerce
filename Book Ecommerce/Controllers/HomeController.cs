@@ -1,10 +1,10 @@
-﻿using Book_Ecommerce.Models;
+﻿using Book_Ecommerce.Domain.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.Storage;
 using System.Diagnostics;
-using Book_Ecommerce.Helpers;
-using Book_Ecommerce.ViewModels;
+using Book_Ecommerce.Domain.Helpers;
+using Book_Ecommerce.Domain.ViewModels;
 using System.Text.Json;
 using Microsoft.AspNetCore.Identity;
 using Book_Ecommerce.Data;

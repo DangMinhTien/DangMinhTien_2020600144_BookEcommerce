@@ -1,7 +1,7 @@
 ﻿
 @{
     Layout = "_Layout.cshtml";
-    var lstPageSize = ViewBag.pageSize as List<PageSize> ?? new List<PageSize>();
+    var lstPageSize = ViewBag.pageSize as List<PageSizeModel> ?? new List<PageSizeModel>();
     var pageSize = lstPageSize.FirstOrDefault(p => p.IsActive)?.Size ?? 10;
 }
 

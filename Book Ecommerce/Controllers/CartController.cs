@@ -1,7 +1,7 @@
-﻿using Book_Ecommerce.MySettings;
-using Book_Ecommerce.Helpers;
-using Book_Ecommerce.Models;
-using Book_Ecommerce.ViewModels;
+﻿using Book_Ecommerce.Domain.MySettings;
+using Book_Ecommerce.Domain.Helpers;
+using Book_Ecommerce.Domain.Entities;
+using Book_Ecommerce.Domain.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -9,6 +9,8 @@ using Microsoft.EntityFrameworkCore;
 using System.Globalization;
 using System.Linq;
 using Book_Ecommerce.Data;
+using Book_Ecommerce.Service.Abstract;
+using Book_Ecommerce.Service;
 
 namespace Book_Ecommerce.Controllers
 {
@@ -18,15 +20,24 @@ namespace Book_Ecommerce.Controllers
         private readonly AppDbContext _context;
         private readonly SignInManager<AppUser> _signManager;
         private readonly UserManager<AppUser> _userManager;
+        private readonly ICartService _cartService;
+        private readonly ICustomerService _customerService;
+        private readonly IProductService _productService;
         CultureInfo cultureInfo = new CultureInfo("vi-VN");
 
         public CartController(AppDbContext context,
                                 SignInManager<AppUser> signInManager,
-                                UserManager<AppUser> userManager)
+                                UserManager<AppUser> userManager,
+                                ICartService cartService,
+                                ICustomerService customerService,
+                                IProductService productService)
         {
             _context = context;
             _signManager = signInManager;
             _userManager = userManager;
+            _cartService = cartService;
+            _customerService = customerService;
+            _productService = productService;
         }
         public async Task<IActionResult> Index()
         {
@@ -38,32 +49,19 @@ namespace Book_Ecommerce.Controllers
                     TempData["error"] = "Không thể mở được giỏ hàng do không tìm thấy tài khoản đăng nhập";
                     return RedirectToAction("Index", "Home");
                 }
-                var customer = await _context.Customers.Include(c => c.CartItems)
-                                                        .ThenInclude(c => c.Product)
-                                                        .ThenInclude(p => p.Images)
-                                                        .FirstOrDefaultAsync(c => c.CustomerId == user.CustomerId);
+                var customer = await _customerService.GetSingleByConditionAsync(c => c.CustomerId == user.CustomerId);
                 if (customer == null)
                 {
                     TempData["error"] = "Không thể mở được giỏ hàng do không tìm thấy khách hàng đăng nhập";
                     return RedirectToAction("Index", "Home");
                 }
-                if(customer.CartItems.Count() == 0)
+                var cartItemVMs = await _cartService.GetByCustomerToViewAsync(customer.CustomerId);
+                if(cartItemVMs == null || cartItemVMs.Count() == 0)
                 {
-                    TempData["infor"] = "Không thể mở giỏ hàng do giỏ hàng của bạn chưa có sản phẩm nào";
-                    return RedirectToAction("Index", "Products");
+                    TempData["infor"] = "Giỏ hàng của khách hàng đang trống";
+                    return RedirectToAction("Index", "Home");
                 }
-                var cartItemVM = customer.CartItems.Select(c => new CartItemVM
-                {
-                    ProductId = c.ProductId,
-                    ProductName = c.Product.ProductName,
-                    ProductSlug = c.Product.ProductSlug,
-                    Price = (c.Product.PercentDiscount == null || c.Product.PercentDiscount == 0) ? c.Product.Price 
-                                    : c.Product.Price - (c.Product.Price * (decimal)c.Product.PercentDiscount/100),
-                    Image = c.Product.Images.FirstOrDefault()?.Url ?? "",
-                    ProductCode = c.Product.ProductCode,
-                    Quantity = c.Quantity
-                }).ToList();
-                return View(cartItemVM);
+                return View(cartItemVMs);
             }
             catch
             {
@@ -81,7 +79,7 @@ namespace Book_Ecommerce.Controllers
                 {
                     return BadRequest(new { mesClient = "Không tìm thấy tài khoản đăng nhập", mesDev = "Account not found" });
                 }
-                var customer = await _context.Customers.FirstOrDefaultAsync(c => c.CustomerId == user.CustomerId);
+                var customer = await _customerService.GetSingleByConditionAsync(c => c.CustomerId == user.CustomerId);
                 if(customer == null)
                 {
                     return BadRequest(new { mesClient = "Không tìm thấy khách hàng đang đăng nhập", mesDev = "Customer not found" });
@@ -94,7 +92,7 @@ namespace Book_Ecommerce.Controllers
                         mesDev = "Quantity is smaller than 1"
                     });
                 }
-                var product = await _context.Products.FirstOrDefaultAsync(p => p.ProductId == productId);
+                var product = await _productService.GetSingleByConditionAsync(p => p.ProductId == productId);
                 if(product == null)
                 {
                     return BadRequest(new
@@ -103,8 +101,7 @@ namespace Book_Ecommerce.Controllers
                         mesDev = "Product is not found"
                     });
                 }    
-                var cartItem = await _context.CartItems.
-                    FirstOrDefaultAsync(c => c.ProductId == productId 
+                var cartItem = await _cartService.GetSingleByConditionAsync(c => c.ProductId == productId 
                                     && c.CustomerId == customer.CustomerId);
                 var quantityInCartItem = cartItem == null ? 0 : cartItem.Quantity;
                 if(quantityInCartItem + quantity > product.Quantity)
@@ -123,15 +120,14 @@ namespace Book_Ecommerce.Controllers
                         CustomerId = customer.CustomerId,
                         Quantity = quantity,
                     };
-                    _context.CartItems.Add(newCartItem);
+                    await _cartService.AddAsync(newCartItem);
                 }
                 else
                 {
                     cartItem.Quantity = quantityInCartItem + quantity;
-                    _context.CartItems.Update(cartItem);
+                    await _cartService.UpdateAsync(cartItem);
                 }
-                await _context.SaveChangesAsync();
-                return Json(new 
+                return Ok(new 
                 {
                     mesClient = "Thêm vào giỏ hàng thành công", 
                     mesDev = "Add to cart is success",
@@ -160,15 +156,13 @@ namespace Book_Ecommerce.Controllers
                     TempData["error"] = "Không thể xóa được sản phẩm trong giỏ hàng do không tìm thấy khách hàng đăng nhập";
                     return RedirectToAction(nameof(Index));
                 }
-                var cartItem = _context.CartItems
-                        .FirstOrDefault(c => c.CustomerId == customer.CustomerId && c.ProductId == productId);
+                var cartItem = await _cartService.GetSingleByConditionAsync(c => c.CustomerId == customer.CustomerId && c.ProductId == productId);
                 if(cartItem == null)
                 {
                     TempData["error"] = "Không thể xóa được sản phẩm trong giỏ hàng do không tìm thấy giỏ hàng";
                     return RedirectToAction(nameof(Index));
                 }
-                _context.CartItems.Remove(cartItem);
-                await _context.SaveChangesAsync();
+                await _cartService.RemoveAsync(cartItem);
                 TempData["success"] = "Xóa sản phẩm trong giỏ hàng thành công";
                 return RedirectToAction(nameof(Index));
             }
@@ -186,35 +180,63 @@ namespace Book_Ecommerce.Controllers
             {
                 var user = await _userManager.GetUserAsync(User);
                 if (user == null)
-                    return BadRequest(new { mesClient = "Tăng số lượng thất bại do không tìm thấy tài khoản đăng nhập", mesDev = "Account not found" });
-                var customer = await _context.Customers.FirstOrDefaultAsync(c => c.CustomerId == user.CustomerId);
+                {
+                    return BadRequest(new 
+                    { 
+                        mesClient = "Tăng số lượng thất bại do không tìm thấy tài khoản đăng nhập", 
+                        mesDev = "Account not found" 
+                    });
+                }
+                var customer = await _customerService.GetSingleByConditionAsync(c => c.CustomerId == user.CustomerId);
                 if (customer == null)
-                    return BadRequest(new { mesClient = "Tăng số lượng thất bại do không tìm thấy khách hàng đang đăng nhập", mesDev = "Customer not found" });
-                var product = await _context.Products.FirstOrDefaultAsync(p => p.ProductId == productId);
+                {
+                    return BadRequest(new 
+                    { 
+                        mesClient = "Tăng số lượng thất bại do không tìm thấy khách hàng đang đăng nhập", 
+                        mesDev = "Customer not found" 
+                    });
+                }
+                var product = await _productService.GetSingleByConditionAsync(p => p.ProductId == productId);
                 if (product == null)
-                    return BadRequest(new { mesClient = "Tăng số lượng thất bại do không tìm thấy sản phẩm cần thêm", mesDev = "Product not found" });
-                var cartItem = await _context.CartItems
-                    .FirstOrDefaultAsync(c => c.CustomerId == customer.CustomerId && c.ProductId == productId);
+                {
+                    return BadRequest(new 
+                    { 
+                        mesClient = "Tăng số lượng thất bại do không tìm thấy sản phẩm cần thêm", 
+                        mesDev = "Product not found" 
+                    });
+                }
+                var cartItem = await _cartService.GetSingleByConditionAsync(c => c.CustomerId == customer.CustomerId && c.ProductId == productId);
                 if(cartItem == null)
-                    return BadRequest(new { mesClient = "Tăng số lượng thất bại do không tìm thấy giỏ hàng", mesDev = "Cart not found" });
+                {
+                    return BadRequest(new 
+                    { 
+                        mesClient = "Tăng số lượng thất bại do không tìm thấy giỏ hàng", 
+                        mesDev = "Cart not found" 
+                    });
+                }
                 if(cartItem.Quantity + 1 > product.Quantity)
-                    return BadRequest(new { mesClient = "Tăng số lượng thất bại do số lượng sản phẩm không đủ", mesDev = "quantity in cart is bigger than product's quantity" });
+                {
+                    return BadRequest(new 
+                    { 
+                        mesClient = "Tăng số lượng thất bại do số lượng sản phẩm không đủ", 
+                        mesDev = "quantity in cart is bigger than product's quantity" 
+                    });
+                }
                 cartItem.Quantity = cartItem.Quantity + 1;
-                _context.CartItems.Update(cartItem);
-                await _context.SaveChangesAsync();
+                await _cartService.UpdateAsync(cartItem);
                 var priceItem = (product.PercentDiscount == null || product.PercentDiscount == 0) ? product.Price
                                     : product.Price - (product.Price * (decimal)product.PercentDiscount / 100);
-                var cart = await _context.CartItems
-                    .Include(c => c.Product)
-                    .Where(c => c.CustomerId == customer.CustomerId)
-                    .ToListAsync();
+                var cart = await _cartService.Table()
+                                            .Include(c => c.Product)
+                                            .Where(c => c.CustomerId == customer.CustomerId)
+                                            .ToListAsync();
                 var amount = cart.Sum(c =>
                 {
                     var price = (c.Product.PercentDiscount == null || c.Product.PercentDiscount == 0) ? c.Product.Price
                                     : c.Product.Price - (c.Product.Price * (decimal)c.Product.PercentDiscount / 100);
                     return c.Quantity * price;
                 });
-                return Json(new
+                return Ok(new
                 {
                     mesClient = "Tăng số lượng thành công",
                     mesDev = "Plus quantity success",
@@ -237,35 +259,63 @@ namespace Book_Ecommerce.Controllers
             {
                 var user = await _userManager.GetUserAsync(User);
                 if (user == null)
-                    return BadRequest(new { mesClient = "Giảm số lượng thất bại do không tìm thấy tài khoản đăng nhập", mesDev = "Account not found" });
-                var customer = await _context.Customers.FirstOrDefaultAsync(c => c.CustomerId == user.CustomerId);
+                {
+                    return BadRequest(new 
+                    { 
+                        mesClient = "Giảm số lượng thất bại do không tìm thấy tài khoản đăng nhập", 
+                        mesDev = "Account not found" 
+                    });
+                }
+                var customer = await _customerService.GetSingleByConditionAsync(c => c.CustomerId == user.CustomerId);
                 if (customer == null)
-                    return BadRequest(new { mesClient = "Giảm số lượng thất bại do không tìm thấy khách hàng đang đăng nhập", mesDev = "Customer not found" });
-                var product = await _context.Products.FirstOrDefaultAsync(p => p.ProductId == productId);
+                {
+                    return BadRequest(new 
+                    { 
+                        mesClient = "Giảm số lượng thất bại do không tìm thấy khách hàng đang đăng nhập", 
+                        mesDev = "Customer not found" 
+                    });
+                }
+                var product = await _productService.GetSingleByConditionAsync(p => p.ProductId == productId);
                 if (product == null)
-                    return BadRequest(new { mesClient = "Giảm số lượng thất bại do không tìm thấy sản phẩm cần thêm", mesDev = "Product not found" });
-                var cartItem = await _context.CartItems
-                    .FirstOrDefaultAsync(c => c.CustomerId == customer.CustomerId && c.ProductId == productId);
+                {
+                    return BadRequest(new 
+                    { 
+                        mesClient = "Giảm số lượng thất bại do không tìm thấy sản phẩm cần thêm", 
+                        mesDev = "Product not found" 
+                    });
+                }
+                var cartItem = await _cartService.GetSingleByConditionAsync(c => c.CustomerId == customer.CustomerId && c.ProductId == productId);
                 if (cartItem == null)
-                    return BadRequest(new { mesClient = "Giảm số lượng thất bại do không tìm thấy giỏ hàng", mesDev = "Cart not found" });
+                {
+                    return BadRequest(new 
+                    { 
+                        mesClient = "Giảm số lượng thất bại do không tìm thấy giỏ hàng", 
+                        mesDev = "Cart not found" 
+                    });
+                }
                 if (cartItem.Quantity <= 1)
-                    return BadRequest(new { mesClient = "Giảm số lượng thất bại do số lượng sẽ nhỏ hơn 1", mesDev = "quantity in cart is bigger than product's quantity" });
+                {
+                    return BadRequest(new 
+                    { 
+                        mesClient = "Giảm số lượng thất bại do số lượng sẽ nhỏ hơn 1", 
+                        mesDev = "quantity in cart is bigger than product's quantity" 
+                    });
+                }
                 cartItem.Quantity = cartItem.Quantity - 1;
-                _context.CartItems.Update(cartItem);
-                await _context.SaveChangesAsync();
+                await _cartService.UpdateAsync(cartItem);
                 var priceItem = (product.PercentDiscount == null || product.PercentDiscount == 0) ? product.Price
                                     : product.Price - (product.Price * (decimal)product.PercentDiscount / 100);
-                var cart = await _context.CartItems
-                    .Include(c => c.Product)
-                    .Where(c => c.CustomerId == customer.CustomerId)
-                    .ToListAsync();
+                var cart = await _cartService.Table()
+                                            .Include(c => c.Product)
+                                            .Where(c => c.CustomerId == customer.CustomerId)
+                                            .ToListAsync();
                 var amount = cart.Sum(c =>
                 {
                     var price = (c.Product.PercentDiscount == null || c.Product.PercentDiscount == 0) ? c.Product.Price
                                     : c.Product.Price - (c.Product.Price * (decimal)c.Product.PercentDiscount / 100);
                     return c.Quantity * price;
                 });
-                return Json(new
+                return Ok(new
                 {
                     mesClient = "Giảm số lượng thành công",
                     mesDev = "Minus quantity success",
@@ -278,7 +328,11 @@ namespace Book_Ecommerce.Controllers
             }
             catch
             {
-                return BadRequest(new { mesClient = "Giảm số lượng thất bại", mesDev = "Giảm quantity is failse" });
+                return BadRequest(new 
+                { 
+                    mesClient = "Giảm số lượng thất bại", 
+                    mesDev = "Minus quantity is false" 
+                });
             }
         }
     }

@@ -1,19 +1,18 @@
-﻿using Book_Ecommerce.Models;
-using Book_Ecommerce.ViewModels;
+﻿using Book_Ecommerce.Domain.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebUtilities;
-using Microsoft.EntityFrameworkCore.Storage;
 using System.Text.Encodings.Web;
 using System.Text;
 using Microsoft.AspNetCore.Authorization;
-using Book_Ecommerce.ExtendMethods;
+using Book_Ecommerce.Domain.ExtendMethods;
 using Microsoft.EntityFrameworkCore;
-using Book_Ecommerce.Utilities;
-using Book_Ecommerce.MySettings;
-using Book_Ecommerce.Helpers;
+using Book_Ecommerce.Domain.MySettings;
+using Book_Ecommerce.Domain.Helpers;
 using Book_Ecommerce.Data;
+using Book_Ecommerce.Service.Abstract;
+using Book_Ecommerce.Domain.ViewModels.UserViewModel;
 
 namespace Book_Ecommerce.Controllers
 {
@@ -22,20 +21,26 @@ namespace Book_Ecommerce.Controllers
         private readonly AppDbContext _context;
         private SignInManager<AppUser> _signInManager;
         private UserManager<AppUser> _userManager;
+        private readonly IUserService _userService;
         private IEmailSender _emailSender;
         private readonly RoleManager<IdentityRole> _roleManage;
+        private readonly ICustomerService _customerService;
 
         public AccountsController(AppDbContext context, 
             SignInManager<AppUser> signInManager,
             UserManager<AppUser> userManager,
             RoleManager<IdentityRole> roleManager,
+            IUserService userService,
+            ICustomerService customerService,
             IEmailSender emailSender)
         {
             _context = context;
             _signInManager = signInManager;
             _userManager = userManager;
+            _userService = userService;
             _emailSender = emailSender;
             _roleManage = roleManager;
+            _customerService = customerService;
         }
         public IActionResult Index()
         {
@@ -63,22 +68,13 @@ namespace Book_Ecommerce.Controllers
         {
             ViewBag.ReturnUrl = returnUrl;
             returnUrl = returnUrl ?? "/";
+            if ( await _userService.GetSingleByConditionAsync(u => u.PhoneNumber == registerVM.PhoneNumber) != null)
+                ModelState.AddModelError(string.Empty, "Số điện thoại đã bị trùng với một tài khoản khác");
             if (ModelState.IsValid)
             {
-                var codeNumber = _context.Customers.Count() > 0 ? _context.Customers.Max(c => c.CodeNumber) + 1 : 1000;
-                var customer = new Customer
-                {
-                    CustomerId = Guid.NewGuid().ToString(),
-                    FullName = registerVM.FullName,
-                    CodeNumber = codeNumber,
-                    CustomerCode = "KH" + codeNumber,
-                    Gender = registerVM.Gender,
-                    Address = registerVM.Address,
-                    DateOfBirth = registerVM.DateOfBirth,
-                };
                 try
                 {
-                    _context.Database.BeginTransaction();
+                    await _context.Database.BeginTransactionAsync();
                     var role = await _roleManage.FindByNameAsync(MyRole.CUSTOMER);
                     if (role == null)
                     {
@@ -91,16 +87,7 @@ namespace Book_Ecommerce.Controllers
                             return View();
                         }
                     }
-                    _context.Customers.Add(customer);
-                    await _context.SaveChangesAsync();
-                    var user = new AppUser
-                    {
-                        UserName = registerVM.Email,
-                        Email = registerVM.Email,
-                        PhoneNumber = registerVM.PhoneNumber,
-                        CustomerId = customer.CustomerId
-                    };
-                    var result = await _userManager.CreateAsync(user, registerVM.Password);
+                    (var result, var user) = await _userService.RegisterCustomerAccountAsync(registerVM);
                     if (result.Succeeded)
                     {
                         // Phát sinh token để xác nhận email
@@ -126,7 +113,7 @@ namespace Book_Ecommerce.Controllers
                         if (!addToRoleResult.Succeeded)
                         {
                             _context.Database.RollbackTransaction();
-                            TempData["error"] = "Không tạo được người dùng mới do không thêm được quyền cho ài khoản";
+                            TempData["error"] = "Không tạo được người dùng mới do không thêm được quyền cho tài khoản";
                             return View();
                         }
                         await _context.Database.CommitTransactionAsync();

@@ -1,21 +1,23 @@
-﻿using Book_Ecommerce.ViewModels;
+﻿using Book_Ecommerce.Domain.ViewModels.CategoryViewModel;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Book_Ecommerce.Data;
+using Book_Ecommerce.Service.Abstract;
+using Book_Ecommerce.Service;
 
 namespace Book_Ecommerce.ViewComponents
 {
     public class SideBarCategoryViewComponent : ViewComponent
     {
-        private readonly AppDbContext _context;
+        private readonly ICategoryService _categoryService;
 
-        public SideBarCategoryViewComponent(AppDbContext context)
+        public SideBarCategoryViewComponent(ICategoryService categoryService)
         {
-            _context = context;
+            _categoryService = categoryService;
         }
         public async Task<IViewComponentResult> InvokeAsync(string? CategotyId)
         {
-            var categories = await _context.Categories.Include(c => c.CategoryProducts).ToListAsync();
+            var categories = await _categoryService.GetToViewComponentAsync();
             var result = categories.Select(c => new CategoryVM
             {
                 CategoryId = c.CategoryId,

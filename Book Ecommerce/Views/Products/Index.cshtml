@@ -69,7 +69,7 @@
                     processData: false,
                     success: function (response) {
                         $('#loader').hide()
-                        console.log(response.mesDev)
+                        console.log(response)
                         var toast = $(RenderHtmlToastSuccess(response.mesClient))
                         $('.m-toast-box').append(toast)
                         HideToastAfterShow(toast)
@@ -85,7 +85,7 @@
                             message = "Tài khoản của bạn không thể thực hiện chức năng này";
                         else {
                             message = response.responseJSON.mesClient
-                            console.log(response.responseJSON.mesDev)
+                            console.log(response.responseJSON)
                         }
                         var toast = $(RenderHtmlToastError(message))
                         $('.m-toast-box').append(toast)
