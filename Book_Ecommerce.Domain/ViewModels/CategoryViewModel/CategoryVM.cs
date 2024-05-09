@@ -9,7 +9,7 @@ namespace Book_Ecommerce.Domain.ViewModels.CategoryViewModel
         public string CategoryCode { get; set; } = null!;
         public string CategoryName { get; set; } = null!;
         public string CategorySlug { get; set; } = null!;
-        public string? Decription { get; set; }
+        public string? Description { get; set; }
         public int SumProduct { get; set; }
         public bool IsActive { get; set; }
         public IEnumerable<Product> Products { get; set; } = null!;

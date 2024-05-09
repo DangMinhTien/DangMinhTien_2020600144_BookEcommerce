@@ -17,7 +17,7 @@ namespace Book_Ecommerce.Domain.Entities
         [Column(TypeName = "varchar(250)")]
         public string BrandSlug { set; get; } = null!;
         [Column(TypeName = "nvarchar(500)")]
-        public string? Decription { set; get; }
+        public string? Description { set; get; }
         [Column(TypeName = "varchar(250)")]
         public string ImageName { get; set; } = null!;
         public string UrlImage { get; set; } = null!;

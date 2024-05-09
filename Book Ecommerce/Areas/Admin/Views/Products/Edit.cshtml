@@ -1,0 +1,314 @@
+﻿@model ProductVM
+@{
+    ViewData["Title"] = "Sửa sản phẩm";
+}
+<h2 class="text-center text-primary py-2">Thêm sản phẩm</h2>
+<div class="row">
+    <div class="col-md-2"></div>
+    <div class="col-md-8 row">
+        <div id="errorMessage" class="col-12 text-danger"></div>
+        <div class="col-md-6">
+            <div class="form-group">
+                <label class="text-dark">Tên sản phẩm<sup class="text-danger">(*)</sup></label>
+                <input id="productName" type="text" class="form-control" value="@Model.ProductName">
+            </div>
+            <div class="form-group">
+                <label class="text-dark">Số lượng<sup class="text-danger">(*)</sup></label>
+                <input id="quantity" type="number" class="form-control" value="@Model.Quantity">
+            </div>
+            <div class="form-group">
+                <label class="text-dark">Giá bán<sup class="text-danger">(*)</sup></label>
+                <input id="price" type="number" class="form-control" value="@Model.Price">
+            </div>
+            <div class="form-group">
+                <label class="text-dark">Phầm trăm giảm giá</label>
+                <input id="percentDiscount" type="number" class="form-control" value="@Model.PercentDiscount">
+            </div>
+            <div class="form-group">
+                <label class="text-dark">Hình ảnh<sup class="text-danger">(*)</sup></label> <br />
+                <div class="file-input-wrapper">
+                    <button class="button">Thêm ảnh</button>
+                    <input id="imageFiles" type="file" />
+                </div>
+            </div>
+            <div id="imagePreview" class="row">
+                
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="form-group">
+                <label class="text-dark">Trạng thái<sup class="text-danger">(*)</sup></label>
+                <select id="isActive" class="form-control">
+                    @if(Model.IsActive){
+                        <option selected value="true">Hiện</option>
+                        <option value="false">Ẩn</option>
+                    }else{
+                        <option value="true">Hiện</option>
+                        <option selected value="false">Ẩn</option>
+                    }
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="text-dark">Thương hiệu<sup class="text-danger">(*)</sup></label>
+                <select id="brandId" name="BrandId" class="form-control" asp-items="@ViewBag.brands"></select>
+            </div>
+            <div class="form-group">
+                <label class="control-label text-dark">Thể loại<sup class="text-danger">(*)</sup></label>
+                <select class="w-100 multiple-select-item" name="CategoryIds" id="categoryIds" multiple="multiple" asp-items="@ViewBag.categories"></select>
+            </div>
+            <div class="form-group">
+                <label class="control-label text-dark">Tác giả</label>
+                <select class="w-100 multiple-select-item" name="AuthorIds" id="authorIds" multiple="multiple" asp-items="@ViewBag.authors"></select>
+            </div>
+            <div class="form-group">
+                <label class="text-dark">Mô tả<sup class="text-danger">(*)</sup></label>
+                <textarea id="description" rows="3" class="form-control">@Model.Decription</textarea>
+            </div>
+        </div>
+        <div class="col-12 d-flex justify-content-between py-2">
+            <a href="@ViewBag.returnUrl" class="btn btn-outline-primary">
+                <i class="fas fa-arrow-circle-left"></i>
+                Quay lại danh sách
+            </a>
+            <button id="editProduct" class="btn btn-primary">Cập nhật</button>
+        </div>
+    </div>
+    <div class="col-md-2"></div>
+</div>
+@section Scripts {
+    <link rel="stylesheet" href="~/lib/multiple-select/multiple-select.min.css" />
+    <script src="~/lib/multiple-select/multiple-select.min.js"></script>
+    <script>
+        $(".multiple-select-item").multipleSelect({
+            selectAll: false,
+            keepOpen: false,
+            isOpen: false
+        });
+    </script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            LoadImage()
+            $('#imageFiles').change(function () {
+                var file = $(this)[0].files
+                if (file.length <= 0)
+                    return;
+                if (!confirm('Bạn có muốn thêm ảnh này không'))
+                    return;
+                var formData = new FormData()
+                formData.append('file', file[0])
+                formData.append('productId', '@Model.ProductId')
+                $('#loader').show()
+                $.ajax({
+                    url: '@Url.Action("AddImage", "Products", new { area = "Admin" })',
+                    type: "POST",
+                    data: formData,
+                    catch: false,
+                    contentType: false,
+                    processData: false,
+                    success: function (response) {
+                        $('#loader').hide()
+                        console.log(response)
+                        var toast = $(RenderHtmlToastSuccess(response.mesClient))
+                        $('.m-toast-box').append(toast)
+                        HideToastAfterShow(toast)
+                        LoadImage()
+                    },
+                    error: function (response) {
+                        console.log(response)
+                        $('#loader').hide()
+                        var message = ""
+                        if (response.status == 401)
+                            message = "Yêu cầu bạn đăng nhập để thực hiện chức năng này";
+                        else if (response.status == 403)
+                            message = "Tài khoản của bạn không thể thực hiện chức năng này";
+                        else {
+                            message = response.responseJSON.mesClient
+                        }
+                        var toast = $(RenderHtmlToastError(message))
+                        $('.m-toast-box').append(toast)
+                        HideToastAfterShow(toast)
+                    }
+                })
+            })
+            $('#editProduct').click(function () {
+                var formData = new FormData()
+                formData.append('ProductName', $('#productName').val())
+                formData.append('Price', $('#price').val())
+                formData.append('PercentDiscount', $('#percentDiscount').val())
+                formData.append('IsActive', $('#isActive').val())
+                formData.append('BrandId', $('#brandId').val())
+                var categoryIds = $('#categoryIds').val()
+                for (var i = 0; i < categoryIds.length; i++) {
+                    formData.append('CategoryIds', categoryIds[i]);
+                }
+                var authorIds = $('#authorIds').val()
+                for (var i = 0; i < authorIds.length; i++) {
+                    formData.append('AuthorIds', authorIds[i]);
+                }
+                formData.append('Description', $('#description').val())
+                formData.append('Quantity', $('#quantity').val())
+                $('#loader').show()
+                $.ajax({
+                    url: '@Url.Action("Update","Products", new {area = "Admin", productId = Model.ProductId})',
+                    type: "POST",
+                    data: formData,
+                    catch: false,
+                    contentType: false,
+                    processData: false,
+                    success: function (response) {
+                        $('#loader').hide()
+                        $('#errorMessage').html("")
+                        console.log(response)
+                        var toast = $(RenderHtmlToastSuccess(response.mesClient))
+                        $('.m-toast-box').append(toast)
+                        HideToastAfterShow(toast)
+                    },
+                    error: function (response) {
+                        console.log(response)
+                        $('#loader').hide()
+                        $('#errorMessage').html("")
+                        var message = ""
+                        if (response.status == 401)
+                            message = "Yêu cầu bạn đăng nhập để thực hiện chức năng này";
+                        else if (response.status == 403)
+                            message = "Tài khoản của bạn không thể thực hiện chức năng này";
+                        else {
+                            if (response.responseJSON.isValid == false) {
+                                var err = ""
+                                for (var i = 0; i < response.responseJSON.error.length; i++) {
+                                    err += `<p>${response.responseJSON.error[i]}</p>`
+                                }
+                                $('#errorMessage').html(err)
+                            }
+                            message = response.responseJSON.mesClient
+                        }
+                        var toast = $(RenderHtmlToastError(message))
+                        $('.m-toast-box').append(toast)
+                        HideToastAfterShow(toast)
+                    }
+                })
+            })
+        })
+        function LoadImage(){
+            var formData = new FormData()
+            $('#loader').show()
+            $.ajax({
+                url: '@Url.Action("GetImageByProduct", "Products", new { area = "Admin" })' + '?productId=@Model.ProductId',
+                type: "GET",
+                catch: false,
+                contentType: false,
+                processData: false,
+                success: function (response) {
+                    $('#loader').hide()
+                    console.log(response)
+                    var imgHtml = ""
+                    response.images.forEach(function (element) {
+                        imgHtml += `<div class="col-lg-4 col-sm-6 mb-3 image-preview-edit">
+                            <span data-imageid="${element.imageId}" class="delete-image"><i class="fas fa-times-circle"></i></span>
+                            <img class="preview-image" src="${element.url}" />
+                        </div>`
+                    })
+                    $('#imagePreview').html(imgHtml)
+                    SetImage()
+                    SetDeleteImage()
+                },
+                error: function (response) {
+                    console.log(response)
+                    $('#loader').hide()
+                    var message = ""
+                    if (response.status == 401)
+                        message = "Yêu cầu bạn đăng nhập để thực hiện chức năng này";
+                    else if (response.status == 403)
+                        message = "Tài khoản của bạn không thể thực hiện chức năng này";
+                    else {
+                        message = response.responseJSON.mesClient
+                    }
+                    var toast = $(RenderHtmlToastError(message))
+                    $('.m-toast-box').append(toast)
+                    HideToastAfterShow(toast)
+                }
+            })
+        }
+        function SetImage() {
+            $('.preview-image').each(function (index, element) {
+                var width = $(element).width()
+                $(element).height(width * 1.2)
+            })
+        }
+        function SetDeleteImage() {
+            $('.delete-image').each(function (index, element) {
+                $(element).click(function () {
+                    if(!confirm("bạn có muốn xóa ảnh vừa chọn"))
+                        return
+                    var formData = new FormData()
+                    formData.append('imageId', $(element).data('imageid'))
+                    $('#loader').show()
+                    $.ajax({
+                        url: '@Url.Action("DeleteImage", "Products", new { area = "Admin" })',
+                        type: "POST",
+                        data: formData,
+                        catch: false,
+                        contentType: false,
+                        processData: false,
+                        success: function (response) {
+                            $('#loader').hide()
+                            console.log(response)
+                            var message = response.mesClient
+                            var toast = $(RenderHtmlToastSuccess(message))
+                            $('.m-toast-box').append(toast)
+                            HideToastAfterShow(toast)
+                            LoadImage()
+                        },
+                        error: function (response) {
+                            console.log(response)
+                            $('#loader').hide()
+                            var message = ""
+                            if (response.status == 401)
+                                message = "Yêu cầu bạn đăng nhập để thực hiện chức năng này";
+                            else if (response.status == 403)
+                                message = "Tài khoản của bạn không thể thực hiện chức năng này";
+                            else {
+                                message = response.responseJSON.mesClient
+                            }
+                            var toast = $(RenderHtmlToastError(message))
+                            $('.m-toast-box').append(toast)
+                            HideToastAfterShow(toast)
+                        }
+                    })
+                })
+            })
+        }
+        function HideToastAfterShow(toast) {
+            setTimeout(function () {
+                // tạo hiệu ứng
+                toast.addClass('hidden')
+                // sau đó ẩn
+                setTimeout(function () {
+                    toast.remove()
+                }, 1000)
+            }, 5000)
+        }
+        function RenderHtmlToastError(message) {
+            return `<div class="m-toast-message m-toast-error">
+                                        <div class="m-toast-icon">
+                                            <i class="fas fa-check-circle"></i>
+                                        </div>
+                                        <div class="m-toast-text">${message}</div>
+                                        <div class="m-toast-close">
+                                            <i class="fas fa-times"></i>
+                                        </div>
+                                    </div>`
+        }
+        function RenderHtmlToastSuccess(message) {
+            return `<div class="m-toast-message m-toast-success">
+                                        <div class="m-toast-icon">
+                                            <i class="fas fa-check-circle"></i>
+                                        </div>
+                                                <div class="m-toast-text">${message}</div>
+                                        <div class="m-toast-close">
+                                            <i class="fas fa-times"></i>
+                                        </div>
+                                    </div>`
+        }
+    </script>
+}

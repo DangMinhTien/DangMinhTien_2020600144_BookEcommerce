@@ -1,8 +1,9 @@
-﻿@model IEnumerable<ProductVM>
+﻿@using Microsoft.CodeAnalysis
+@model IEnumerable<ProductVM>
 @{
     ViewData["Title"] = "Quản trị sản phẩm";
     CultureInfo cultureInfo = new CultureInfo("vi-VN");
-    var pagingModel = ViewBag.pagingModel as PagingModel;
+    var pagingModel = ViewBag.pagingModel as PagingModel ?? new PagingModel();
     var pageSizes = ViewBag.pageSizes as List<PageSizeModel>;
 }
 <!-- DataTales Example -->
@@ -65,7 +66,10 @@
                         var discountPercent = item.PercentDiscount == null ? "" : $"{item.PercentDiscount}%";
                         <tr>
                             <td>
-                                <a href="#">@item.ProductCode</a>
+                                <a asp-action="Edit" asp-controller="Products" asp-area="Admin" 
+                                    asp-route-productCode="@item.ProductCode" asp-route-returnUrl="@ViewBag.returnUrl">
+                                    @item.ProductCode
+                                </a>
                             </td>
                             <td>@item.ProductName</td>
                             <td>@item.ProductSlug</td>
@@ -81,8 +85,7 @@
                                 <img class="img-product-admin" src="@srcImg"/>
                             </td>
                             <td>
-                                <a href="#">Sửa</a>
-                                <a href="#">Xóa</a>
+                                <a style="cursor: pointer" class="delete-product" data-productid="@item.ProductId" data-productcode="@item.ProductCode">Xóa</a>
                             </td>
                         </tr>
                     }
@@ -93,5 +96,75 @@
             </div>
         </div>
     </div>
-
 </div>
+@section Scripts{
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('.delete-product').click(function () {
+                if (!confirm('Bạn có muốn xóa sản phẩm ' + $(this).data('productcode') + ' không ?'))
+                    return
+                var productId = $(this).data('productid')
+                $('#loader').show()
+                $.ajax({
+                    url: '@Url.Action("Delete", "Products", new { area = "Admin"})' + `?productId=${productId}`,
+                    type: "POST",
+                    catch: false,
+                    contentType: false,
+                    processData: false,
+                    success: function (response) {
+                        $('#loader').hide()
+                        console.log(response)
+                        window.location.href = '/quan-ly-san-pham?page=@pagingModel.currentpage&pagesize=@ViewBag.pagesize&search=@ViewBag.search'
+                    },
+                    error: function (response) {
+                        console.log(response)
+                        $('#loader').hide()
+                        var message = ""
+                        if (response.status == 401)
+                            message = "Yêu cầu bạn đăng nhập để thực hiện chức năng này";
+                        else if (response.status == 403)
+                            message = "Tài khoản của bạn không thể thực hiện chức năng này";
+                        else {
+                            message = response.responseJSON.mesClient
+                        }
+                        var toast = $(RenderHtmlToastError(message))
+                        $('.m-toast-box').append(toast)
+                        HideToastAfterShow(toast)
+                    }
+                })
+            })
+        })
+        function HideToastAfterShow(toast) {
+            setTimeout(function () {
+                // tạo hiệu ứng
+                toast.addClass('hidden')
+                // sau đó ẩn
+                setTimeout(function () {
+                    toast.remove()
+                }, 1000)
+            }, 5000)
+        }
+        function RenderHtmlToastError(message) {
+            return `<div class="m-toast-message m-toast-error">
+                        <div class="m-toast-icon">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <div class="m-toast-text">${message}</div>
+                        <div class="m-toast-close">
+                            <i class="fas fa-times"></i>
+                        </div>
+                    </div>`
+        }
+        function RenderHtmlToastSuccess(message) {
+            return `<div class="m-toast-message m-toast-success">
+                        <div class="m-toast-icon">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                                <div class="m-toast-text">${message}</div>
+                        <div class="m-toast-close">
+                            <i class="fas fa-times"></i>
+                        </div>
+                    </div>`
+        }
+    </script>
+}

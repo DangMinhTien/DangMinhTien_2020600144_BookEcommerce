@@ -43,7 +43,7 @@ namespace Book_Ecommerce.Controllers
                         CodeNumber = maxCodeCate++,
                         CategoryName = categoryNames[i],
                         CategorySlug = Generation.GenerationSlug(categoryNames[i]),
-                        Decription = "Thể loại thú vị"
+                        Description = "Thể loại thú vị"
                     };
                     var brand = new Brand
                     {
@@ -52,7 +52,7 @@ namespace Book_Ecommerce.Controllers
                         CodeNumber = maxCodeBrand++,
                         BrandName = brandNames[i],
                         BrandSlug = Generation.GenerationSlug(brandNames[i]),
-                        Decription = "Thương hiệu tuyệt vời",
+                        Description = "Thương hiệu tuyệt vời",
                         ImageName = $"{MyAppSetting.FOLDER_NAME_CLOUDINARY}/brand",
                         UrlImage = $"https://res.cloudinary.com/dpnabmdzr/image/upload/v1714063590/{MyAppSetting.FOLDER_NAME_CLOUDINARY}/SeedData/brand.jpg"
                     };
@@ -162,7 +162,7 @@ namespace Book_Ecommerce.Controllers
                         CustomerId = Guid.NewGuid().ToString(),
                         FullName = "Đặng Tiến",
                         CodeNumber = customerCode,
-                        CustomerCode = "KH" + customerCode,
+                        CustomerCode = "KH" + DateTime.Now.Year.ToString() + customerCode,
                         Gender = true,
                         DateOfBirth = DateTime.Now,
                     };
@@ -174,7 +174,7 @@ namespace Book_Ecommerce.Controllers
                         EmailConfirmed = true,
                         CustomerId = customer.CustomerId
                     };
-                    var resultCustomerAccount = await _userManager.CreateAsync(userCustomer, "@Tien2801");
+                    var resultCustomerAccount = await _userManager.CreateAsync(userCustomer, "TienHaui@1234");
                     if (!resultCustomerAccount.Succeeded)
                     {
                         await _context.Database.RollbackTransactionAsync();
@@ -204,7 +204,7 @@ namespace Book_Ecommerce.Controllers
                         DateOfBirth = DateTime.Now,
                         Gender = true,
                         CodeNumber = employeeCode,
-                        EmployeeCode = "NV" + employeeCode,
+                        EmployeeCode = "NV" + DateTime.Now.Year.ToString() + employeeCode,
                         Address = "AD-HP-VN"
                     };
                     _context.Employees.Add(employee);
@@ -215,7 +215,7 @@ namespace Book_Ecommerce.Controllers
                         EmailConfirmed = true,
                         EmployeeId = employee.EmployeeId
                     };
-                    var resultUserEmployee = await _userManager.CreateAsync(userEmployee, "@Tien2801");
+                    var resultUserEmployee = await _userManager.CreateAsync(userEmployee, "TienHaui@1234");
                     if (!resultUserEmployee.Succeeded)
                     {
                         await _context.Database.RollbackTransactionAsync();

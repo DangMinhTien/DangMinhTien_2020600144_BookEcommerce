@@ -17,7 +17,7 @@ namespace Book_Ecommerce.Domain.Entities
         [Column(TypeName = "varchar(250)")]
         public string CategorySlug { get; set; } = null!;
         [Column(TypeName = "nvarchar(500)")] 
-        public string? Decription { get; set; }
+        public string? Description { get; set; }
         public IEnumerable<CategoryProducts> CategoryProducts { get; set; } = null!;
     }
 }

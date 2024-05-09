@@ -130,7 +130,7 @@ namespace Book_Ecommerce.Data.Migrations
                         .HasColumnType("bigint");
 
                     b.Property<string>("Information")
-                        .HasColumnType("varchar(250)");
+                        .HasColumnType("nvarchar(500)");
 
                     b.HasKey("AuthorId");
 
@@ -210,7 +210,7 @@ namespace Book_Ecommerce.Data.Migrations
                     b.Property<long>("CodeNumber")
                         .HasColumnType("bigint");
 
-                    b.Property<string>("Decription")
+                    b.Property<string>("Description")
                         .HasColumnType("nvarchar(500)");
 
                     b.Property<string>("ImageName")
@@ -276,7 +276,7 @@ namespace Book_Ecommerce.Data.Migrations
                     b.Property<long>("CodeNumber")
                         .HasColumnType("bigint");
 
-                    b.Property<string>("Decription")
+                    b.Property<string>("Description")
                         .HasColumnType("nvarchar(500)");
 
                     b.HasKey("CategoryId");

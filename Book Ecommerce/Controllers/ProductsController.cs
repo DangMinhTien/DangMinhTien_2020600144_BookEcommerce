@@ -34,7 +34,7 @@ namespace Book_Ecommerce.Controllers
             _brandService = brandService;
             _authorService = authorService;
         }
-        [Route("sanpham.html")]
+        [Route("/sanpham")]
         public async Task<IActionResult> Index(string? search = null, int page = 1, int pagesize = MyAppSetting.PAGE_SIZE)
         {
             try
@@ -125,7 +125,7 @@ namespace Book_Ecommerce.Controllers
                 return NotFound("Không thể lấy được sản phẩm");
             }
         }
-        [Route("/sanpham/{productSlug}.html")]
+        [Route("/sanpham/{productSlug}")]
         public async Task<IActionResult> Detail(string productSlug)
         {
             var product = await _productService.GetDetailToViewAsync(productSlug);

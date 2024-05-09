@@ -10,6 +10,8 @@ namespace Book_Ecommerce.Service.Abstract
 {
     public interface ICloudinaryService
     {
+        Task DeleteAsync(string fileName);
+        Task DeleteRangeAsync(List<string> fileNames);
         Task<CloudinaryModel> UploadAsync(IFormFile file);
     }
 }

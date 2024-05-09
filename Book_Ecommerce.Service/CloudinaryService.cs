@@ -41,5 +41,33 @@ namespace Book_Ecommerce.Service
                 Url = uploadResult.Url.ToString(),
             };
         }
+        public async Task DeleteAsync(string fileName)
+        {
+            var cloudinary = new Cloudinary(new Account(
+                cloud: _configuration.GetSection("Cloudinary:CloudName").Value,
+                apiKey: _configuration.GetSection("Cloudinary:ApiKey").Value,
+                apiSecret: _configuration.GetSection("Cloudinary:ApiSecret").Value
+            ));
+            var deleteParams = new DelResParams()
+            {
+                PublicIds = new List<string> { fileName },
+                Type = "upload"
+            };
+            var result = await cloudinary.DeleteResourcesAsync(deleteParams);
+        }
+        public async Task DeleteRangeAsync(List<string> fileNames)
+        {
+            var cloudinary = new Cloudinary(new Account(
+                cloud: _configuration.GetSection("Cloudinary:CloudName").Value,
+                apiKey: _configuration.GetSection("Cloudinary:ApiKey").Value,
+                apiSecret: _configuration.GetSection("Cloudinary:ApiSecret").Value
+            ));
+            var deleteParams = new DelResParams()
+            {
+                PublicIds = fileNames,
+                Type = "upload"
+            };
+            var result = await cloudinary.DeleteResourcesAsync(deleteParams);
+        }
     }
 }

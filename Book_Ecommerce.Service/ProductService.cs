@@ -28,7 +28,7 @@ namespace Book_Ecommerce.Service
         private readonly IUrlHelper _urlHelper;
         private List<PageSizeModel> lstPageSize;
 
-        public ProductService(IUnitOfWork unitOfWork, IUrlHelperFactory urlHelperFactory, IActionContextAccessor action, AppDbContext context)
+        public ProductService(IUnitOfWork unitOfWork, IUrlHelperFactory urlHelperFactory, IActionContextAccessor action)
         {
             _unitOfWork = unitOfWork;
             _urlHelper = urlHelperFactory.GetUrlHelper(action.ActionContext ?? new ActionContext());
@@ -70,10 +70,10 @@ namespace Book_Ecommerce.Service
             #region bắt đầu phân trang
             var totalItem = products.Count();
             var totalPage = (int)Math.Ceiling((double)totalItem / pagesize);
-            if (page < 1)
-                page = 1;
             if (page > totalPage)
                 page = totalPage;
+            if (page < 1)
+                page = 1;
             var productVMs = products.Select(p => new ProductVM
             {
                 ProductId = p.ProductId,
@@ -107,7 +107,7 @@ namespace Book_Ecommerce.Service
             return (productVMs, pagingModel, lstPageSize);
         }
         public async Task<(IEnumerable<ProductVM>, PagingModel, IEnumerable<PageSizeModel>)>
-            GetToViewAdminAsync(string? search, int page = 1, int pagesize = MyAppSetting.PAGE_SIZE)
+            GetToViewManageAsync(string? search, int page = 1, int pagesize = MyAppSetting.PAGE_SIZE)
         {
             var query = _unitOfWork.ProductRepository.Table()
                                                     .Include(p => p.Images)
@@ -116,15 +116,15 @@ namespace Book_Ecommerce.Service
             {
                 query = query.Where(p => p.ProductName.Contains(search));
             }
-            var products = await query.ToListAsync();
+            var products = await query.OrderBy(p => p.CodeNumber).ToListAsync();
 
             #region Bắt đầu phân trang
             var totalItem = products.Count();
             var totalPage = (int)Math.Ceiling((double)totalItem / pagesize);
-            if (page < 1)
-                page = 1;
             if (page > totalPage)
                 page = totalPage;
+            if (page < 1)
+                page = 1;
             var productVMs = products.Select(p => new ProductVM
             {
                 ProductId = p.ProductId,
@@ -133,6 +133,7 @@ namespace Book_Ecommerce.Service
                 ProductSlug = p.ProductSlug,
                 Quantity = p.Quantity,
                 Price = p.Price,
+                PercentDiscount = p.PercentDiscount,
                 IsActive = p.IsActive,
                 Decription = p.Description,
                 Images = p.Images
@@ -168,10 +169,10 @@ namespace Book_Ecommerce.Service
             #region Bắt đầu phân trang
             var totalItem = products.Count();
             var totalPage = (int)Math.Ceiling((double)totalItem / pagesize);
-            if (page < 1)
-                page = 1;
             if (page > totalPage)
                 page = totalPage;
+            if (page < 1)
+                page = 1;
             var productVMs = products.Select(p => new ProductVM
             {
                 ProductId = p.ProductId,
@@ -214,10 +215,10 @@ namespace Book_Ecommerce.Service
             #region Bắt đầu phân trang
             var totalItem = products.Count();
             var totalPage = (int)Math.Ceiling((double)totalItem / pagesize);
-            if (page < 1)
-                page = 1;
             if (page > totalPage)
                 page = totalPage;
+            if (page < 1)
+                page = 1;
             var productVMs = products.Select(p => new ProductVM
             {
                 ProductId = p.ProductId,
@@ -259,10 +260,10 @@ namespace Book_Ecommerce.Service
             #region Bắt đầu phân trang
             var totalItem = products.Count();
             var totalPage = (int)Math.Ceiling((double)totalItem / pagesize);
-            if (page < 1)
-                page = 1;
             if (page > totalPage)
                 page = totalPage;
+            if (page < 1)
+                page = 1;
             var productVMs = products.Select(p => new ProductVM
             {
                 ProductId = p.ProductId,
@@ -343,6 +344,34 @@ namespace Book_Ecommerce.Service
             };
             return productVM;
         }
+        public async Task<ProductVM?> GetDetailToViewManageAsync(string productCode)
+        {
+            var product = await _unitOfWork.ProductRepository.Table()
+                                           .Include(p => p.Brand)
+                                           .Include(p => p.CategoryProducts)
+                                           .ThenInclude(p => p.Category)
+                                           .Include(p => p.AuthorProducts)
+                                           .ThenInclude(p => p.Author)
+                                           .FirstOrDefaultAsync(p => p.ProductCode == productCode);
+            if (product == null)
+                return null;
+            var productVM = new ProductVM
+            {
+                ProductId = product.ProductId,
+                ProductName = product.ProductName,
+                ProductCode = product.ProductCode,
+                ProductSlug = product.ProductSlug,
+                PercentDiscount = product.PercentDiscount,
+                Price = product.Price,
+                Decription = product.Description,
+                Quantity = product.Quantity,
+                IsActive = product.IsActive,
+                Categories = product.CategoryProducts.Select(p => p.Category).ToList(),
+                Authors = product.AuthorProducts.Select(p => p.Author).ToList(),
+                Brand = product.Brand
+            };
+            return productVM;
+        }
         public async Task<Product?> GetSingleByConditionAsync(Expression<Func<Product, bool>> expression)
         {
             return await _unitOfWork.ProductRepository.GetSingleByConditionAsync(expression);
@@ -373,6 +402,15 @@ namespace Book_Ecommerce.Service
             }
             await _unitOfWork.SaveChangesAsync();
         }
-        
+        public async Task UpdateAsync(Product product)
+        {
+            _unitOfWork.ProductRepository.Update(product);
+            await _unitOfWork.SaveChangesAsync();
+        }
+        public async Task RemoveAsync(Product product)
+        {
+            _unitOfWork.ProductRepository.Remove(product);
+            await _unitOfWork.SaveChangesAsync();
+        }
     }
 }

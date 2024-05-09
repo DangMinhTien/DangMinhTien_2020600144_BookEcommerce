@@ -112,6 +112,9 @@ namespace Book_Ecommerce.Infrastructure.Configuration
             service.AddScoped<ICartService, CartService>();
             service.AddScoped<IProvinceService, ProvinceService>();
             service.AddScoped<ICheckoutService, CheckoutService>();
+            service.AddScoped<IImageService, ImageService>();
+            service.AddScoped<IAuthorProductService, AuthorProductService>();
+            service.AddScoped<ICategoryProductService, CategoryProductService>();
         }
     }
 }

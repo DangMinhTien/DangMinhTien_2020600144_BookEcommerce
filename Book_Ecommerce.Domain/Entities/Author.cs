@@ -16,7 +16,7 @@ namespace Book_Ecommerce.Domain.Entities
         public string AuthorName { set; get; } = null!;
         [Column(TypeName = "varchar(250)")]
         public string AuthorSlug { set; get; } = null!;
-        [Column(TypeName = "varchar(250)")]
+        [Column(TypeName = "nvarchar(500)")]
         public string? Information { set; get; }
         public IEnumerable<AuthorProduct> AuthorProducts { get; set; } = null!;
 

@@ -21,13 +21,16 @@ namespace Book_Ecommerce.Service.Abstract
             GetByCategoryToViewAsync(string categoryId, string categorySlug, int page = 1, int pagesize = MyAppSetting.PAGE_SIZE);
         Task<(IEnumerable<ProductVM>, PagingModel, IEnumerable<PageSizeModel>)> 
             GetToViewAsync(string? search, int page = 1, int pagesize = MyAppSetting.PAGE_SIZE);
-        Task<(IEnumerable<ProductVM>, PagingModel, IEnumerable<PageSizeModel>)> 
-            GetToViewAdminAsync(string? search, int page = 1, int pagesize = 12);
+        Task<(IEnumerable<ProductVM>, PagingModel, IEnumerable<PageSizeModel>)>
+            GetToViewManageAsync(string? search, int page = 1, int pagesize = 12);
         Task<ProductVM?> GetDetailToViewAsync(string productSlug);
         Task SaveChangesAsync();
         IQueryable<Product> Table();
         Task<Product?> GetSingleByConditionAsync(Expression<Func<Product, bool>> expression);
         Product? GetSingleByCondition(Expression<Func<Product, bool>> expression);
         Task AddAsync(Product product, IEnumerable<Image>? images = null, IEnumerable<CategoryProducts>? categoryProducts = null, IEnumerable<AuthorProduct>? authorProducts = null);
+        Task<ProductVM?> GetDetailToViewManageAsync(string productCode);
+        Task UpdateAsync(Product product);
+        Task RemoveAsync(Product product);
     }
 }

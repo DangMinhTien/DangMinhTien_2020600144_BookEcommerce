@@ -10,7 +10,7 @@ namespace Book_Ecommerce.Domain.ViewModels.BrandViewModel
         public string BrandName { set; get; } = null!;
         public string BrandSlug { set; get; } = null!;
         public bool IsActive { get; set; }
-        public string? Decription { set; get; }
+        public string? Description { set; get; }
         public string Image { set; get; } = null!;
         public int SumProduct { set; get; }
         public IEnumerable<Product>? Products { get; set; }
