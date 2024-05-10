@@ -1,13 +1,13 @@
 ﻿@model IEnumerable<AuthorVM>
 @{
-    ViewData["Title"] = "Quản lý tác gải";
+    ViewData["Title"] = "Quản lý tác giả";
     var pagingModel = ViewBag.pagingModel as PagingModel ?? new PagingModel();
     var pageSizes = ViewBag.pageSizes as List<PageSizeModel>;
 }
 <!-- DataTales Example -->
 <div class="card shadow">
     <div class="card-header py-3 text-primary">
-        <h4 class="m-0 font-weight-bold text-primary">Quản lý thể loại</h4>
+        <h4 class="m-0 font-weight-bold text-primary">Quản lý tác giả</h4>
     </div>
     <div class="card-header py-2">
         <div class="row">
@@ -168,11 +168,18 @@
                             console.log(response)
                             $('#loader').hide()
                             $('#errorMessage').html("")
-                            window.location.href = '/quan-ly-tac-gia?page=@pagingModel.currentpage&pagesize=@ViewBag.pagesize&search=@ViewBag.search'
+                            window.location.href = '@Url.Action("Index", "Authors", new
+                            {
+                                area = "Admin",
+                                search = ViewBag.search,
+                                page = pagingModel.currentpage,
+                                pagesize = ViewBag.pagesize
+                            })'
                         },
                         error: function (response) {
                             console.log(response)
                             $('#loader').hide()
+                            $('#errorMessage').html("")
                             var message = ""
                             if (response.status == 401)
                                 message = "Yêu cầu bạn đăng nhập để thực hiện chức năng này";
@@ -207,7 +214,13 @@
                             console.log(response)
                             $('#loader').hide()
                             $('#errorMessage').html("")
-                            window.location.href = '/quan-ly-tac-gia?page=@pagingModel.currentpage&pagesize=@ViewBag.pagesize&search=@ViewBag.search'
+                            window.location.href = '@Url.Action("Index", "Authors", new
+                            {
+                                area = "Admin",
+                                search = ViewBag.search,
+                                page = pagingModel.currentpage,
+                                pagesize = ViewBag.pagesize
+                            })'
                         },
                         error: function (response) {
                             console.log(response)
@@ -250,7 +263,13 @@
                     success: function (response) {
                         console.log(response)
                         $('#loader').hide()
-                        window.location.href = '/quan-ly-tac-gia?page=@pagingModel.currentpage&pagesize=@ViewBag.pagesize&search=@ViewBag.search'
+                        window.location.href = '@Url.Action("Index", "Authors", new
+                        {
+                            area = "Admin",
+                            search = ViewBag.search,
+                            page = pagingModel.currentpage,
+                            pagesize = ViewBag.pagesize
+                        })'
                     },
                     error: function (response) {
                         console.log(response)

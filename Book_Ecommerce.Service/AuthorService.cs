@@ -120,7 +120,7 @@ namespace Book_Ecommerce.Service
             _unitOfWork.AuthorRepository.Update(author);
             await _unitOfWork.SaveChangesAsync();
         }
-        public async Task RomoveAsync(Author author)
+        public async Task RemoveAsync(Author author)
         {
             _unitOfWork.AuthorRepository.Remove(author);
             await _unitOfWork.SaveChangesAsync();

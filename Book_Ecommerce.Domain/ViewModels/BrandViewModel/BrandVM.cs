@@ -11,7 +11,8 @@ namespace Book_Ecommerce.Domain.ViewModels.BrandViewModel
         public string BrandSlug { set; get; } = null!;
         public bool IsActive { get; set; }
         public string? Description { set; get; }
-        public string Image { set; get; } = null!;
+        public string ImageName { set; get; } = null!;
+        public string UrlImage { set; get; } = null!;
         public int SumProduct { set; get; }
         public IEnumerable<Product>? Products { get; set; }
     }

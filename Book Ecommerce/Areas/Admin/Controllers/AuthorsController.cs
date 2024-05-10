@@ -153,7 +153,7 @@ namespace Book_Ecommerce.Areas.Admin.Controllers
                 {
                     return BadRequest(new { mesClient = "Không xóa được do thông tìm thấy tác giả", mesDev = "Author is not found" });
                 }
-                await _authorService.RomoveAsync(author);
+                await _authorService.RemoveAsync(author);
                 TempData["success"] = "Xóa thể loại thành công";
                 return Ok(new { mesClient = "Xóa thể loại thành công", mesDev = "delete category is successfully" });
             }

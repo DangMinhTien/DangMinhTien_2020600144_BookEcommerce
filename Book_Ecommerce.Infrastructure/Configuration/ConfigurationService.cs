@@ -115,6 +115,7 @@ namespace Book_Ecommerce.Infrastructure.Configuration
             service.AddScoped<IImageService, ImageService>();
             service.AddScoped<IAuthorProductService, AuthorProductService>();
             service.AddScoped<ICategoryProductService, CategoryProductService>();
+            service.AddScoped<IBannerService, BannerService>();
         }
     }
 }

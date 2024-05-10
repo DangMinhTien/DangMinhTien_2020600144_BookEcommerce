@@ -26,6 +26,7 @@ namespace Book_Ecommerce.Data.Abstract
         IRepository<Order> OrderRepository { get; }
         IRepository<OrderDetail> OrderDetailRepository { get; }
         IRepository<Image> ImageRepository { get; }
+        IRepository<Banner> BannerRepository { get; }
 
         Task SaveChangesAsync();
     }

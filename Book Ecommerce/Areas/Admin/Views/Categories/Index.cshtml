@@ -169,11 +169,18 @@
                             console.log(response)
                             $('#loader').hide()
                             $('#errorMessage').html("")
-                            window.location.href = '/quan-ly-the-loai?page=@pagingModel.currentpage&pagesize=@ViewBag.pagesize&search=@ViewBag.search'
+                            window.location.href = '@Url.Action("Index", "Categories", new
+                            {
+                                area = "Admin",
+                                search = ViewBag.search,
+                                page = pagingModel.currentpage,
+                                pagesize = ViewBag.pagesize
+                            })'
                         },
                         error: function (response) {
                             console.log(response)
                             $('#loader').hide()
+                            $('#errorMessage').html("")
                             var message = ""
                             if (response.status == 401)
                                 message = "Yêu cầu bạn đăng nhập để thực hiện chức năng này";
@@ -208,7 +215,13 @@
                             console.log(response)
                             $('#loader').hide()
                             $('#errorMessage').html("")
-                            window.location.href = '/quan-ly-the-loai?page=@pagingModel.currentpage&pagesize=@ViewBag.pagesize&search=@ViewBag.search'
+                            window.location.href = '@Url.Action("Index", "Categories", new
+                            {
+                                area = "Admin",
+                                search = ViewBag.search,
+                                page = pagingModel.currentpage,
+                                pagesize = ViewBag.pagesize
+                            })'
                         },
                         error: function (response) {
                             console.log(response)
@@ -251,7 +264,13 @@
                     success: function (response) {
                         console.log(response)
                         $('#loader').hide()
-                        window.location.href = '/quan-ly-the-loai?page=@pagingModel.currentpage&pagesize=@ViewBag.pagesize&search=@ViewBag.search'
+                        window.location.href = '@Url.Action("Index", "Categories", new
+                        {
+                            area = "Admin",
+                            search = ViewBag.search,
+                            page = pagingModel.currentpage,
+                            pagesize = ViewBag.pagesize
+                        })'
                     },
                     error: function (response) {
                         console.log(response)

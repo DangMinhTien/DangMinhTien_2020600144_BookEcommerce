@@ -21,6 +21,6 @@ namespace Book_Ecommerce.Domain.Entities
         [Column(TypeName = "varchar(250)")]
         public string ImageName { get; set; } = null!;
         public string UrlImage { get; set; } = null!;
-        public IEnumerable<Product>? Products { get; set; }
+        public IEnumerable<Product> Products { get; set; } = null!;
     }
 }

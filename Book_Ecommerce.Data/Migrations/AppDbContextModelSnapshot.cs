@@ -169,6 +169,13 @@ namespace Book_Ecommerce.Data.Migrations
                     b.Property<string>("BannerId")
                         .HasColumnType("char(36)");
 
+                    b.Property<string>("BannerCode")
+                        .IsRequired()
+                        .HasColumnType("varchar(250)");
+
+                    b.Property<long>("CodeNumber")
+                        .HasColumnType("bigint");
+
                     b.Property<string>("Content")
                         .IsRequired()
                         .HasColumnType("nvarchar(500)");

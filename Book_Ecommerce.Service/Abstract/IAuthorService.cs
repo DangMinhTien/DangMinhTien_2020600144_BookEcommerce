@@ -17,7 +17,7 @@ namespace Book_Ecommerce.Service.Abstract
         Task<Author?> GetSingleByConditionAsync(Expression<Func<Author, bool>> expression);
         Task<IEnumerable<Author>> GetToViewComponentAsync();
         Task<(IEnumerable<AuthorVM>, PagingModel, IEnumerable<PageSizeModel>)> GetToViewManageAsync(string? search = null, int page = 1, int pagesize = 20);
-        Task RomoveAsync(Author author);
+        Task RemoveAsync(Author author);
         IQueryable<Author> Table();
         Task UpdateAsync(Author author);
     }
