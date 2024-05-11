@@ -17,37 +17,37 @@ namespace Book_Ecommerce.Controllers
         {
             return View();
         }
-        [HttpGet]
+        [HttpGet("/lay-tinh-thanh")]
         public async Task<IActionResult> GetAllProvince()
         {
             var provinces = await _context.Provinces.ToListAsync();
             return Json(new { data = provinces});
         }
-        [HttpGet]
+        [HttpGet("/lay-quan-huyen-theo-tinh-thanh")]
         public async Task<IActionResult> GetDistrictsByProvince(string provinceCode)
         {
             var districts = await _context.Districts.Where(d => d.ProvinceCode == provinceCode).ToListAsync();
             return Json(new { data = districts });
         }
-        [HttpGet]
+        [HttpGet("/lay-xa-phuong-theo-quan-huyen")]
         public async Task<IActionResult> GetWardsByDistrict(string districtCode)
         {
             var wards = await _context.Wards.Where(w => w.DistrictCode == districtCode).ToListAsync();
             return Json(new { data = wards });
         }
-        [HttpGet]
+        [HttpGet("/lay-tinh-thanh-theo-id")]
         public async Task<IActionResult> GetProvinceById(string code)
         {
             var province = await _context.Provinces.FirstOrDefaultAsync(p => p.Code == code);
             return Json(new { data = province });
         }
-        [HttpGet]
+        [HttpGet("/lay-quan-huyen-theo-id")]
         public async Task<IActionResult> GetDistrictsById(string code)
         {
             var district = await _context.Districts.FirstOrDefaultAsync(p => p.Code == code); ;
             return Json(new { data = district });
         }
-        [HttpGet]
+        [HttpGet("/lay-quan-huyen-theo-id")]
         public async Task<IActionResult> GetWardsById(string code)
         {
             var ward = await _context.Wards.FirstOrDefaultAsync(p => p.Code == code);

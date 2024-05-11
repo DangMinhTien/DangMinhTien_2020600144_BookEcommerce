@@ -87,7 +87,7 @@ namespace Book_Ecommerce.Controllers
                             return View();
                         }
                     }
-                    (var result, var user) = await _userService.RegisterCustomerAccountAsync(registerVM);
+                    (var result, var user, var customer) = await _userService.RegisterCustomerAccountAsync(registerVM);
                     if (result.Succeeded)
                     {
                         // Phát sinh token để xác nhận email
@@ -106,9 +106,9 @@ namespace Book_Ecommerce.Controllers
 
                         await _emailSender.SendEmailAsync(registerVM.Email,
                             "Xác nhận địa chỉ email",
-                            @$"Bạn đã đăng ký tài khoản trên Book_Ecommerce,
-                           hãy <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>bấm vào đây</a> 
-                           để kích hoạt tài khoản.");
+                        @$"Bạn đã đăng ký tài khoản khách hàng ({customer.CustomerCode}) trên hệ thống nhà sách MinhTienBook,
+                        hãy <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>bấm vào đây</a> 
+                        để kích hoạt tài khoản.");
                         var addToRoleResult = await _userManager.AddToRoleAsync(user, role.Name);
                         if (!addToRoleResult.Succeeded)
                         {
@@ -142,7 +142,7 @@ namespace Book_Ecommerce.Controllers
             TempData["error"] = "Lỗi khi tạo tài khoản";
             return View();
         }
-        [HttpGet]
+        [HttpGet("/xac-nhan-email")]
         public async Task<IActionResult> ConfirmEmail(string userId, string code)
         {
             if (userId == null || code == null)
@@ -285,7 +285,7 @@ namespace Book_Ecommerce.Controllers
             }
             return View(model);
         }
-        [HttpGet]
+        [HttpGet("/dat-lai-mat-khau")]
         [AllowAnonymous]
         public async Task<IActionResult> ResetPassword(string userId, string code, string key, string passwordHash)
         {

@@ -39,6 +39,7 @@ namespace Book_Ecommerce.Controllers
             _customerService = customerService;
             _productService = productService;
         }
+        [HttpGet("/quan-ly-gio-hang")]
         public async Task<IActionResult> Index()
         {
             try
@@ -69,7 +70,7 @@ namespace Book_Ecommerce.Controllers
                 return RedirectToAction("Index", "Home");
             }
         }
-        [HttpPost]
+        [HttpPost("/quan-ly-gio-hang/themsanpham")]
         public async Task<IActionResult> AddToCart(string productId, int quantity = 1)
         {
             try
@@ -139,7 +140,7 @@ namespace Book_Ecommerce.Controllers
                 return BadRequest(new {mesClient = "Thêm vào giỏ hàng thất bại", mesDev = ex.Message});
             }
         }
-        [HttpPost]
+        [HttpPost("/quan-ly-gio-hang/xoasanpham")]
         public async Task<IActionResult> RemoveCart(string productId)
         {
             try
@@ -173,7 +174,7 @@ namespace Book_Ecommerce.Controllers
             }
 
         }
-        [HttpPost]
+        [HttpPost("/quan-ly-gio-hang/congsoluong")]
         public async Task<IActionResult> PlusCart(string productId)
         {
             try
@@ -252,7 +253,7 @@ namespace Book_Ecommerce.Controllers
                 return BadRequest(new { mesClient = "Thêm số lượng thất bại", mesDev = "Plus quantity is failse" });
             }
         }
-        [HttpPost]
+        [HttpPost("/quan-ly-gio-hanng/giamsoluong")]
         public async Task<IActionResult> MinusCart(string productId)
         {
             try

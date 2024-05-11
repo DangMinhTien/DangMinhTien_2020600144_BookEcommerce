@@ -406,7 +406,7 @@
             })
             $('.edit-status').click(function () {
                 var employeeCode = $(this).data('employeecode')
-                var func = $(this).data('status') == true ? 'khóa' : 'Mở khóa'
+                var func = $(this).data('status') == true ? 'khóa' : 'mở khóa'
                 if (!confirm(`Bạn có muốn ${func} nhân viên ${employeeCode}`))
                     return
                 employeeId = $(this).data('employeeid')

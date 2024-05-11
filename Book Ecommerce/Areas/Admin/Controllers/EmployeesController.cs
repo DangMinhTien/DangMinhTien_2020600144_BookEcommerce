@@ -313,6 +313,7 @@ namespace Book_Ecommerce.Areas.Admin.Controllers
                 return BadRequest(new { mesClient = "Không thể thay đổi trạng thái tài khoản nhân viên do hệ thống lỗi", mesDev = ex.Message });
             }
         }
+        [HttpPost("/quan-ly-nhan-vien/xoa")]
         public async Task<IActionResult> Delete(string employeeId)
         {
             try

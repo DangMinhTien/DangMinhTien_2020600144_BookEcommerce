@@ -71,6 +71,7 @@ namespace Book_Ecommerce.Controllers
             _checkoutService = checkoutService;
             _payPalService = payPalService;
         }
+        [HttpGet("/dat-hang")]
         public async Task<IActionResult> Index()
         {
             try
@@ -108,8 +109,8 @@ namespace Book_Ecommerce.Controllers
                 return RedirectToAction("Index", "Home");
             }
         }
-        [HttpPost]
-        public async Task<IActionResult> Index(CheckoutVM checkout)
+        [HttpPost("/trang-thanh-toan")]
+        public async Task<IActionResult> ViewPay(CheckoutVM checkout)
         {
             try
             {
@@ -150,7 +151,7 @@ namespace Book_Ecommerce.Controllers
                 return RedirectToAction("Index", "Home");
             }
         }
-        [HttpPost]
+        [HttpPost("/thanh-toan")]
         public async Task<IActionResult> Pay(PayVM payVM, string paymentType = MyPayment.COD)
         {
             try
@@ -269,6 +270,7 @@ namespace Book_Ecommerce.Controllers
             TempData["error"] = " Đặt hàng thất bại do lỗi hệ thống";
             return View("Failure");
         }
+        [HttpGet("/ket-qua-thanh-toan-vppay")]
         public async Task<IActionResult> VnPaymentCallBack(string orderId, string customerId)
         {
             try
@@ -299,6 +301,7 @@ namespace Book_Ecommerce.Controllers
                 return View("Failure");
             }
         }
+        [HttpGet("/thanh-toan-paypal")]
         public async System.Threading.Tasks.Task<IActionResult> PaypalPayment(string orderId, string customerId)
         {
             try
@@ -335,7 +338,7 @@ namespace Book_Ecommerce.Controllers
                 return RedirectToAction(nameof(PaypalPaymentFail), new {orderId = orderId});
             }
         }
-        [HttpGet]
+        [HttpGet("/thanh-toan-paypal-that-bai")]
         public async Task<IActionResult> PaypalPaymentFail(string orderId)
         {
             try
@@ -353,7 +356,7 @@ namespace Book_Ecommerce.Controllers
             TempData["error"] = "Đặt hàng thất bại do thanh toán Paypal không thành công";
             return View("Failure");
         }
-        [HttpGet]
+        [HttpGet("/thanh-toan-paypal-thanh-cong")]
         public async Task<IActionResult> PayPalPaymentSuccess(string customerId)
         {
             try

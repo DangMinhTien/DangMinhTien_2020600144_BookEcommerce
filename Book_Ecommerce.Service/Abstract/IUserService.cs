@@ -15,7 +15,7 @@ namespace Book_Ecommerce.Service.Abstract
     {
         Task<AppUser?> GetSingleByConditionAsync(Expression<Func<AppUser, bool>> expression);
         IQueryable<AppUser> Table();
-        Task<(IdentityResult, AppUser)> RegisterCustomerAccountAsync(RegisterVM registerVM);
+        Task<(IdentityResult, AppUser, Customer)> RegisterCustomerAccountAsync(RegisterVM registerVM);
         Task<(IdentityResult, AppUser, Employee)> RegisterEmployeeAccountAsync(InputEmployee inputEmployee);
     }
 }
