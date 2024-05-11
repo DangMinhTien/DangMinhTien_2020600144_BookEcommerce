@@ -56,14 +56,15 @@ namespace Book_Ecommerce.Service
             {
                 query = query.Where(b => b.Title.Contains(search));
             }
-            var banners = await query.OrderBy(b => b.CodeNumber).ToListAsync();
+            query = query.OrderBy(b => b.CodeNumber);
             #region bắt đầu phân trang
-            var totalItem = banners.Count();
+            var totalItem = query.Count();
             var totalPage = (int)Math.Ceiling((double)totalItem / pagesize);
             if (page > totalPage)
                 page = totalPage;
             if (page < 1)
                 page = 1;
+            var banners = await query.Skip((page - 1) * pagesize).Take(pagesize).ToListAsync();
             var bannerVMs = banners.Select(b => new BannerVM
             {
                 BannerId = b.BannerId,
@@ -72,7 +73,7 @@ namespace Book_Ecommerce.Service
                 Content = b.Content,
                 ImageName = b.ImageName,
                 UrlImage = b.UrlImage,
-            }).Skip((page - 1) * pagesize).Take(pagesize).ToList();
+            }).ToList();
             var pagingModel = new PagingModel
             {
                 currentpage = page,

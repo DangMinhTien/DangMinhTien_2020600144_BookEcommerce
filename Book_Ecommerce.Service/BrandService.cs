@@ -70,14 +70,15 @@ namespace Book_Ecommerce.Service
             {
                 query = query.Where(b => b.BrandName.Contains(search));
             }
-            var brands = await query.OrderBy(b => b.CodeNumber).ToListAsync();
+            query = query.OrderBy(b => b.CodeNumber);
             #region bắt đầu phân trang
-            var totalItem = brands.Count();
+            var totalItem = query.Count();
             var totalPage = (int)Math.Ceiling((double)totalItem / pagesize);
             if (page > totalPage)
                 page = totalPage;
             if (page < 1)
                 page = 1;
+            var brands = await query.Skip((page - 1) * pagesize).Take(pagesize).ToListAsync();
             var brandVMs = brands.Select(b => new BrandVM
             {
                 BrandId = b.BrandId,
@@ -88,7 +89,7 @@ namespace Book_Ecommerce.Service
                 SumProduct = b.Products.Count(),
                 ImageName = b.ImageName,
                 UrlImage = b.UrlImage,
-            }).Skip((page - 1) * pagesize).Take(pagesize).ToList();
+            }).ToList();
             var pagingModel = new PagingModel
             {
                 currentpage = page,

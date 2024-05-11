@@ -212,6 +212,7 @@ namespace Book_Ecommerce.Controllers
                     {
                         UserName = "admin@gmail.com",
                         Email = "admin@gmail.com",
+                        PhoneNumber = "0999999999",
                         EmailConfirmed = true,
                         EmployeeId = employee.EmployeeId
                     };

@@ -19,9 +19,9 @@ namespace Book_Ecommerce.Domain.Entities
         public bool Gender { get; set; }
         [Column(TypeName = "nvarchar(250)")]
         public string? Address { get; set; }
-        public AppUser? User { get; set; }
-        public IEnumerable<Order>? Orders { get; set; }
-        public IEnumerable<Comment>? Comments { get; set; }
+        public AppUser User { get; set; } = null!;
+        public IEnumerable<Order> Orders { get; set; } = null!;
+        public IEnumerable<Comment> Comments { get; set; } = null!;
         public IEnumerable<FavouriteProduct> FavouriteProducts { get; set; } = null!;
         public IEnumerable<CartItem> CartItems { get; set; } = null!;
     }

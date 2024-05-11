@@ -2,8 +2,8 @@
 {
     public class MyRole
     {
-        public const string CUSTOMER = "Customer";
-        public const string EMPLOYEE = "Employee";
-        public const string ADMIN = "Admin";
+        public const string CUSTOMER = "Khách hàng";
+        public const string EMPLOYEE = "Nhân viên";
+        public const string ADMIN = "Quản trị viên";
     }
 }

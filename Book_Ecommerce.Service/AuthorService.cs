@@ -70,14 +70,15 @@ namespace Book_Ecommerce.Service
             {
                 query = query.Where(a => a.AuthorName.Contains(search));
             }
-            var authors = await query.OrderBy(a => a.CodeNumber).ToListAsync();
+            query = query.OrderBy(a => a.CodeNumber);
             #region bắt đầu phân trang
-            var totalItem = authors.Count();
+            var totalItem = query.Count();
             var totalPage = (int)Math.Ceiling((double)totalItem / pagesize);
             if (page > totalPage)
                 page = totalPage;
             if (page < 1)
                 page = 1;
+            var authors = await query.Skip((page - 1) * pagesize).Take(pagesize).ToListAsync();
             var authorVMs = authors.Select(a => new AuthorVM
             {
                 AuthorId = a.AuthorId,
@@ -87,7 +88,7 @@ namespace Book_Ecommerce.Service
                 AuthorCode = a.AuthorCode,
                 Information = a.Information,
                 SumProduct = a.AuthorProducts.Count(),
-            }).Skip((page - 1) * pagesize).Take(pagesize).ToList();
+            }).ToList();
             var pagingModel = new PagingModel
             {
                 currentpage = page,

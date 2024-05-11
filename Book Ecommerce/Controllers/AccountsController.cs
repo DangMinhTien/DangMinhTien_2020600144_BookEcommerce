@@ -82,7 +82,7 @@ namespace Book_Ecommerce.Controllers
                         var roleResult = await _roleManage.CreateAsync(role);
                         if (!roleResult.Succeeded)
                         {
-                            _context.Database.RollbackTransaction();
+                            await _context.Database.RollbackTransactionAsync();
                             TempData["error"] = "Không tạo được người dùng mới do không tìm thấy quyền khách hàng";
                             return View();
                         }
@@ -112,7 +112,7 @@ namespace Book_Ecommerce.Controllers
                         var addToRoleResult = await _userManager.AddToRoleAsync(user, role.Name);
                         if (!addToRoleResult.Succeeded)
                         {
-                            _context.Database.RollbackTransaction();
+                            await _context.Database.RollbackTransactionAsync();
                             TempData["error"] = "Không tạo được người dùng mới do không thêm được quyền cho tài khoản";
                             return View();
                         }

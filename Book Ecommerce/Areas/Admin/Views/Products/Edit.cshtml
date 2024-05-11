@@ -137,11 +137,11 @@
                 formData.append('PercentDiscount', $('#percentDiscount').val())
                 formData.append('IsActive', $('#isActive').val())
                 formData.append('BrandId', $('#brandId').val())
-                var categoryIds = $('#categoryIds').val()
+                var categoryIds = $('#categoryIds').multipleSelect('getSelects')
                 for (var i = 0; i < categoryIds.length; i++) {
                     formData.append('CategoryIds', categoryIds[i]);
                 }
-                var authorIds = $('#authorIds').val()
+                var authorIds = $('#authorIds').multipleSelect('getSelects')
                 for (var i = 0; i < authorIds.length; i++) {
                     formData.append('AuthorIds', authorIds[i]);
                 }

@@ -19,6 +19,6 @@ namespace Book_Ecommerce.Domain.Entities
         public bool Gender { get; set; }
         [Column(TypeName = "nvarchar(500)")]
         public string Address { set; get; } = null!;
-        public AppUser? User { get; set; }
+        public AppUser User { get; set; } = null!;
     }
 }

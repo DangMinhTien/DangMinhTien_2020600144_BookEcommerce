@@ -116,15 +116,16 @@ namespace Book_Ecommerce.Service
             {
                 query = query.Where(p => p.ProductName.Contains(search));
             }
-            var products = await query.OrderBy(p => p.CodeNumber).ToListAsync();
+            query = query.OrderBy(p => p.CodeNumber);
 
             #region Bắt đầu phân trang
-            var totalItem = products.Count();
+            var totalItem = query.Count();
             var totalPage = (int)Math.Ceiling((double)totalItem / pagesize);
             if (page > totalPage)
                 page = totalPage;
             if (page < 1)
                 page = 1;
+            var products = await query.Skip((page - 1) * pagesize).Take(pagesize).ToListAsync();
             var productVMs = products.Select(p => new ProductVM
             {
                 ProductId = p.ProductId,
@@ -137,7 +138,7 @@ namespace Book_Ecommerce.Service
                 IsActive = p.IsActive,
                 Decription = p.Description,
                 Images = p.Images
-            }).Skip((page - 1) * pagesize).Take(pagesize).ToList();
+            }).ToList();
             var pagingModel = new PagingModel
             {
                 currentpage = page,

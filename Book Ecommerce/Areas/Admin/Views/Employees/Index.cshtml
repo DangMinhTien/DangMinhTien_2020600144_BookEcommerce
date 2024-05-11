@@ -1,0 +1,574 @@
+﻿@model IEnumerable<EmployeeVM>
+@{
+    ViewData["Title"] = "Quản lý nhân viên";
+    var pagingModel = ViewBag.pagingModel as PagingModel ?? new PagingModel();
+    var pageSizes = ViewBag.pageSizes as List<PageSizeModel>;
+}
+<!-- DataTales Example -->
+<div class="card shadow">
+    <div class="card-header py-3 text-primary">
+        <h4 class="m-0 font-weight-bold text-primary">Quản lý nhân viên</h4>
+    </div>
+    <div class="card-header py-2">
+        <div class="row">
+            <div class="col-sm-6 col-xl-8 py-1">
+                <a id="createEmployee" class="btn btn-primary" data-toggle="modal" data-target="#formModal">
+                    <i class="fas fa-plus"></i>
+                    Thêm mới
+                </a>
+            </div>
+            <div class="col-sm-6 col-xl-4 d-flex py-1">
+                <div class="search mr-2">
+                    <form class="form-inline mr-auto w-100 navbar-search"
+                          asp-action="Index" asp-controller="Employees" asp-area="Admin" method="get">
+                        <div class="input-group">
+                            <input type="text" name="search" class="form-control bg-light border-1 small"
+                                   placeholder="Tìm theo tên" aria-label="Search"
+                                   aria-describedby="basic-addon2" value="@ViewBag.search">
+                            <div class="input-group-append">
+                                <button class="btn btn-primary" type="submit">
+                                    <i class="fas fa-search fa-sm"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <partial name="_PageSizeAdminPartial" model="@pageSizes"></partial>
+            </div>
+        </div>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                <thead class="bg-primary text-light">
+                    <tr>
+                        <th>Mã nhân viên</th>
+                        <th>Họ tên</th>
+                        <th>Địa chỉ</th>
+                        <th>Giới tính</th>
+                        <th>Ngày sinh</th>
+                        <th>Email/Tài khoản</th>
+                        <th>Số điện thoại</th>
+                        <th>Trạng thái</th>
+                        <th>Quyền</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td class="text-primary">
+                                @item.EmployeeCode
+                            </td>
+                            <td>@item.FullName</td>
+                            <td>@item.Address</td>
+                            <td>
+                                @if(item.Gender == true)
+                                {
+                                    <span>Nam</span>
+                                }
+                                else
+                                {
+                                    <span>Nữ</span>
+                                }
+                            </td>
+                            <td>@item.DateOfBirth.ToString("dd/MM/yyyy")</td>
+                            <td>@item.User.UserName</td>
+                            <td>@item.User.PhoneNumber</td>
+                            <td>
+                                @if(item.User.LockoutEnd == null)
+                                {
+                                    <a style="cursor: pointer;" class="edit-status" data-employeecode="@item.EmployeeCode" data-employeeid="@item.EmployeeId" data-status="true">Hoạt động</a>
+                                }
+                                else
+                                {
+                                    <a style="cursor: pointer;" class="edit-status" data-employeecode="@item.EmployeeCode" data-employeeid="@item.EmployeeId" data-status="false">Bị khóa</a>
+                                }
+                            </td>
+                            <td>
+                                <a style="cursor: pointer" class="text-primary edit-role" data-employeeid="@item.EmployeeId" data-toggle="modal" data-target="#formRole">
+                                    @string.Join(", ", item.RoleNames)
+                                </a>
+                            </td>
+                            <td>
+                                <a data-employeecode="@item.EmployeeCode" data-employeeid="@item.EmployeeId" style="cursor: pointer" class="delete-employee">Xóa</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+            <div class="d-flex justify-content-center">
+                <partial name="_PagingAdmin" model="@pagingModel"></partial>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Modal Form Role-->
+<div class="modal fade" id="formRole" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="titleForm">Phân quyền</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div id="errorRoleMessage" class="text-danger"></div>
+                <div class="form-group">
+                    <label class="col-form-label">Quyền</label>
+                    <select class="w-100 multiple-select-item" id="roleNames" multiple="multiple" asp-items="@ViewBag.roleNames"></select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+                <button id="btnUpdateRole" type="button" class="btn btn-primary">Cập nhật</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Modal Form Create-->
+<div class="modal fade" id="formModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" style="max-width: 900px;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="titleForm">Thêm mới</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div id="errorMessage" class="text-danger"></div>
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label class="text-dark">Email</label>
+                            <input id="email" type="text" class="form-control" placeholder="Địa chỉ email">
+                        </div>
+                        <div class="form-group">
+                            <label class="text-dark">Mật khẩu</label>
+                            <input id="password" type="password" class="form-control" placeholder="Mật khẩu">
+                        </div>
+                        <div class="form-group">
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input" id="checkpassword">
+                                <label class="custom-control-label" for="checkpassword">Hiện mật khẩu</label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="text-dark">Họ tên</label>
+                            <input id="fullName" type="text" class="form-control" placeholder="Họ tên">
+                        </div>
+                        <div class="form-group">
+                            <label class="text-dark">Số điện thoại</label>
+                            <input id="phoneNumber" type="text" class="form-control" placeholder="Số điện thoại">
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label class="text-dark">Ngày sinh</label>
+                            <input id="dateOfBirth" type="date" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label class="text-dark">Giới tính</label>
+                            <div class="form-group">
+                                <div class="custom-control custom-radio">
+                                    <input type="radio" class="custom-control-input" value="true" name="gender" id="men" checked>
+                                    <label class="custom-control-label" for="men">Nam</label>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="custom-control custom-radio">
+                                    <input type="radio" class="custom-control-input" value="false" name="gender" id="women">
+                                    <label class="custom-control-label" for="women">Nữ</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="text-dark">Địa chỉ</label>
+                            <input id="address" type="text" class="form-control" placeholder="Địa chỉ">
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-4">
+                                <label class="text-dark">Tỉnh/thành</label>
+                                <select class="form-control" name="province" id="province">
+                                    <option value="">Tỉnh/thành</option>
+                                </select>
+                            </div>
+                            <div class="form-group col-4">
+                                <label class="text-dark">quận/huyện</label>
+                                <select class="form-control" name="district" id="district">
+                                    <option value="">quận/huyện</option>
+                                </select>
+                            </div>
+                            <div class="form-group col-4">
+                                <label class="text-dark">phường/xã</label>
+                                <select class="form-control" name="ward" id="ward">
+                                    <option value="">xã/phường</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    </div>
+                </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+                <button id="btnCreate" type="button" class="btn btn-primary">Thêm</button>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    <link rel="stylesheet" href="~/lib/multiple-select/multiple-select.min.css" />
+    <script src="~/lib/multiple-select/multiple-select.min.js"></script>
+    <script>
+        $(".multiple-select-item").multipleSelect({
+            selectAll: false,
+            keepOpen: false,
+            isOpen: false
+        });
+    </script>
+    <script type="text/javascript">
+        var employeeId = ''
+        $(document).ready(function () {
+            RenderHtmlToAddress('@Url.Action("GetAllProvince", "ProvincesVietNam", new { area = "" })', $('#province'), 'Tỉnh/thành')
+
+            $('#province').change(function () {
+                var provinceCode = $(this).val()
+                RenderHtmlToAddress('@Url.Action("GetDistrictsByProvince", "ProvincesVietNam", new { area = "" })' + `?provinceCode=${provinceCode}`,
+                    $('#district'), 'quận/huyện')
+                $('#ward').html(`<option value="">phường/xã</option>`)
+            })
+            $('#district').change(function () {
+                var districtCode = $(this).val()
+                RenderHtmlToAddress('@Url.Action("GetWardsByDistrict", "ProvincesVietNam", new { area = "" })' + `?districtCode=${districtCode}`,
+                    $('#ward'), 'phường/xã')
+            })
+            $('#ward').change(function () {
+                DisplayOnAddress()
+            })
+            $('#checkpassword').change(function () {
+                if ($(this).is(":checked")) {
+                    $('#password').attr('type', 'text')
+                }
+                else {
+                    $('#password').attr('type', 'password')
+                }
+            })
+            // thêm, phân quyền, xóa
+            $('#createEmployee').click(function () {
+                refreshForm()
+            })
+            $('#btnCreate').click(function () {
+                var formData = new FormData()
+                formData.append('Email', $('#email').val())
+                formData.append('Password', $('#password').val())
+                formData.append('FullName', $('#fullName').val())
+                var gender
+                if ($("#men").prop("checked") == true)
+                    gender = true
+                else
+                    gender = false
+                formData.append('Gender', gender)
+                formData.append('PhoneNumber', $('#phoneNumber').val())
+                formData.append('DateOfBirth', $('#dateOfBirth').val())
+                formData.append('Address', $('#address').val())
+                $('#loader').show()
+                $.ajax({
+                    url: '@Url.Action("Create", "Employees", new { area = "Admin" })',
+                    type: "POST",
+                    data: formData,
+                    catch: false,
+                    contentType: false,
+                    processData: false,
+                    success: function (response) {
+                        console.log(response)
+                        $('#loader').hide()
+                        $('#errorMessage').html("")
+                        window.location.href = '@Url.Action("Index", "Employees", new
+                        {
+                            area = "Admin",
+                            search = ViewBag.search,
+                            page = pagingModel.currentpage,
+                            pagesize = ViewBag.pagesize
+                        })'
+                    },
+                    error: function (response) {
+                        console.log(response)
+                        $('#loader').hide()
+                        $('#errorMessage').html("")
+                        var message = ""
+                        if (response.status == 401)
+                            message = "Yêu cầu bạn đăng nhập để thực hiện chức năng này";
+                        else if (response.status == 403)
+                            message = "Tài khoản của bạn không thể thực hiện chức năng này";
+                        else {
+                            if (response.responseJSON.isValid == false) {
+                                var err = ""
+                                for (var i = 0; i < response.responseJSON.error.length; i++) {
+                                    err += `<p>${response.responseJSON.error[i]}</p>`
+                                }
+                                $('#errorMessage').html(err)
+                            }
+                            message = response.responseJSON.mesClient
+                        }
+                        var toast = $(RenderHtmlToastError(message))
+                        $('.m-toast-box').append(toast)
+                        HideToastAfterShow(toast)
+                    }
+                })
+            })
+            $('.edit-role').click(function () {
+                $('#errorRoleMessage').html('')
+                $('#roleNames').multipleSelect('setSelects', [])
+                employeeId = $(this).data('employeeid')
+                $('#loader').show()
+                $.ajax({
+                    url: '@Url.Action("GetRoles", "Employees", new { area = "Admin" })' + `?employeeId=${employeeId}`,
+                    type: "GET",
+                    catch: false,
+                    contentType: false,
+                    processData: false,
+                    success: function (response) {
+                        console.log(response)
+                        $('#loader').hide()
+                        $('#roleNames').multipleSelect('setSelects', response.roleNames)
+                        console.log($('#roleNames').multipleSelect('getSelects'))
+                    },
+                    error: function (response) {
+                        console.log(response)
+                        $('#loader').hide()
+                        var message = ""
+                        if (response.status == 401)
+                            message = "Yêu cầu bạn đăng nhập để thực hiện chức năng này";
+                        else if (response.status == 403)
+                            message = "Tài khoản của bạn không thể thực hiện chức năng này";
+                        else {
+                            message = response.responseJSON.mesClient
+                        }
+                        var toast = $(RenderHtmlToastError(message))
+                        $('.m-toast-box').append(toast)
+                        HideToastAfterShow(toast)
+                    }
+                })
+            })
+            $('#btnUpdateRole').click(function () {
+                var formData = new FormData()
+                var roleNames = $('#roleNames').multipleSelect('getSelects')
+                for (var i = 0; i < roleNames.length; i++) {
+                    formData.append('roleNames', roleNames[i])
+                }
+                $('#loader').show()
+                $.ajax({
+                    url: '@Url.Action("UpdateRoles", "Employees", new { area = "Admin" })' + `?employeeId=${employeeId}`,
+                    type: "POST",
+                    data: formData,
+                    catch: false,
+                    contentType: false,
+                    processData: false,
+                    success: function (response) {
+                        console.log(response)
+                        $('#loader').hide()
+                        $('#errorRoleMessage').html('')
+                        window.location.href = '@Url.Action("Index", "Employees", new
+                        {
+                            area = "Admin",
+                            search = ViewBag.search,
+                            page = pagingModel.currentpage,
+                            pagesize = ViewBag.pagesize
+                        })'
+                    },
+                    error: function (response) {
+                        console.log(response)
+                        $('#loader').hide()
+                        $('#errorRoleMessage').html('')
+                        var message = ""
+                        if (response.status == 401)
+                            message = "Yêu cầu bạn đăng nhập để thực hiện chức năng này";
+                        else if (response.status == 403)
+                            message = "Tài khoản của bạn không thể thực hiện chức năng này";
+                        else {
+                            if (response.responseJSON.isValid == false) {
+                                var err = ""
+                                for (var i = 0; i < response.responseJSON.error.length; i++) {
+                                    err += `<p>${response.responseJSON.error[i]}</p>`
+                                }
+                                $('#errorRoleMessage').html(err)
+                            }
+                            message = response.responseJSON.mesClient
+                        }
+                        var toast = $(RenderHtmlToastError(message))
+                        $('.m-toast-box').append(toast)
+                        HideToastAfterShow(toast)
+                    }
+                })
+            })
+            $('.edit-status').click(function () {
+                var employeeCode = $(this).data('employeecode')
+                var func = $(this).data('status') == true ? 'khóa' : 'Mở khóa'
+                if (!confirm(`Bạn có muốn ${func} nhân viên ${employeeCode}`))
+                    return
+                employeeId = $(this).data('employeeid')
+                $('#loader').show()
+                $.ajax({
+                    url: '@Url.Action("UpdateStatus", "Employees", new { area = "Admin" })' + `?employeeId=${employeeId}`,
+                    type: "POST",
+                    catch: false,
+                    contentType: false,
+                    processData: false,
+                    success: function (response) {
+                        console.log(response)
+                        $('#loader').hide()
+                        window.location.href = '@Url.Action("Index", "Employees", new
+                        {
+                            area = "Admin",
+                            search = ViewBag.search,
+                            page = pagingModel.currentpage,
+                            pagesize = ViewBag.pagesize
+                        })'
+                    },
+                    error: function (response) {
+                        console.log(response)
+                        $('#loader').hide()
+                        var message = ""
+                        if (response.status == 401)
+                            message = "Yêu cầu bạn đăng nhập để thực hiện chức năng này";
+                        else if (response.status == 403)
+                            message = "Tài khoản của bạn không thể thực hiện chức năng này";
+                        else {
+                            message = response.responseJSON.mesClient
+                        }
+                        var toast = $(RenderHtmlToastError(message))
+                        $('.m-toast-box').append(toast)
+                        HideToastAfterShow(toast)
+                    }
+                })
+            })
+            $('.delete-employee').click(function () {
+                var employeeCode = $(this).data('employeecode')
+                if (!confirm(`Bạn có muốn xóa nhân viên ${employeeCode}`))
+                    return
+                employeeId = $(this).data('employeeid')
+                $('#loader').show()
+                $.ajax({
+                    url: '@Url.Action("Delete", "Employees", new { area = "Admin" })' + `?employeeId=${employeeId}`,
+                    type: "POST",
+                    catch: false,
+                    contentType: false,
+                    processData: false,
+                    success: function (response) {
+                        console.log(response)
+                        $('#loader').hide()
+                        window.location.href = '@Url.Action("Index", "Employees", new
+                        {
+                            area = "Admin",
+                            search = ViewBag.search,
+                            page = pagingModel.currentpage,
+                            pagesize = ViewBag.pagesize
+                        })'
+                    },
+                    error: function (response) {
+                        console.log(response)
+                        $('#loader').hide()
+                        var message = ""
+                        if (response.status == 401)
+                            message = "Yêu cầu bạn đăng nhập để thực hiện chức năng này";
+                        else if (response.status == 403)
+                            message = "Tài khoản của bạn không thể thực hiện chức năng này";
+                        else {
+                            message = response.responseJSON.mesClient
+                        }
+                        var toast = $(RenderHtmlToastError(message))
+                        $('.m-toast-box').append(toast)
+                        HideToastAfterShow(toast)
+                    }
+                })
+            })
+        })
+        function DisplayOnAddress() {
+            var address = ''
+            if ($('#ward').val() != '') {
+                address += $("#ward option:selected").text() + ' - '
+            }
+            if ($('#district').val() != '') {
+                address += $("#district option:selected").text() + ' - '
+            }
+            if ($('#province').val() != '') {
+                address += $("#province option:selected").text()
+            }
+            $('#address').val(address)
+        }
+        function RenderHtmlToAddress(url, select, selectfor) {
+            $('#loader').show()
+            $.ajax({
+                url: url,
+                type: 'GET',
+                catch: false,
+                contentType: false,
+                processData: false,
+                success: function (response) {
+                    $('#loader').hide()
+                    var row = `<option value="">${selectfor}</option>`
+                    $(response.data).each(function (index, element) {
+                        row += `<option value="${element.code}">${element.fullName}</option>`
+                    })
+                    select.html(row)
+                    DisplayOnAddress()
+                },
+                error: function (response) {
+                    $('#loader').hide()
+                    var toast = $(RenderHtmlToastError(`Không lấy được dữ liệu ${selectfor}`))
+                    $('.m-toast-box').append(toast)
+                    HideToastAfterShow(toast)
+                    DisplayOnAddress()
+                }
+            })
+        }
+        // các hàm boỏ trợ cho form
+        function refreshForm() {
+            $("#email").val('')
+            $("#password").val('')
+            $("#fullname").val('')
+            $("#phoneNumber").val('')
+            $("#dateOfBirth").val('')
+            $("#men").prop('checked', true)
+            RenderHtmlToAddress('@Url.Action("GetAllProvince", "ProvincesVietNam", new { area = "" })', $('#province'), 'Tỉnh/thành')
+            $('#district').html('<option value="">quận huyện</option>')
+            $('#ward').html('<option value="">xã/phường</option>')
+            $('#errorMessage').html("")
+        }
+        function HideToastAfterShow(toast) {
+            setTimeout(function () {
+                // tạo hiệu ứng
+                toast.addClass('hidden')
+                // sau đó ẩn
+                setTimeout(function () {
+                    toast.remove()
+                }, 1000)
+            }, 5000)
+        }
+        function RenderHtmlToastError(message) {
+            return `<div class="m-toast-message m-toast-error">
+                                <div class="m-toast-icon">
+                                    <i class="fas fa-check-circle"></i>
+                                </div>
+                                <div class="m-toast-text">${message}</div>
+                                <div class="m-toast-close">
+                                    <i class="fas fa-times"></i>
+                                </div>
+                            </div>`
+        }
+        function RenderHtmlToastSuccess(message) {
+            return `<div class="m-toast-message m-toast-success">
+                                <div class="m-toast-icon">
+                                    <i class="fas fa-check-circle"></i>
+                                </div>
+                                        <div class="m-toast-text">${message}</div>
+                                <div class="m-toast-close">
+                                    <i class="fas fa-times"></i>
+                                </div>
+                            </div>`
+        }
+    </script>
+}

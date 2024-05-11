@@ -1,6 +1,7 @@
 ﻿using Book_Ecommerce.Data.Abstract;
 using Book_Ecommerce.Domain.Entities;
 using Book_Ecommerce.Domain.MySettings;
+using Book_Ecommerce.Domain.ViewModels.EmployeeViewModel;
 using Book_Ecommerce.Domain.ViewModels.UserViewModel;
 using Book_Ecommerce.Service.Abstract;
 using Microsoft.AspNetCore.Identity;
@@ -57,6 +58,32 @@ namespace Book_Ecommerce.Service
             };
             var result = await _userManager.CreateAsync(user, registerVM.Password);
             return (result, user);
+        }
+        public async Task<(IdentityResult, AppUser, Employee)> RegisterEmployeeAccountAsync(InputEmployee inputEmployee)
+        {
+            var codeNumber = _unitOfWork.EmployeeRepository.Table().Count() > 0 ?
+                _unitOfWork.EmployeeRepository.Table().Max(e => e.CodeNumber) + 1 : 1000;
+            var employee = new Employee
+            {
+                EmployeeId = Guid.NewGuid().ToString(),
+                FullName = inputEmployee.FullName,
+                CodeNumber = codeNumber,
+                EmployeeCode = "NV" + DateTime.Now.Year.ToString() + codeNumber,
+                Gender = inputEmployee.Gender,
+                Address = inputEmployee.Address,
+                DateOfBirth = inputEmployee.DateOfBirth ?? DateTime.Now,
+            };
+            await _unitOfWork.EmployeeRepository.AddAsync(employee);
+            await _unitOfWork.SaveChangesAsync();
+            var user = new AppUser
+            {
+                UserName = inputEmployee.Email,
+                Email = inputEmployee.Email,
+                PhoneNumber = inputEmployee.PhoneNumber,
+                EmployeeId = employee.EmployeeId
+            };
+            var result = await _userManager.CreateAsync(user, inputEmployee.Password);
+            return (result, user, employee);
         }
         public async Task<AppUser?> GetSingleByConditionAsync(Expression<Func<AppUser, bool>> expression)
         {
