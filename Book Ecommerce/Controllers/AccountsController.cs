@@ -12,7 +12,7 @@ using Book_Ecommerce.Domain.MySettings;
 using Book_Ecommerce.Domain.Helpers;
 using Book_Ecommerce.Data;
 using Book_Ecommerce.Service.Abstract;
-using Book_Ecommerce.Domain.ViewModels.UserViewModel;
+using Book_Ecommerce.Domain.ViewModels.AccountViewModel;
 
 namespace Book_Ecommerce.Controllers
 {
@@ -175,6 +175,7 @@ namespace Book_Ecommerce.Controllers
                 return RedirectToAction("Index", "Home");
             }
         }
+
         [HttpGet("/login")]
         public IActionResult Login(string? returnUrl = null)
         {

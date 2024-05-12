@@ -87,7 +87,7 @@
                                 }
                             </td>
                             <td>
-                                <a style="cursor: pointer" class="text-primary edit-role" data-employeeid="@item.EmployeeId" data-toggle="modal" data-target="#formRole">
+                                <a style="cursor: pointer" class="text-primary edit-role" data-employeecode="@item.EmployeeCode" data-employeeid="@item.EmployeeId" data-toggle="modal" data-target="#formRole">
                                     @string.Join(", ", item.RoleNames)
                                 </a>
                             </td>
@@ -231,6 +231,7 @@
     </script>
     <script type="text/javascript">
         var employeeId = ''
+        var employeeCode = ''
         $(document).ready(function () {
             RenderHtmlToAddress('@Url.Action("GetAllProvince", "ProvincesVietNam", new { area = "" })', $('#province'), 'Tỉnh/thành')
 
@@ -323,6 +324,7 @@
                 $('#errorRoleMessage').html('')
                 $('#roleNames').multipleSelect('setSelects', [])
                 employeeId = $(this).data('employeeid')
+                employeeCode = $(this).data('employeecode')
                 $('#loader').show()
                 $.ajax({
                     url: '@Url.Action("GetRoles", "Employees", new { area = "Admin" })' + `?employeeId=${employeeId}`,
@@ -354,6 +356,8 @@
                 })
             })
             $('#btnUpdateRole').click(function () {
+                if(!confirm(`Bạn có muốn cập nhật lại quyền cho nhân viên ${employeeCode} không ?`))
+                    return
                 var formData = new FormData()
                 var roleNames = $('#roleNames').multipleSelect('getSelects')
                 for (var i = 0; i < roleNames.length; i++) {
@@ -405,7 +409,7 @@
                 })
             })
             $('.edit-status').click(function () {
-                var employeeCode = $(this).data('employeecode')
+                employeeCode = $(this).data('employeecode')
                 var func = $(this).data('status') == true ? 'khóa' : 'mở khóa'
                 if (!confirm(`Bạn có muốn ${func} nhân viên ${employeeCode}`))
                     return
@@ -446,13 +450,13 @@
                 })
             })
             $('.delete-employee').click(function () {
-                var employeeCode = $(this).data('employeecode')
+                employeeCode = $(this).data('employeecode')
                 if (!confirm(`Bạn có muốn xóa nhân viên ${employeeCode}`))
                     return
                 employeeId = $(this).data('employeeid')
                 $('#loader').show()
                 $.ajax({
-                    url: '@Url.Action("Delete", "Employees", new { area = "Admin" })' + `?employeeId=${employeeId}`,
+                    url: '@Url.Action("Delete", "Employees", new { area = "Admin"})' + `?employeeId=${employeeId}`,
                     type: "POST",
                     catch: false,
                     contentType: false,

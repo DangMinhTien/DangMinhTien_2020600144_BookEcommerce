@@ -1,0 +1,57 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using Microsoft.AspNetCore.Authorization
+@using Book_Ecommerce.Service.Abstract
+@inject SignInManager<AppUser> SignInManager
+@inject UserManager<AppUser> UserManager
+@inject IEmployeeService EmployeeService
+<ul class="navbar-nav ml-auto">
+
+    <div class="topbar-divider d-none d-sm-block"></div>
+
+    <!-- Nav Item - User Information -->
+    <li class="nav-item dropdown no-arrow">
+        @if (SignInManager.IsSignedIn(User))
+        {
+            var user = await UserManager.GetUserAsync(User);
+            var employeeName = (await EmployeeService.GetSingleByCondionAsync(e => e.EmployeeId == user.EmployeeId))?.FullName;
+            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
+               data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <span class="mr-2 d-none d-lg-inline text-gray-600 small">Xin chào @employeeName</span>
+                <img class="img-profile rounded-circle"
+                     src="~/admin/img/undraw_profile.svg">
+            </a>
+            <!-- Dropdown - User Information -->
+            <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
+                 aria-labelledby="userDropdown">
+                <a asp-action="Index" asp-controller="Accounts" asp-area="Admin" class="dropdown-item">
+                    <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
+                    Thông tin tài khoản
+                </a>
+                <div class="dropdown-divider"></div>
+                <a asp-action="Logout" asp-controller="Accounts" asp-area="" class="dropdown-item">
+                    <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
+                    Đăng xuất
+                </a>
+            </div>
+        }
+        else
+        {
+            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
+               data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <span class="mr-2 d-none d-lg-inline text-gray-600 small">Xin chào</span>
+                <img class="img-profile rounded-circle"
+                     src="~/admin/img/undraw_profile.svg">
+            </a>
+            <!-- Dropdown - User Information -->
+            <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
+                 aria-labelledby="userDropdown">
+                <div class="dropdown-divider"></div>
+                <a asp-action="Login" asp-controller="Accounts" asp-area="" class="dropdown-item">
+                    <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
+                    Đăng nhập
+                </a>
+            </div>
+        }
+    </li>
+
+</ul>

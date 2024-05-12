@@ -2,7 +2,7 @@
 using Book_Ecommerce.Domain.Entities;
 using Book_Ecommerce.Domain.MySettings;
 using Book_Ecommerce.Domain.ViewModels.EmployeeViewModel;
-using Book_Ecommerce.Domain.ViewModels.UserViewModel;
+using Book_Ecommerce.Domain.ViewModels.AccountViewModel;
 using Book_Ecommerce.Service.Abstract;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;

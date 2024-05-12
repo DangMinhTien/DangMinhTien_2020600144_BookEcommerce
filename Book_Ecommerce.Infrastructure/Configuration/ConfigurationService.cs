@@ -88,6 +88,14 @@ namespace Book_Ecommerce.Infrastructure.Configuration
                     policyBuilder.RequireRole(MyRole.CUSTOMER);
                 });
             });
+            service.AddAuthorization(options =>
+            {
+                options.AddPolicy("IsEmployee", policyBuilder =>
+                {
+                    policyBuilder.RequireAuthenticatedUser();
+                    policyBuilder.RequireRole(MyRole.CUSTOMER, MyRole.ADMIN);
+                });
+            });
         }
         public static void RegisterDI(this IServiceCollection service)
         {
@@ -117,6 +125,7 @@ namespace Book_Ecommerce.Infrastructure.Configuration
             service.AddScoped<ICategoryProductService, CategoryProductService>();
             service.AddScoped<IBannerService, BannerService>();
             service.AddScoped<IEmployeeService, EmployeeService>();
+            service.AddScoped<IOrderService, OrderService>();
         }
     }
 }

@@ -1,0 +1,338 @@
+﻿
+@{
+    ViewData["Title"] = "Thống kê";
+}
+<!-- Content Row -->
+<div class="row">
+
+    <!-- Earnings (Monthly) Card Example -->
+    <div class="col-xl-4 col-md-6 mb-4">
+        <div class="card border-left-primary shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                            Số lượng hàng tồn
+                        </div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">@ViewBag.sumQuantityProduct</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-calendar fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Earnings (Monthly) Card Example -->
+    <div class="col-xl-4 col-md-6 mb-4">
+        <div class="card border-left-success shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                            Số lượng bán ra
+                        </div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">@ViewBag.sumProductBuy</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-comments fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pending Requests Card Example -->
+    <div class="col-xl-4 col-md-6 mb-4">
+        <div class="card border-left-warning shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                            Tổng doanh thu
+                        </div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">@ViewBag.revenue</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Content Row -->
+<div class="row">
+    <div class="col-md-6">
+        <canvas id="chartRevenue"></canvas>
+    </div>
+    <div class="col-md-6">
+        <canvas id="chartQuantity"></canvas>
+    </div>
+</div>
+<div class="row mt-5">
+    <div class="col-md-6">
+        <p class="text-center font-weight-bold" style="font-size: 13px; color: #666666">Thống kê thể loại</p>
+        <canvas id="chartCategory"></canvas>
+    </div>
+    <div class="col-md-6">
+        <p class="text-center font-weight-bold" style="font-size: 13px; color: #666666">Thống kê thương hiệu</p>
+        <canvas id="chartBrand"></canvas>
+    </div>
+</div>
+@section Scripts {
+    <script src="~/admin/vendor/chart.js/Chart.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#loader').show()
+            $.ajax({
+                url: '@Url.Action("GetRevenue", "Statistical", new { area = "Admin" })',
+                type: "GET",
+                catch: false,
+                contentType: false,
+                processData: false,
+                success: function (response) {
+                    console.log(response)
+                    $('#loader').hide()
+                    var colors = generateRelatedColors(response.length)
+                    var months = []
+                    var totalQuantitys = []
+                    var revenues = []
+                    response.forEach(function (element) {
+                        months.push('Th ' + element.month)
+                        totalQuantitys.push(element.totalQuantity)
+                        revenues.push(element.revenue)
+                    })
+                    new Chart("chartRevenue", {
+                        type: "bar",
+                        data: {
+                            labels: months,
+                            datasets: [{
+                                backgroundColor: colors.rgbaColors,
+                                borderColor: colors.rgbColors,
+                                borderWidth: 1,
+                                data: revenues
+                            }]
+                        },
+                        options: {
+                            legend: { display: false },
+                            title: {
+                                display: true,
+                                text: 'Doanh thu trong năm'
+                            }
+                        }
+                    });
+
+                    new Chart("chartQuantity", {
+                        type: "bar",
+                        data: {
+                            labels: months,
+                            datasets: [{
+                                backgroundColor: colors.rgbaColors,
+                                borderColor: colors.rgbColors,
+                                borderWidth: 1,
+                                data: totalQuantitys
+                            }]
+                        },
+                        options: {
+                            legend: { display: false },
+                            title: {
+                                display: true,
+                                text: 'Số lượng bán trong năm'
+                            }
+                        }
+                    });
+                },
+                error: function (response) {
+                    console.log(response)
+                    $('#loader').hide()
+                    var message = ""
+                    if (response.status == 401)
+                        message = "Yêu cầu bạn đăng nhập để thực hiện chức năng này";
+                    else if (response.status == 403)
+                        message = "Tài khoản của bạn không thể thực hiện chức năng này";
+                    else {
+                        message = response.responseJSON.mesClient
+                    }
+                    var toast = $(RenderHtmlToastError(message))
+                    $('.m-toast-box').append(toast)
+                    HideToastAfterShow(toast)
+                }
+            })
+            $('#loader').show()
+            $.ajax({
+                url: '@Url.Action("Category", "Statistical", new { area = "Admin" })',
+                type: "GET",
+                catch: false,
+                contentType: false,
+                processData: false,
+                success: function (response) {
+                    console.log("Thể loại", response)
+                    $('#loader').hide()
+                    var colors = generateRelatedColors(response.length)
+                    var labels = []
+                    var values = []
+                    response.forEach(function (element) {
+                        labels.push(element.categoryName)
+                        values.push(element.totalProduct)
+                    })
+                    new Chart("chartCategory", {
+                        type: 'pie',
+                        data: {
+                            labels: labels,
+                            datasets: [
+                                {
+                                    label: 'Dataset 1',
+                                    data: values,
+                                    backgroundColor: colors.rgbColors
+                                }
+                            ]
+                        },
+                        options: {
+                            responsive: true,
+                            plugins: {
+                                legend: {
+                                    position: 'top',
+                                },
+                                title: {
+                                    display: true,
+                                    text: 'Thống kê thể loại'
+                                }
+                            }
+                        },
+                    });
+                },
+                error: function (response) {
+                    console.log(response)
+                    $('#loader').hide()
+                    var message = ""
+                    if (response.status == 401)
+                        message = "Yêu cầu bạn đăng nhập để thực hiện chức năng này";
+                    else if (response.status == 403)
+                        message = "Tài khoản của bạn không thể thực hiện chức năng này";
+                    else {
+                        message = response.responseJSON.mesClient
+                    }
+                    var toast = $(RenderHtmlToastError(message))
+                    $('.m-toast-box').append(toast)
+                    HideToastAfterShow(toast)
+                }
+            })
+            $('#loader').show()
+            $.ajax({
+                url: '@Url.Action("Brand", "Statistical", new { area = "Admin" })',
+                type: "GET",
+                catch: false,
+                contentType: false,
+                processData: false,
+                success: function (response) {
+                    console.log("Thể loại", response)
+                    $('#loader').hide()
+                    var colors = generateRelatedColors(response.length)
+                    var labels = []
+                    var values = []
+                    response.forEach(function (element) {
+                        labels.push(element.brandName)
+                        values.push(element.totalProduct)
+                    })
+                    new Chart("chartBrand", {
+                        type: 'pie',
+                        data: {
+                            labels: labels,
+                            datasets: [
+                                {
+                                    label: 'Dataset 1',
+                                    data: values,
+                                    backgroundColor: colors.rgbColors
+                                }
+                            ]
+                        },
+                        options: {
+                            responsive: true,
+                            plugins: {
+                                legend: {
+                                    position: 'top',
+                                },
+                                title: {
+                                    display: true,
+                                    text: 'Thống kê thương hiệu'
+                                }
+                            }
+                        },
+                    });
+                },
+                error: function (response) {
+                    console.log(response)
+                    $('#loader').hide()
+                    var message = ""
+                    if (response.status == 401)
+                        message = "Yêu cầu bạn đăng nhập để thực hiện chức năng này";
+                    else if (response.status == 403)
+                        message = "Tài khoản của bạn không thể thực hiện chức năng này";
+                    else {
+                        message = response.responseJSON.mesClient
+                    }
+                    var toast = $(RenderHtmlToastError(message))
+                    $('.m-toast-box').append(toast)
+                    HideToastAfterShow(toast)
+                }
+            })
+        })
+        function generateRelatedColors(numColors) {
+            var rgbaColors = [];
+            var rgbColors = [];
+
+            for (var i = 0; i < numColors; i++) {
+                // Tạo một màu ngẫu nhiên
+                var red = Math.floor(Math.random() * 256); // Giá trị màu đỏ từ 0 đến 255
+                var green = Math.floor(Math.random() * 256); // Giá trị màu xanh lá cây từ 0 đến 255
+                var blue = Math.floor(Math.random() * 256); // Giá trị màu xanh lam từ 0 đến 255
+                var alpha = Math.random().toFixed(2); // Giá trị alpha từ 0.00 đến 1.00 (2 chữ số thập phân)
+
+                // Tạo chuỗi mã màu RGBA và thêm vào mảng rgbaColors
+                var rgbaColor = `rgba(${red}, ${green}, ${blue}, ${alpha})`;
+                rgbaColors.push(rgbaColor);
+
+                // Tạo chuỗi mã màu RGB và thêm vào mảng rgbColors
+                var rgbColor = `rgb(${red}, ${green}, ${blue})`;
+                rgbColors.push(rgbColor);
+            }
+
+            return { rgbaColors: rgbaColors, rgbColors: rgbColors };
+        }
+        function HideToastAfterShow(toast) {
+            setTimeout(function () {
+                // tạo hiệu ứng
+                toast.addClass('hidden')
+                // sau đó ẩn
+                setTimeout(function () {
+                    toast.remove()
+                }, 1000)
+            }, 5000)
+        }
+        function RenderHtmlToastError(message) {
+            return `<div class="m-toast-message m-toast-error">
+                        <div class="m-toast-icon">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <div class="m-toast-text">${message}</div>
+                        <div class="m-toast-close">
+                            <i class="fas fa-times"></i>
+                        </div>
+                    </div>`
+        }
+        function RenderHtmlToastSuccess(message) {
+            return `<div class="m-toast-message m-toast-success">
+                        <div class="m-toast-icon">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                                <div class="m-toast-text">${message}</div>
+                        <div class="m-toast-close">
+                            <i class="fas fa-times"></i>
+                        </div>
+                    </div>`
+        }
+    </script>
+}

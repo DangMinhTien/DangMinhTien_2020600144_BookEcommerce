@@ -109,6 +109,11 @@ namespace Book_Ecommerce.Service
         {
             return await _unitOfWork.EmployeeRepository.GetSingleByConditionAsync(expression);
         }
+        public async Task UpdateAsync(Employee employee)
+        {
+            _unitOfWork.EmployeeRepository.Update(employee);
+            await _unitOfWork.SaveChangesAsync();
+        }
         public async Task RemoveAsync(Employee employee)
         {
             _unitOfWork.EmployeeRepository.Remove(employee);

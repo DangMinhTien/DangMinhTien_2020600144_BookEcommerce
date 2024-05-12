@@ -16,5 +16,6 @@ namespace Book_Ecommerce.Service.Abstract
         Task<(IEnumerable<EmployeeVM>, PagingModel, IEnumerable<PageSizeModel>)> GetToViewManageAsync(string? search = null, int page = 1, int pagesize = 20);
         Task RemoveAsync(Employee employee);
         IQueryable<Employee> Table();
+        Task UpdateAsync(Employee employee);
     }
 }

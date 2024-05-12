@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Book_Ecommerce.Domain.ViewModels.EmployeeViewModel;
 using Microsoft.AspNetCore.Identity;
 using Book_Ecommerce.Domain.Entities;
-using Book_Ecommerce.Domain.ViewModels.UserViewModel;
+using Book_Ecommerce.Domain.ViewModels.AccountViewModel;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.EntityFrameworkCore;

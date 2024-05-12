@@ -1,6 +1,6 @@
 ﻿using Book_Ecommerce.Domain.Entities;
 using Book_Ecommerce.Domain.ViewModels.EmployeeViewModel;
-using Book_Ecommerce.Domain.ViewModels.UserViewModel;
+using Book_Ecommerce.Domain.ViewModels.AccountViewModel;
 using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;

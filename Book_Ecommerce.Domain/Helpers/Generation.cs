@@ -1,4 +1,7 @@
-﻿using System.Globalization;
+﻿using Book_Ecommerce.Domain.MySettings;
+using System;
+using System.Globalization;
+using System.Security.Policy;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -46,5 +49,23 @@ namespace Book_Ecommerce.Domain.Helpers
             } while (randomNumber % 1000 != 0);
             return randomNumber;
         }
-    }
+        public static string GenerationStatusOrderString(int status)
+        {
+            switch(status)
+            {
+                case (int)StatusOrder.HuyDonHang:
+                    return "Hủy đơn hàng"; 
+                case (int)StatusOrder.DaDatHang:
+                    return "Đã đặt hàng";
+                case (int)StatusOrder.DaThanhToan:
+                    return "Đã thanh toán";
+                case (int)StatusOrder.DangGiaoHang:
+                    return "Đang giao hàng";
+                case (int)StatusOrder.GiaoThanhCong:
+                    return "Giao thành công";
+                default:
+                    return "Không lấy được trạng thái";
+                }
+            }
+        }
 }

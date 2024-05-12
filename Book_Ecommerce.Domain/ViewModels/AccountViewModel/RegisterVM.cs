@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Book_Ecommerce.Domain.ViewModels.UserViewModel
+namespace Book_Ecommerce.Domain.ViewModels.AccountViewModel
 {
     public class RegisterVM
     {
