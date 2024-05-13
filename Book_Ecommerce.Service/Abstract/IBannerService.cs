@@ -13,6 +13,7 @@ namespace Book_Ecommerce.Service.Abstract
     public interface IBannerService
     {
         Task AddAsync(Banner banner);
+        Task<IEnumerable<Banner>> GetDataAsync(Expression<Func<Banner, bool>>? expression = null);
         Task<Banner?> GetSingleByConditionAsync(Expression<Func<Banner, bool>> expression);
         Task<(IEnumerable<BannerVM>, PagingModel, IEnumerable<PageSizeModel>)> GetToViewManageAsync(string? search = null, int page = 1, int pagesize = 20);
         Task RemoveAsync(Banner banner);

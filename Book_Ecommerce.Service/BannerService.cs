@@ -96,6 +96,10 @@ namespace Book_Ecommerce.Service
         {
             return await _unitOfWork.BannerRepository.GetSingleByConditionAsync(expression);
         }
+        public async Task<IEnumerable<Banner>> GetDataAsync(Expression<Func<Banner, bool>>? expression = null)
+        {
+            return await _unitOfWork.BannerRepository.GetDataAsync(expression);
+        }
         public IQueryable<Banner> Table()
         {
             return _unitOfWork.BannerRepository.Table();

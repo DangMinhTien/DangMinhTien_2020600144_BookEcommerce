@@ -15,17 +15,18 @@
     </button>
     <div class="collapse navbar-collapse justify-content-between" id="navbarCollapse">
         <div class="navbar-nav mr-auto py-0">
-            <a asp-action="Index" asp-controller="Home" class="nav-item nav-link active">Trang chủ</a>
-            <a asp-action="Index" asp-controller="Products" asp-area="" class="nav-item nav-link">Sản Phẩm</a>
+            <a asp-action="Index" asp-controller="Home" class="nav-item nav-link @MenuClient.HomeNavClass(ViewBag.MenuClient as string ?? "")">Trang chủ</a>
+            <a asp-action="Index" asp-controller="Products" asp-area="" class="nav-item nav-link @MenuClient.ProductNavClass(ViewBag.MenuClient as string ?? "")">Sản Phẩm</a>
             @{
                 var ResultAuthor = await authorizationService.AuthorizeAsync(User, "IsCustomer");
                 if (ResultAuthor.Succeeded)
                 {
                     <div class="nav-item dropdown">
-                        <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Tài khoản</a>
+                        <a class="nav-link dropdown-toggle @MenuClient.MyOrderNavClass(ViewBag.MenuClient as string ?? "") @MenuClient.ProfileNavClass(ViewBag.MenuClient as string ?? "")"
+                           data-toggle="dropdown">Tài khoản</a>
                         <div class="dropdown-menu rounded-0 m-0">
-                            <a asp-action="Index" asp-controller="AccountsProfile" asp-area="" class="dropdown-item">Thông tin tài khoản</a>
-                            <a asp-action="Index" asp-controller="MyOrders" class="dropdown-item">Đơn hàng của tôi</a>
+                            <a asp-action="Index" asp-controller="AccountsProfile" asp-area="" class="dropdown-item @MenuClient.ProfileNavClass(ViewBag.MenuClient as string ?? "")">Thông tin tài khoản</a>
+                            <a asp-action="Index" asp-controller="MyOrders" class="dropdown-item @MenuClient.MyOrderNavClass(ViewBag.MenuClient as string ?? "")">Đơn hàng của tôi</a>
                         </div>
                     </div>
                 }
@@ -39,9 +40,9 @@
                 }
                 else
                 {
-                    <a asp-action="Login" asp-controller="Accounts" class="nav-item nav-link">Đăng nhập</a>
+                <a asp-action="Login" asp-controller="Accounts" class="nav-item nav-link @MenuClient.LoginNavClass(ViewBag.MenuClient as string ?? "")">Đăng nhập</a>
                 }
-                <a asp-action="Register" asp-controller="Accounts" class="nav-item nav-link">Đăng ký</a>
+            <a asp-action="Register" asp-controller="Accounts" class="nav-item nav-link @MenuClient.RegisterNavClass(ViewBag.MenuClient as string ?? "")">Đăng ký</a>
             </div>
     </div>
 </nav>

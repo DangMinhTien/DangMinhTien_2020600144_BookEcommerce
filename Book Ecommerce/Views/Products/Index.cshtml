@@ -3,6 +3,7 @@
     Layout = "/Views/Shared/_LayoutProduct.cshtml";
     CultureInfo cultureInfo = new CultureInfo("vi-VN");
     var pagingModel = ViewBag.pagingModel as PagingModel;
+    ViewBag.MenuClient = MenuClient.Product;
 }
 @foreach(var product in Model)
 {

@@ -1,0 +1,27 @@
+﻿@model IEnumerable<BannerVM>
+@{
+    var bannerFirst = Model.FirstOrDefault();
+}
+<div id="header-carousel" class="carousel slide" data-ride="carousel">
+    <div class="carousel-inner">
+        @foreach (var item in Model)
+        {
+            var cssActive = item == bannerFirst ? "active" : "";
+            <div class="carousel-item @cssActive" style="height: 510px;">
+                <a asp-action="Index" asp-controller="Products" asp-area="">
+                    <img class="img-fluid" src="@item.UrlImage" alt="Image">
+                </a>
+            </div>
+        }
+    </div>
+    <a class="carousel-control-prev" href="#header-carousel" data-slide="prev">
+        <div class="btn btn-dark" style="width: 45px; height: 45px;">
+            <span class="carousel-control-prev-icon mb-n2"></span>
+        </div>
+    </a>
+    <a class="carousel-control-next" href="#header-carousel" data-slide="next">
+        <div class="btn btn-dark" style="width: 45px; height: 45px;">
+            <span class="carousel-control-next-icon mb-n2"></span>
+        </div>
+    </a>
+</div>

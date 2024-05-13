@@ -7541,62 +7541,6 @@
       "PackagePath": "staticwebassets\\js\\site.js"
     },
     {
-      "Id": "C:\\Users\\LENOVO\\OneDrive\\Documents\\Wordspace\\DoAnTotNghiep\\Code\\Book Ecommerce\\Book Ecommerce\\wwwroot\\lib\\Chart.js\\chart.cjs.map",
-      "PackagePath": "staticwebassets\\lib\\Chart.js\\chart.cjs.map"
-    },
-    {
-      "Id": "C:\\Users\\LENOVO\\OneDrive\\Documents\\Wordspace\\DoAnTotNghiep\\Code\\Book Ecommerce\\Book Ecommerce\\wwwroot\\lib\\Chart.js\\chart.js",
-      "PackagePath": "staticwebassets\\lib\\Chart.js\\chart.js"
-    },
-    {
-      "Id": "C:\\Users\\LENOVO\\OneDrive\\Documents\\Wordspace\\DoAnTotNghiep\\Code\\Book Ecommerce\\Book Ecommerce\\wwwroot\\lib\\Chart.js\\chart.js.map",
-      "PackagePath": "staticwebassets\\lib\\Chart.js\\chart.js.map"
-    },
-    {
-      "Id": "C:\\Users\\LENOVO\\OneDrive\\Documents\\Wordspace\\DoAnTotNghiep\\Code\\Book Ecommerce\\Book Ecommerce\\wwwroot\\lib\\Chart.js\\chart.min.js",
-      "PackagePath": "staticwebassets\\lib\\Chart.js\\chart.min.js"
-    },
-    {
-      "Id": "C:\\Users\\LENOVO\\OneDrive\\Documents\\Wordspace\\DoAnTotNghiep\\Code\\Book Ecommerce\\Book Ecommerce\\wwwroot\\lib\\Chart.js\\chart.umd.js",
-      "PackagePath": "staticwebassets\\lib\\Chart.js\\chart.umd.js"
-    },
-    {
-      "Id": "C:\\Users\\LENOVO\\OneDrive\\Documents\\Wordspace\\DoAnTotNghiep\\Code\\Book Ecommerce\\Book Ecommerce\\wwwroot\\lib\\Chart.js\\chart.umd.js.map",
-      "PackagePath": "staticwebassets\\lib\\Chart.js\\chart.umd.js.map"
-    },
-    {
-      "Id": "C:\\Users\\LENOVO\\OneDrive\\Documents\\Wordspace\\DoAnTotNghiep\\Code\\Book Ecommerce\\Book Ecommerce\\wwwroot\\lib\\Chart.js\\chart.umd.min.js",
-      "PackagePath": "staticwebassets\\lib\\Chart.js\\chart.umd.min.js"
-    },
-    {
-      "Id": "C:\\Users\\LENOVO\\OneDrive\\Documents\\Wordspace\\DoAnTotNghiep\\Code\\Book Ecommerce\\Book Ecommerce\\wwwroot\\lib\\Chart.js\\helpers.cjs.map",
-      "PackagePath": "staticwebassets\\lib\\Chart.js\\helpers.cjs.map"
-    },
-    {
-      "Id": "C:\\Users\\LENOVO\\OneDrive\\Documents\\Wordspace\\DoAnTotNghiep\\Code\\Book Ecommerce\\Book Ecommerce\\wwwroot\\lib\\Chart.js\\helpers.js",
-      "PackagePath": "staticwebassets\\lib\\Chart.js\\helpers.js"
-    },
-    {
-      "Id": "C:\\Users\\LENOVO\\OneDrive\\Documents\\Wordspace\\DoAnTotNghiep\\Code\\Book Ecommerce\\Book Ecommerce\\wwwroot\\lib\\Chart.js\\helpers.js.map",
-      "PackagePath": "staticwebassets\\lib\\Chart.js\\helpers.js.map"
-    },
-    {
-      "Id": "C:\\Users\\LENOVO\\OneDrive\\Documents\\Wordspace\\DoAnTotNghiep\\Code\\Book Ecommerce\\Book Ecommerce\\wwwroot\\lib\\Chart.js\\helpers.min.js",
-      "PackagePath": "staticwebassets\\lib\\Chart.js\\helpers.min.js"
-    },
-    {
-      "Id": "C:\\Users\\LENOVO\\OneDrive\\Documents\\Wordspace\\DoAnTotNghiep\\Code\\Book Ecommerce\\Book Ecommerce\\wwwroot\\lib\\Chart.js\\index.d.ts",
-      "PackagePath": "staticwebassets\\lib\\Chart.js\\index.d.ts"
-    },
-    {
-      "Id": "C:\\Users\\LENOVO\\OneDrive\\Documents\\Wordspace\\DoAnTotNghiep\\Code\\Book Ecommerce\\Book Ecommerce\\wwwroot\\lib\\Chart.js\\index.umd.d.ts",
-      "PackagePath": "staticwebassets\\lib\\Chart.js\\index.umd.d.ts"
-    },
-    {
-      "Id": "C:\\Users\\LENOVO\\OneDrive\\Documents\\Wordspace\\DoAnTotNghiep\\Code\\Book Ecommerce\\Book Ecommerce\\wwwroot\\lib\\Chart.js\\types.d.ts",
-      "PackagePath": "staticwebassets\\lib\\Chart.js\\types.d.ts"
-    },
-    {
       "Id": "C:\\Users\\LENOVO\\OneDrive\\Documents\\Wordspace\\DoAnTotNghiep\\Code\\Book Ecommerce\\Book Ecommerce\\wwwroot\\lib\\bootstrap-4.5.3\\js\\bootstrap.bundle.js",
       "PackagePath": "staticwebassets\\lib\\bootstrap-4.5.3\\js\\bootstrap.bundle.js"
     },
@@ -8843,18 +8787,6 @@
     {
       "Id": "C:\\Users\\LENOVO\\OneDrive\\Documents\\Wordspace\\DoAnTotNghiep\\Code\\Book Ecommerce\\Book Ecommerce\\wwwroot\\lib\\summernote\\summernote.min.js",
       "PackagePath": "staticwebassets\\lib\\summernote\\summernote.min.js"
-    },
-    {
-      "Id": "C:\\Users\\LENOVO\\OneDrive\\Documents\\Wordspace\\DoAnTotNghiep\\Code\\Book Ecommerce\\Book Ecommerce\\wwwroot\\mail\\contact.js",
-      "PackagePath": "staticwebassets\\mail\\contact.js"
-    },
-    {
-      "Id": "C:\\Users\\LENOVO\\OneDrive\\Documents\\Wordspace\\DoAnTotNghiep\\Code\\Book Ecommerce\\Book Ecommerce\\wwwroot\\mail\\contact.php",
-      "PackagePath": "staticwebassets\\mail\\contact.php"
-    },
-    {
-      "Id": "C:\\Users\\LENOVO\\OneDrive\\Documents\\Wordspace\\DoAnTotNghiep\\Code\\Book Ecommerce\\Book Ecommerce\\wwwroot\\mail\\jqBootstrapValidation.min.js",
-      "PackagePath": "staticwebassets\\mail\\jqBootstrapValidation.min.js"
     },
     {
       "Id": "C:\\Users\\LENOVO\\OneDrive\\Documents\\Wordspace\\DoAnTotNghiep\\Code\\Book Ecommerce\\Book Ecommerce\\wwwroot\\scss\\site.scss",
