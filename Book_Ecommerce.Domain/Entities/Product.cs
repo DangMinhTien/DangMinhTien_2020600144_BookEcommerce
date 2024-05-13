@@ -18,7 +18,7 @@ namespace Book_Ecommerce.Domain.Entities
         public string ProductSlug { get; set; } = null!;
         public decimal Price { get; set; }
         public double? PercentDiscount { get; set; }
-        [Column(TypeName = "nvarchar(500)")]
+        [Column(TypeName = "nvarchar(max)")]
         public string? Description { get; set; }
         public int Quantity { get; set; }
         public bool IsActive { get; set; }

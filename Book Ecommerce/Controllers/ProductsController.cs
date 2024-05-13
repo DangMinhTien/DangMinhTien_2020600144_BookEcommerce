@@ -10,6 +10,7 @@ using Book_Ecommerce.Service.Abstract;
 using Book_Ecommerce.Service;
 using Book_Ecommerce.Domain.Models;
 using Book_Ecommerce.Domain.ViewModels.ProductViewModel;
+using Microsoft.AspNetCore.Identity;
 
 
 namespace Book_Ecommerce.Controllers
@@ -21,20 +22,29 @@ namespace Book_Ecommerce.Controllers
         private readonly ICategoryService _categoryService;
         private readonly IBrandService _brandService;
         private readonly IAuthorService _authorService;
+        private readonly UserManager<AppUser> _userManager;
+        private readonly ICustomerService _customerService;
+        private readonly ICommentService _commentService;
 
         public ProductsController(AppDbContext context, 
             IProductService productService,
             ICategoryService categoryService,
             IBrandService brandService,
-            IAuthorService authorService)
+            IAuthorService authorService,
+            UserManager<AppUser> userManager,
+            ICustomerService customerService,
+            ICommentService commentService)
         {
             _context = context;
             _productService = productService;
             _categoryService = categoryService;
             _brandService = brandService;
             _authorService = authorService;
+            _userManager = userManager;
+            _customerService = customerService;
+            _commentService = commentService;
         }
-        [Route("/sanpham")]
+        [HttpGet("/sanpham")]
         public async Task<IActionResult> Index(string? search = null, int page = 1, int pagesize = MyAppSetting.PAGE_SIZE)
         {
             try
@@ -51,10 +61,10 @@ namespace Book_Ecommerce.Controllers
             }
             catch(Exception ex)
             {
-                return NotFound("Không thể lấy được sản phẩm");
+                return NotFound(ex.Message);
             }
         }
-        [Route("/sanpham/theloai/{categorySlug}")]
+        [HttpGet("/sanpham/theloai/{categorySlug}")]
         public async Task<IActionResult> GetByCategory(string categorySlug, int page = 1, int pagesize = MyAppSetting.PAGE_SIZE)
         {
             try
@@ -71,14 +81,13 @@ namespace Book_Ecommerce.Controllers
                 ViewBag.pageSize = lstPageSize;
                 ViewBag.categoryId = category.CategoryId;
                 return View("Index", products);
-
             }
-            catch
+            catch (Exception ex)
             {
-                return NotFound("Không thể lấy được sản phẩm");
+                return NotFound(ex.Message);
             }
         }
-        [Route("/sanpham/thuonghieu/{brandSlug}")]
+        [HttpGet("/sanpham/thuonghieu/{brandSlug}")]
         public async Task<IActionResult> GetByBrand(string brandSlug, int page = 1, int pagesize = MyAppSetting.PAGE_SIZE)
         {
             try
@@ -97,12 +106,12 @@ namespace Book_Ecommerce.Controllers
                 return View("Index", products);
 
             }
-            catch
+            catch (Exception ex)
             {
-                return NotFound("Không thể lấy được sản phẩm");
+                return NotFound(ex.Message);
             }
         }
-        [Route("/sanpham/tacgia/{authorSlug}")]
+        [HttpGet("/sanpham/tacgia/{authorSlug}")]
         public async Task<IActionResult> GetByAuthor(string authorSlug, int page = 1, int pagesize = MyAppSetting.PAGE_SIZE)
         {
             try
@@ -120,20 +129,105 @@ namespace Book_Ecommerce.Controllers
                 ViewBag.authorId = author.AuthorId;
                 return View("Index", products);
             }
-            catch
+            catch (Exception ex)
             {
-                return NotFound("Không thể lấy được sản phẩm");
+                return NotFound(ex.Message);
             }
         }
-        [Route("/sanpham/{productSlug}")]
+        [HttpGet("/sanpham/{productSlug}")]
         public async Task<IActionResult> Detail(string productSlug)
         {
-            var product = await _productService.GetDetailToViewAsync(productSlug);
-            if (product == null)
+            try
             {
-                return NotFound("Không tìm thấy sản phẩm");
+                var product = await _productService.GetDetailToViewAsync(productSlug);
+                if (product == null)
+                {
+                    return NotFound("Không tìm thấy sản phẩm");
+                }
+                return View(product);
             }
-            return View(product);
+            catch(Exception ex)
+            {
+                return NotFound(ex.Message);
+            }
+        }
+        [HttpGet("/sanpham/laydanhgia")]
+        public async Task<IActionResult> GetComment(string productId)
+        {
+            try
+            {
+                var product = await _productService.GetSingleByConditionAsync(c => c.ProductId == productId);
+                if (product == null)
+                {
+                    return BadRequest(new { mesClient = "Không lấy được đánh giá sản phẩm do không tìm thấy sản phẩm", mesDev = "Product is not found" });
+                }
+                var commnents = await _commentService.Table().Include(c => c.Customer)
+                                                        .Where(c => c.ProductId == product.ProductId)
+                                                        .OrderByDescending(c => c.DateCreated).ToListAsync();
+                var result = commnents.Select(c => new
+                {
+                    commentId = c.CommentId,
+                    vote = c.Vote,
+                    message = c.Message,
+                    customerName = c.Customer.FullName,
+                    dateCreated = c.DateCreated.ToString("dd/MM/yyyy - HH:mm:ss"),
+                });
+                return Ok(result);
+            }
+            catch(Exception ex)
+            {
+                return BadRequest(new {mesClient = "Không lấy được đánh giá do lỗi hệ thống", mesDev =  ex.Message});
+            }
+        }
+        [Authorize(Roles = MyRole.CUSTOMER)]
+        [HttpPost("/sanpham/guidanhgia")]
+        public async Task<IActionResult> SendComment(string productId, InputComment inputComment)
+        {
+            if(ModelState.IsValid)
+            {
+                try
+                {
+                    var user = await _userManager.GetUserAsync(User);
+                    if (user == null)
+                    {
+                        return BadRequest(new { isValid = true, mesClient = "Không gửi được đánh giá do không tìm thấy tài khoản đăng nhập", mesDev = "don't find account login" });
+                    }
+                    var customer = await _customerService.GetSingleByConditionAsync(c => c.CustomerId == user.CustomerId);
+                    if (customer == null)
+                    {
+                        return BadRequest(new { isValid = true, mesClient = "Không gửi được đánh giá do không tìm thấy khách hàng đăng nhập", mesDev = "don't find customer login" });
+                    }
+                    var product = await _productService.GetSingleByConditionAsync(p => p.ProductId == productId);
+                    if (product == null)
+                    {
+                        return BadRequest(new { isValid = true, mesClient = "Không gửi được đánh giá do không tìm thấy sản phẩm", mesDev = "don't find product" });
+                    }
+                    var comment = new Comment
+                    {
+                        CommentId = Guid.NewGuid().ToString(),
+                        Vote = inputComment.Vote ?? 5,
+                        Message = inputComment.Message,
+                        DateCreated = DateTime.Now,
+                        CustomerId = customer.CustomerId,
+                        ProductId = product.ProductId,
+                    };
+                    await _commentService.AddAsync(comment);
+                    return Ok(new {mesClient = "Gửi đánh giá thành công", mesDev = "send comment successfully"});
+                }
+                catch(Exception ex)
+                {
+                    return BadRequest(new { isValid = true, mesClient = "Không gửi được đánh giá do lỗi hệ thống", mesDev = ex.Message });
+                }
+            }
+            List<string> error = new List<string>();
+            foreach (var value in ModelState.Values)
+            {
+                foreach (var err in value.Errors)
+                {
+                    error.Add(err.ErrorMessage);
+                }
+            }
+            return BadRequest(new {isValid = false, error = error, mesClient = "Lỗi nhập dữ liệu", mesDev = "error inpur data"});
         }
     }
 }

@@ -18,5 +18,6 @@ namespace Book_Ecommerce.Service.Abstract
         Task RemoveAsync(Customer customer);
         Task SaveChangesAsync();
         IQueryable<Customer> Table();
+        Task UpdateAsync(Customer customer);
     }
 }

@@ -35,10 +35,9 @@
                     <small class="fas fa-star"></small>
                     <small class="fas fa-star"></small>
                     <small class="fas fa-star"></small>
-                    <small class="fas fa-star-half-alt"></small>
-                    <small class="far fa-star"></small>
+                    <small class="fas fa-star"></small>
+                    <small class="fas fa-star"></small>
                 </div>
-                <small class="pt-1">(50 Reviews)</small>
             </div>
             @if(Model.PercentDiscount > 0)
             {
@@ -84,7 +83,7 @@
                 }
             </p>
             <p class="mb-2">Thương hiệu: <a class="link-in-productdetail" href="@Url.Action("GetByBrand","Products",new {brandSlug = Model.Brand?.BrandSlug})">@Model.Brand?.BrandName</a></p>
-            <p class="mb-2">Số lượt đánh giá: @Model.Comments.Count()</p>
+            <p class="mb-2">Số lượt đánh giá: <span class="sum-comment">@Model.SumComment</span></p>
             
             <div class="d-flex align-items-center mb-4 pt-2">
                 <div class="input-group quantity mr-3" style="width: 130px;">
@@ -107,103 +106,66 @@
     <div class="row px-xl-5">
         <div class="col">
             <div class="nav nav-tabs justify-content-center border-secondary mb-4">
-                <a class="nav-item nav-link active" data-toggle="tab" href="#tab-pane-1">Description</a>
-                <a class="nav-item nav-link" data-toggle="tab" href="#tab-pane-2">Information</a>
-                <a class="nav-item nav-link" data-toggle="tab" href="#tab-pane-3">Reviews (0)</a>
+                <a class="nav-item nav-link active" data-toggle="tab" href="#tab-pane-1">Mô tả</a>
+                <a class="nav-item nav-link" data-toggle="tab" href="#tab-pane-2">Đánh giá(<span class="sum-comment">@Model.SumComment</span>)</a>
             </div>
             <div class="tab-content">
                 <div class="tab-pane fade show active" id="tab-pane-1">
-                    <h4 class="mb-3">Product Description</h4>
-                    <p>Eos no lorem eirmod diam diam, eos elitr et gubergren diam sea. Consetetur vero aliquyam invidunt duo dolores et duo sit. Vero diam ea vero et dolore rebum, dolor rebum eirmod consetetur invidunt sed sed et, lorem duo et eos elitr, sadipscing kasd ipsum rebum diam. Dolore diam stet rebum sed tempor kasd eirmod. Takimata kasd ipsum accusam sadipscing, eos dolores sit no ut diam consetetur duo justo est, sit sanctus diam tempor aliquyam eirmod nonumy rebum dolor accusam, ipsum kasd eos consetetur at sit rebum, diam kasd invidunt tempor lorem, ipsum lorem elitr sanctus eirmod takimata dolor ea invidunt.</p>
-                    <p>Dolore magna est eirmod sanctus dolor, amet diam et eirmod et ipsum. Amet dolore tempor consetetur sed lorem dolor sit lorem tempor. Gubergren amet amet labore sadipscing clita clita diam clita. Sea amet et sed ipsum lorem elitr et, amet et labore voluptua sit rebum. Ea erat sed et diam takimata sed justo. Magna takimata justo et amet magna et.</p>
+                    <h4 class="mb-3">Mô tả</h4>
+                    @Html.Raw(Model.Decription)
                 </div>
                 <div class="tab-pane fade" id="tab-pane-2">
-                    <h4 class="mb-3">Additional Information</h4>
-                    <p>Eos no lorem eirmod diam diam, eos elitr et gubergren diam sea. Consetetur vero aliquyam invidunt duo dolores et duo sit. Vero diam ea vero et dolore rebum, dolor rebum eirmod consetetur invidunt sed sed et, lorem duo et eos elitr, sadipscing kasd ipsum rebum diam. Dolore diam stet rebum sed tempor kasd eirmod. Takimata kasd ipsum accusam sadipscing, eos dolores sit no ut diam consetetur duo justo est, sit sanctus diam tempor aliquyam eirmod nonumy rebum dolor accusam, ipsum kasd eos consetetur at sit rebum, diam kasd invidunt tempor lorem, ipsum lorem elitr sanctus eirmod takimata dolor ea invidunt.</p>
                     <div class="row">
-                        <div class="col-md-6">
-                            <ul class="list-group list-group-flush">
-                                <li class="list-group-item px-0">
-                                    Sit erat duo lorem duo ea consetetur, et eirmod takimata.
-                                </li>
-                                <li class="list-group-item px-0">
-                                    Amet kasd gubergren sit sanctus et lorem eos sadipscing at.
-                                </li>
-                                <li class="list-group-item px-0">
-                                    Duo amet accusam eirmod nonumy stet et et stet eirmod.
-                                </li>
-                                <li class="list-group-item px-0">
-                                    Takimata ea clita labore amet ipsum erat justo voluptua. Nonumy.
-                                </li>
-                            </ul>
+                        <div id="viewComments" class="col-md-6">
+                            
                         </div>
                         <div class="col-md-6">
-                            <ul class="list-group list-group-flush">
-                                <li class="list-group-item px-0">
-                                    Sit erat duo lorem duo ea consetetur, et eirmod takimata.
-                                </li>
-                                <li class="list-group-item px-0">
-                                    Amet kasd gubergren sit sanctus et lorem eos sadipscing at.
-                                </li>
-                                <li class="list-group-item px-0">
-                                    Duo amet accusam eirmod nonumy stet et et stet eirmod.
-                                </li>
-                                <li class="list-group-item px-0">
-                                    Takimata ea clita labore amet ipsum erat justo voluptua. Nonumy.
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-                <div class="tab-pane fade" id="tab-pane-3">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <h4 class="mb-4">1 review for "Colorful Stylish Shirt"</h4>
-                            <div class="media mb-4">
-                                <img src="img/user.jpg" alt="Image" class="img-fluid mr-3 mt-1" style="width: 45px;">
-                                <div class="media-body">
-                                    <h6>John Doe<small> - <i>01 Jan 2045</i></small></h6>
-                                    <div class="text-primary mb-2">
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star-half-alt"></i>
-                                        <i class="far fa-star"></i>
-                                    </div>
-                                    <p>Diam amet duo labore stet elitr ea clita ipsum, tempor labore accusam ipsum et no at. Kasd diam tempor rebum magna dolores sed sed eirmod ipsum.</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <h4 class="mb-4">Leave a review</h4>
-                            <small>Your email address will not be published. Required fields are marked *</small>
+                            <h4 class="mb-4">Viết đánh giá của bạn</h4>
+                            <div id="errorMessage" class="text-danger"></div>
                             <div class="d-flex my-3">
-                                <p class="mb-0 mr-2">Your Rating * :</p>
-                                <div class="text-primary">
-                                    <i class="far fa-star"></i>
-                                    <i class="far fa-star"></i>
-                                    <i class="far fa-star"></i>
-                                    <i class="far fa-star"></i>
-                                    <i class="far fa-star"></i>
+                                <p class="mb-0 mr-2">Đánh giá :</p>
+                                <div id="ratingForm" class="text-primary">
+                                    <label>
+                                        <input type="radio" name="rating" value="1" checked>
+                                        <span class="star" style="color: #28a745">
+                                            <i class="fas fa-star"></i>
+                                        </span>
+                                    </label>
+                                    <label>
+                                        <input type="radio" name="rating" value="2">
+                                        <span class="star">
+                                            <i class="fas fa-star"></i>
+                                        </span>
+                                    </label>
+                                    <label>
+                                        <input type="radio" name="rating" value="3">
+                                        <span class="star">
+                                            <i class="fas fa-star"></i>
+                                        </span>
+                                    </label>
+                                    <label>
+                                        <input type="radio" name="rating" value="4">
+                                        <span class="star">
+                                            <i class="fas fa-star"></i>
+                                        </span>
+                                    </label>
+                                    <label>
+                                        <input type="radio" name="rating" value="5">
+                                        <span class="star">
+                                            <i class="fas fa-star"></i>
+                                        </span>
+                                    </label>
                                 </div>
                             </div>
-                            <form>
+                            <div>
                                 <div class="form-group">
-                                    <label for="message">Your Review *</label>
+                                    <label for="message">Bình luận</label>
                                     <textarea id="message" cols="30" rows="5" class="form-control"></textarea>
                                 </div>
-                                <div class="form-group">
-                                    <label for="name">Your Name *</label>
-                                    <input type="text" class="form-control" id="name">
-                                </div>
-                                <div class="form-group">
-                                    <label for="email">Your Email *</label>
-                                    <input type="email" class="form-control" id="email">
-                                </div>
                                 <div class="form-group mb-0">
-                                    <input type="submit" value="Leave Your Review" class="btn btn-primary px-3">
+                                    <button id="btnSendComment" class="btn btn-primary px-3">Gửi đánh giá</button>
                                 </div>
-                            </form>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -276,7 +238,30 @@
 <!-- Products End -->
 @section Scripts {
     <script type="text/javascript">
+        document.addEventListener('DOMContentLoaded', function () {
+            const stars = document.querySelectorAll('.star');
+            const radioButtons = document.querySelectorAll('input[type="radio"]');
+
+            stars.forEach((star, index) => {
+                star.addEventListener('click', function () {
+                    radioButtons[index].checked = true; // Check radio button khi sao được click
+
+                    // Đánh dấu các sao trước đó là đã chọn
+                    for (let i = 0; i <= index; i++) {
+                        stars[i].style.color = '#28a745';
+                    }
+
+                    // Đánh dấu các sao sau đó là chưa chọn
+                    for (let i = index + 1; i < stars.length; i++) {
+                        stars[i].style.color = '#ddd';
+                    }
+                });
+            });
+        });
+    </script>
+    <script type="text/javascript">
         $(document).ready(function () {
+            LoadComment()
             $('.AddToCart').click(function () {
                 var productid = $(this).data('productid')
                 var formData = new FormData()
@@ -360,6 +345,54 @@
                 if($('#Quantity').val() <= 0)
                     $('#Quantity').val(1)
             })
+            // phần bình luận
+            $('#btnSendComment').click(function () {
+                var vote = $("input[name='rating']:checked").val();
+                var formData = new FormData()
+                formData.append('Vote', vote)
+                formData.append('Message', $('#message').val())
+                $('#loader').show()
+                $.ajax({
+                    url: '@Url.Action("SendComment", "Products", new { area = "", productId = Model.ProductId })',
+                    type: "POST",
+                    data: formData,
+                    catch: false,
+                    contentType: false,
+                    processData: false,
+                    success: function (response) {
+                        console.log(response)
+                        $('#loader').hide()
+                        $('#errorMessage').html("")
+                        var toast = $(RenderHtmlToastSuccess(response.mesClient))
+                        $('.m-toast-box').append(toast)
+                        HideToastAfterShow(toast)
+                        LoadComment()
+                    },
+                    error: function (response) {
+                        console.log(response)
+                        $('#loader').hide()
+                        $('#errorMessage').html("")
+                        var message = ""
+                        if (response.status == 401)
+                            message = "Yêu cầu bạn đăng nhập để thực hiện chức năng này";
+                        else if (response.status == 403)
+                            message = "Tài khoản của bạn không thể thực hiện chức năng này";
+                        else {
+                            if (response.responseJSON.isValid == false) {
+                                var err = ""
+                                for (var i = 0; i < response.responseJSON.error.length; i++) {
+                                    err += `<p>${response.responseJSON.error[i]}</p>`
+                                }
+                                $('#errorMessage').html(err)
+                            }
+                            message = response.responseJSON.mesClient
+                        }
+                        var toast = $(RenderHtmlToastError(message))
+                        $('.m-toast-box').append(toast)
+                        HideToastAfterShow(toast)
+                    }
+                })
+            })
         })
         function HideToastAfterShow(toast) {
             setTimeout(function () {
@@ -392,6 +425,83 @@
                             <i class="fas fa-times"></i>
                         </div>
                     </div>`
+        }
+        function LoadComment() {
+            $('#loader').show()
+            $.ajax({
+                url: '@Url.Action("GetComment", "Products", new { area = "", productId = Model.ProductId })',
+                type: "GET",
+                catch: false,
+                contentType: false,
+                processData: false,
+                success: function (response) {
+                    console.log(response)
+                    $('#loader').hide()
+                    $('.sum-comment').html(response.length)
+                    var htmlComments = ''
+                    response.forEach(function(element){
+                        var htmlStart = RenderStar(element.vote)
+                        htmlComments += `<div class="media mb-4">
+                                        <img src="/contents/Photos/user.png" alt="Image" class="img-fluid mr-3 mt-1" style="width: 45px;">
+                                        <div class="media-body">
+                                            <h6>${element.customerName} <small> - <i>${element.dateCreated}</i></small></h6>
+                                            <div class="text-primary mb-2">
+                                                ${htmlStart}
+                                            </div>
+                                            <p>${element.message}</p>
+                                        </div>
+                                    </div>`
+                    })
+                    $('#viewComments').html(htmlComments)
+                },
+                error: function (response) {
+                    console.log(response)
+                    $('#loader').hide()
+                    var message = ""
+                    if (response.status == 401)
+                        message = "Yêu cầu bạn đăng nhập để thực hiện chức năng này";
+                    else if (response.status == 403)
+                        message = "Tài khoản của bạn không thể thực hiện chức năng này";
+                    else {
+                        message = response.responseJSON.mesClient
+                    }
+                    var toast = $(RenderHtmlToastError(message))
+                    $('.m-toast-box').append(toast)
+                    HideToastAfterShow(toast)
+                }
+            })
+        }
+        function RenderStar(number){
+            if(number == 1)
+                return `<i class="fas fa-star"></i>
+                        <i class="far fa-star"></i>
+                        <i class="far fa-star"></i>
+                        <i class="far fa-star"></i>
+                        <i class="far fa-star"></i>`
+            if(number == 2)
+                return `<i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="far fa-star"></i>
+                        <i class="far fa-star"></i>
+                        <i class="far fa-star"></i>`
+            if (number == 3)
+                return `<i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="far fa-star"></i>
+                        <i class="far fa-star"></i>`
+            if (number == 4)
+                return `<i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="far fa-star"></i>`
+            if (number == 5)
+                return `<i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>`
         }
     </script>
 }

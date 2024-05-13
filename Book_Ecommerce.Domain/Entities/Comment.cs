@@ -14,8 +14,6 @@ namespace Book_Ecommerce.Domain.Entities
         public string Message { get; set; } = null!;
         [DataType(DataType.Date)]
         public DateTime DateCreated { get; set; }
-        [DataType(DataType.Date)]
-        public DateTime DateModified { get; set; }
         [Column(TypeName = "char(36)")]
         public string CustomerId { get; set; } = null!;
         public Customer Customer { get; set; } = null!;

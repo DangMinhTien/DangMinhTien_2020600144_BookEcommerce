@@ -107,6 +107,11 @@ namespace Book_Ecommerce.Service
         {
             await _unitOfWork.CustomerRepository.AddAsync(customer);
         }
+        public async Task UpdateAsync(Customer customer)
+        {
+            _unitOfWork.CustomerRepository.Update(customer);
+            await _unitOfWork.SaveChangesAsync();
+        }
         public async Task RemoveAsync(Customer customer)
         {
             _unitOfWork.CustomerRepository.Remove(customer);

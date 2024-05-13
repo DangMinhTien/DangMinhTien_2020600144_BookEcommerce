@@ -12,7 +12,7 @@
         {
             var css = item.IsActive ? "item-sidebar-active" : "";
             <div class="item-sidebar @css">
-                <a asp-action="GetByCategory" asp-controller="Products" asp-route-categorySlug="@item.CategorySlug" class="px-0">
+                <a asp-action="GetByCategory" asp-controller="Products" asp-area="" asp-route-categorySlug="@item.CategorySlug" class="px-0">
                     @item.CategoryName
                     <span class="">(@item.SumProduct)</span>
                 </a>

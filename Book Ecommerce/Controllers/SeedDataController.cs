@@ -82,7 +82,7 @@ namespace Book_Ecommerce.Controllers
                             Price = 200000,
                             PercentDiscount = (j == 0) ? 10 : null,
                             IsActive = true,
-                            Description = "Sản phẩm chất lượng cao",
+                            Description = "<p>&nbsp;cuốn sách hấp dẫn</p><p>và nhiều kiến thức&nbsp;</p>",
                             BrandId = brand.BrandId
                         };
                         _context.Products.Add(product);

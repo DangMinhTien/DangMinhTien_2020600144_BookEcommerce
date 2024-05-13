@@ -330,9 +330,6 @@ namespace Book_Ecommerce.Data.Migrations
                     b.Property<DateTime>("DateCreated")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime>("DateModified")
-                        .HasColumnType("datetime2");
-
                     b.Property<string>("Message")
                         .IsRequired()
                         .HasColumnType("nvarchar(500)");
@@ -592,7 +589,7 @@ namespace Book_Ecommerce.Data.Migrations
                         .HasColumnType("bigint");
 
                     b.Property<string>("Description")
-                        .HasColumnType("nvarchar(500)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
@@ -1092,7 +1089,8 @@ namespace Book_Ecommerce.Data.Migrations
 
                     b.Navigation("Orders");
 
-                    b.Navigation("User");
+                    b.Navigation("User")
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Book_Ecommerce.Domain.Entities.District", b =>
@@ -1102,7 +1100,8 @@ namespace Book_Ecommerce.Data.Migrations
 
             modelBuilder.Entity("Book_Ecommerce.Domain.Entities.Employee", b =>
                 {
-                    b.Navigation("User");
+                    b.Navigation("User")
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Book_Ecommerce.Domain.Entities.Order", b =>

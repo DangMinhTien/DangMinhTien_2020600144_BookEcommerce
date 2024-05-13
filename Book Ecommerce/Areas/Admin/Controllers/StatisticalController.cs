@@ -10,7 +10,7 @@ using System.Globalization;
 namespace Book_Ecommerce.Areas.Admin.Controllers
 {
     [Area("Admin")]
-    [Authorize(Roles = $"{MyRole.EMPLOYEE}, {MyRole.ADMIN}")]
+    [Authorize(Roles = MyRole.ADMIN)]
     public class StatisticalController : Controller
     {
         private readonly IOrderService _orderService;

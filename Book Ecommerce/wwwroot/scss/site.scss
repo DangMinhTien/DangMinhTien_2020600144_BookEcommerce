@@ -151,6 +151,21 @@
     color: #28a745;
     text-decoration: underline;
 }
+
+.star {
+    color: #ddd; /* Màu sao không được chọn */
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.star:hover,
+.star:hover ~ .star {
+    color: #28a745; /* Màu sao khi di chuột qua */
+}
+
+input[name="rating"] {
+    display: none !important; /* Ẩn radio button */
+}
 // Product Detail End
 // SideBar Start
 .sidebar-collapse:hover h5{
@@ -236,3 +251,4 @@
     }
 }
 // loader end
+

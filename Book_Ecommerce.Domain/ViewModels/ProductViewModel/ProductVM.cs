@@ -15,11 +15,11 @@ namespace Book_Ecommerce.Domain.ViewModels.ProductViewModel
         public string? Decription { get; set; }
         public int Quantity { get; set; }
         public bool IsActive { get; set; }
+        public int SumComment { get; set; }
         public Brand Brand { set; get; } = null!;
         public IEnumerable<Category> Categories { set; get; } = null!;
         public IEnumerable<Author> Authors { set; get; } = null!;
         public IEnumerable<Image> Images { get; set; } = null!;
         public IEnumerable<ProductVM> Products { get; set; } = null!;
-        public IEnumerable<Comment> Comments { get; set; } = null!;
     }
 }

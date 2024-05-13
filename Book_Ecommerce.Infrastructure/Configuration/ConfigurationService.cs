@@ -87,13 +87,10 @@ namespace Book_Ecommerce.Infrastructure.Configuration
                     policyBuilder.RequireAuthenticatedUser();
                     policyBuilder.RequireRole(MyRole.CUSTOMER);
                 });
-            });
-            service.AddAuthorization(options =>
-            {
-                options.AddPolicy("IsEmployee", policyBuilder =>
+                options.AddPolicy("IsEmployeeOrAdmin", policyBuilder =>
                 {
                     policyBuilder.RequireAuthenticatedUser();
-                    policyBuilder.RequireRole(MyRole.CUSTOMER, MyRole.ADMIN);
+                    policyBuilder.RequireRole(new List<string> { MyRole.EMPLOYEE, MyRole.ADMIN });
                 });
             });
         }
@@ -126,6 +123,7 @@ namespace Book_Ecommerce.Infrastructure.Configuration
             service.AddScoped<IBannerService, BannerService>();
             service.AddScoped<IEmployeeService, EmployeeService>();
             service.AddScoped<IOrderService, OrderService>();
+            service.AddScoped<ICommentService, CommentService>();
         }
     }
 }

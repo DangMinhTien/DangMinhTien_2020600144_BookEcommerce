@@ -328,7 +328,7 @@ namespace Book_Ecommerce.Service
                 Categories = product.CategoryProducts.Select(p => p.Category).ToList(),
                 Authors = product.AuthorProducts.Select(p => p.Author).ToList(),
                 Brand = product.Brand,
-                Comments = product.Comments,
+                SumComment = product.Comments.Count(),
                 Products = products.Select(p => new ProductVM
                 {
                     ProductId = p.ProductId,

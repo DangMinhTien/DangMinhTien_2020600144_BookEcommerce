@@ -1,0 +1,248 @@
+﻿@model AccountVM
+@{
+    ViewData["Title"] = "Thông tin tài khoản";
+}
+<div class="container">
+    <h2>Tài khoản của bạn</h2>
+    <div>
+        <hr />
+        <div class="row">
+            <div class="col-md-3">
+                <ul class="nav nav-pills flex-column">
+                    <li class="nav-item"><a class="nav-link bg-primary text-white link" style="cursor: pointer">Thông tin tài khoản</a></li>
+                    <li class="nav-item"><a class="nav-link link" style="cursor: pointer">Mật khẩu</a></li>
+                </ul>
+            </div>
+            <div class="col-md-9">
+                <div class="row content">
+                    <div class="col-md-6">
+                        <div id="errorMessage" class="text-danger"></div>
+                        <div class="form-group">
+                            <label>Email</label>
+                            <input id="email" class="form-control" disabled value="@Model.Email" />
+                        </div>
+                        <div class="form-group">
+                            <label>Họ tên</label>
+                            <input id="fullName" class="form-control" value="@Model.FullName" />
+                        </div>
+                        <div class="form-group">
+                            <label>Giới tính</label>
+                            <div>
+                                @if (Model.Gender)
+                                {
+                                    <input type="radio" id="men" checked name="gender" /> <span>Nam</span>
+                                    <input type="radio" id="women" name="gender" /> <span>Nữ</span>
+                                }
+                                else
+                                {
+                                    <input type="radio" id="men" name="gender" /> <span>Nam</span>
+                                    <input type="radio" id="women" name="gender" checked /> <span>Nữ</span>
+                                }
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Ngày sinh</label>
+                            <input type="date" id="dateOfBirth" class="form-control" />
+                        </div>
+                        <div class="form-group">
+                            <label>Địa chỉ</label>
+                            <input type="text" id="address" class="form-control" value="@Model.Address" />
+                        </div>
+                        <div class="form-group">
+                            <label>Số điện thoại</label>
+                            <input type="text" id="phoneNumber" class="form-control" value="@Model.PhoneNumber" />
+                        </div>
+                        <button id="btnUpdateProfile" type="button"
+                                class="btn btn-primary my-2 text-white">
+                            Cập nhật
+                        </button>
+                    </div>
+                </div>
+                <div class="row content d-none">
+                    <div class="col-md-6">
+                        <div id="errorMessagePassword" class="text-danger"></div>
+                        <div class="form-group">
+                            <label>Mật khẩu hiện tại</label>
+                            <input id="currentPassword" type="password" class="form-control" />
+                        </div>
+                        <div class="form-group">
+                            <label>Mật khẩu mới</label>
+                            <input id="newPassword" type="password" class="form-control" />
+                        </div>
+                        <div class="form-group">
+                            <input type="checkbox" id="ShowPassword" /> Hiển thị mật khẩu
+                        </div>
+                        <button id="btnChangePassword" type="button" class="btn btn-primary my-2 text-white">Đổi mật khẩu</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    <script type="text/javascript">
+        $(document).ready(function () {
+            var dateOfBirth = '@Model.DateOfBirth?.ToString("yyyy-MM-dd")'
+            $('#dateOfBirth').val(dateOfBirth)
+            // Hiển thị màu và bg cho phần sidebar
+            $('.link').click(function () {
+                $('.link').removeClass('bg-primary')
+                $('.link').removeClass('text-white')
+                $(this).addClass('bg-primary')
+                $(this).addClass('text-white')
+                console.log('Oke chưa')
+            })
+            // Hiển thị cho phần content
+            $('.link').each(function (index, element) {
+                $(element).click(function () {
+                    $('.content').addClass('d-none')
+                    var contents = $('.content')
+                    $(contents[index]).removeClass('d-none')
+                })
+            })
+            // Hiển thị mật khẩu
+            $('#ShowPassword').change(function () {
+                if ($(this).prop('checked') == true) {
+                    $('#currentPassword').attr('type', 'text')
+                    $('#newPassword').attr('type', 'text')
+                } else {
+                    $('#currentPassword').attr('type', 'password')
+                    $('#newPassword').attr('type', 'password')
+                }
+            })
+            $('#btnUpdateProfile').click(function () {
+                var formData = new FormData()
+                formData.append('FullName', $('#fullName').val())
+                var gender
+                if ($("#men").prop("checked") == true)
+                    gender = true
+                else
+                    gender = false
+                formData.append('Gender', gender)
+                formData.append('PhoneNumber', $('#phoneNumber').val())
+                formData.append('DateOfBirth', $('#dateOfBirth').val())
+                formData.append('Address', $('#address').val())
+                $('#loader').show()
+                $.ajax({
+                    url: '@Url.Action("UpdateProfile", "AccountsProfile", new { area = "" })',
+                    type: "POST",
+                    data: formData,
+                    catch: false,
+                    contentType: false,
+                    processData: false,
+                    success: function (response) {
+                        console.log(response)
+                        $('#loader').hide()
+                        $('#errorMessage').html("")
+                        var toast = $(RenderHtmlToastSuccess(response.mesClient))
+                        $('.m-toast-box').append(toast)
+                        HideToastAfterShow(toast)
+                    },
+                    error: function (response) {
+                        console.log(response)
+                        $('#loader').hide()
+                        $('#errorMessage').html("")
+                        var message = ""
+                        if (response.status == 401)
+                            message = "Yêu cầu bạn đăng nhập để thực hiện chức năng này";
+                        else if (response.status == 403)
+                            message = "Tài khoản của bạn không thể thực hiện chức năng này";
+                        else {
+                            if (response.responseJSON.isValid == false) {
+                                var err = ""
+                                for (var i = 0; i < response.responseJSON.error.length; i++) {
+                                    err += `<p>${response.responseJSON.error[i]}</p>`
+                                }
+                                $('#errorMessage').html(err)
+                            }
+                            message = response.responseJSON.mesClient
+                        }
+                        var toast = $(RenderHtmlToastError(message))
+                        $('.m-toast-box').append(toast)
+                        HideToastAfterShow(toast)
+                    }
+                })
+            })
+            $('#btnChangePassword').click(function () {
+                var formData = new FormData()
+                formData.append('CurrentPassword', $('#currentPassword').val())
+                formData.append('NewPassword', $('#newPassword').val())
+                $('#loader').show()
+                $.ajax({
+                    url: '@Url.Action("ChangePassword", "AccountsProfile", new { area = "" })',
+                    type: "POST",
+                    data: formData,
+                    catch: false,
+                    contentType: false,
+                    processData: false,
+                    success: function (response) {
+                        console.log(response)
+                        $('#loader').hide()
+                        $('#errorMessagePassword').html("")
+                        var toast = $(RenderHtmlToastSuccess(response.mesClient))
+                        $('.m-toast-box').append(toast)
+                        HideToastAfterShow(toast)
+                        var toast2 = $(RenderHtmlToastSuccess('Bạn vừa đăng xuất khỏi hệ thống'))
+                        $('.m-toast-box').append(toast2)
+                        HideToastAfterShow(toast2)
+                    },
+                    error: function (response) {
+                        console.log(response)
+                        $('#loader').hide()
+                        $('#errorMessagePassword').html("")
+                        var message = ""
+                        if (response.status == 401)
+                            message = "Yêu cầu bạn đăng nhập để thực hiện chức năng này";
+                        else if (response.status == 403)
+                            message = "Tài khoản của bạn không thể thực hiện chức năng này";
+                        else {
+                            if (response.responseJSON.isValid == false) {
+                                var err = ""
+                                for (var i = 0; i < response.responseJSON.error.length; i++) {
+                                    err += `<p>${response.responseJSON.error[i]}</p>`
+                                }
+                                $('#errorMessagePassword').html(err)
+                            }
+                            message = response.responseJSON.mesClient
+                        }
+                        var toast = $(RenderHtmlToastError(message))
+                        $('.m-toast-box').append(toast)
+                        HideToastAfterShow(toast)
+                    }
+                })
+            })
+        })
+        function HideToastAfterShow(toast) {
+            setTimeout(function () {
+                // tạo hiệu ứng
+                toast.addClass('hidden')
+                // sau đó ẩn
+                setTimeout(function () {
+                    toast.remove()
+                }, 1000)
+            }, 5000)
+        }
+        function RenderHtmlToastError(message) {
+            return `<div class="m-toast-message m-toast-error">
+                                    <div class="m-toast-icon">
+                                        <i class="fas fa-check-circle"></i>
+                                    </div>
+                                    <div class="m-toast-text">${message}</div>
+                                    <div class="m-toast-close">
+                                        <i class="fas fa-times"></i>
+                                    </div>
+                                </div>`
+        }
+        function RenderHtmlToastSuccess(message) {
+            return `<div class="m-toast-message m-toast-success">
+                                    <div class="m-toast-icon">
+                                        <i class="fas fa-check-circle"></i>
+                                    </div>
+                                            <div class="m-toast-text">${message}</div>
+                                    <div class="m-toast-close">
+                                        <i class="fas fa-times"></i>
+                                    </div>
+                                </div>`
+        }
+    </script>
+}

@@ -14,6 +14,7 @@ namespace Book_Ecommerce.Service.Abstract
     {
         Task<Order?> GetSingleByConditionAsync(Expression<Func<Order, bool>> expression);
         Task<(IEnumerable<OrderVM>, PagingModel, IEnumerable<PageSizeModel>)> GetToViewManageAsync(string? search = null, int page = 1, int pagesize = 20);
+        Task<(IEnumerable<OrderVM>, PagingModel, IEnumerable<PageSizeModel>)> GetToViewMyOrderAsync(string customerId, string? search = null, int page = 1, int pagesize = 20);
         Task RemoveAsync(Order order);
         IQueryable<Order> Table();
         Task UpdateAsync(Order order);
