@@ -124,6 +124,7 @@ namespace Book_Ecommerce.Infrastructure.Configuration
             service.AddScoped<IEmployeeService, EmployeeService>();
             service.AddScoped<IOrderService, OrderService>();
             service.AddScoped<ICommentService, CommentService>();
+            service.AddScoped<IFavouriteProductService, FavouriteProductService>();
         }
     }
 }

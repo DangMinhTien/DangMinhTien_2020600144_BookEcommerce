@@ -44,7 +44,7 @@
                 <div class="card-footer d-flex justify-content-between bg-light border">
                     <a asp-action="Detail" asp-controller="Products" asp-route-productSlug="@product.ProductSlug" class="btn btn-sm text-dark p-0"><i class="fas fa-eye text-primary mr-1"></i>Chi tiết</a>
                     <p data-productid="@product.ProductId" class="btn btn-sm text-dark p-0 AddToCart"><i class="fas fa-shopping-cart text-primary mr-1"></i>Thêm</p>
-                    <a asp-action="Detail" asp-controller="Products" asp-route-productSlug="@product.ProductSlug" class="btn btn-sm text-dark p-0"><i class="fas fas fa-heart text-primary mr-1"></i>Thích</a>
+                    <a data-productid="@product.ProductId" class="btn btn-sm text-dark p-0 AddToFavourite"><i class="fas fas fa-heart text-primary mr-1"></i>Thích</a>
                 </div>
             </div>
         </div>
@@ -77,6 +77,44 @@
                         $('#sumcart').text(response.sumItem)
                     },
                     error: function(response){
+                        console.log(response)
+                        $('#loader').hide()
+                        var message = ""
+                        if (response.status == 401)
+                            message = "Yêu cầu bạn đăng nhập để thực hiện chức năng này";
+                        else if (response.status == 403)
+                            message = "Tài khoản của bạn không thể thực hiện chức năng này";
+                        else {
+                            message = response.responseJSON.mesClient
+                            console.log(response.responseJSON)
+                        }
+                        var toast = $(RenderHtmlToastError(message))
+                        $('.m-toast-box').append(toast)
+                        HideToastAfterShow(toast)
+                    }
+                })
+            })
+            $('.AddToFavourite').click(function () {
+                var productid = $(this).data('productid')
+                var formData = new FormData()
+                formData.append('productid', productid)
+                $('#loader').show()
+                $.ajax({
+                    url: '@Url.Action("AddToFavourite", "Favourites")',
+                    type: 'POST',
+                    data: formData,
+                    catch: false,
+                    contentType: false,
+                    processData: false,
+                    success: function (response) {
+                        $('#loader').hide()
+                        console.log(response)
+                        var toast = $(RenderHtmlToastSuccess(response.mesClient))
+                        $('.m-toast-box').append(toast)
+                        HideToastAfterShow(toast)
+                        $('#sumFavourite').text(response.sumItem)
+                    },
+                    error: function (response) {
                         console.log(response)
                         $('#loader').hide()
                         var message = ""

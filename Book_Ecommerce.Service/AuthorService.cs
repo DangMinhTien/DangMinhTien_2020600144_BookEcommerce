@@ -87,6 +87,8 @@ namespace Book_Ecommerce.Service
                 IsActive = true,
                 AuthorCode = a.AuthorCode,
                 Information = a.Information,
+                UrlImage = a.UrlImage,
+                FileImage = a.FileImage,
                 SumProduct = a.AuthorProducts.Count(),
             }).ToList();
             var pagingModel = new PagingModel

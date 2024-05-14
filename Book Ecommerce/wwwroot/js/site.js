@@ -26,10 +26,18 @@ $(document).ready(function () {
         var width = $(element).width()
         $(element).height(width * 1.2)
     })
+    $('.img-author').each(function (index, element) {
+        var width = $(element).width()
+        $(element).height(width * 1)
+    })
     $(window).resize(function () {
         $('.img-product').each(function (index, element) {
             var width = $(element).width()
             $(element).height(width * 1.2)
+        })
+        $('.img-author').each(function (index, element) {
+            var width = $(element).width()
+            $(element).height(width * 1)
         })
         console.log('Đã xảy ra sự kiện thay đổi kích thước màn hình');
     });

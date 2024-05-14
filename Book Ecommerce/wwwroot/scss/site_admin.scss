@@ -265,3 +265,17 @@
     }
 }
 // banner-admin-end
+//author-admin-start
+.img-author-admin {
+    height: 140px;
+    width: 120px;
+    object-fit: cover;
+}
+
+@media only screen and (max-width: 550px) {
+    .img-author-admin {
+        height: 90px;
+        width: 75px;
+    }
+}
+//author-admin-end

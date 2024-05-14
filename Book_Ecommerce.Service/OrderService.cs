@@ -15,6 +15,8 @@ using Microsoft.EntityFrameworkCore;
 using Book_Ecommerce.Domain.ViewModels.OrderViewModel;
 using PayPal.v1.Payments;
 using System.Linq.Expressions;
+using Book_Ecommerce.Domain.Helpers;
+using System.Globalization;
 
 namespace Book_Ecommerce.Service
 {
@@ -156,6 +158,42 @@ namespace Book_Ecommerce.Service
                                         _urlHelper.Action("Index", "MyOrders", new { page = page, search = search, pagesize = psItem.Size }) ?? "";
             }
             return (orderVMs, pagingModel, lstPageSize);
+        }
+        public async Task<dynamic?> GetOrderDetailToView(string orderId)
+        {
+            var order = await _unitOfWork.OrderRepository.Table().Include(o => o.OrderDetails)
+                                                 .ThenInclude(od => od.Product)
+                                                 .ThenInclude(p => p.Images)
+                                                 .Include(o => o.Customer)
+                                                 .FirstOrDefaultAsync(o => o.OrderId == orderId);
+            if (order == null)
+                return null;
+            CultureInfo cultureInfo = new CultureInfo("vi-VN");
+            var result = new
+            {
+                orderId = order.OrderId,
+                orderCode = order.OrderCode,
+                dateCreated = order.DateCreated.ToString("dd/MM/yyyy"),
+                status = Generation.GenerationStatusOrderString(order.Status),
+                note = order.Note,
+                customerName = order.Customer.FullName,
+                fullName = order.FullName,
+                phoneNumber = order.PhoneNumber,
+                address = order.Address,
+                dateDelivery = order.DateDelivery.ToString("dd/MM/yyyy"),
+                paymentType = order.PaymentType,
+                transportFee = string.Format(cultureInfo, "{0:C0}", order.TransportFee),
+                totalAmount = string.Format(cultureInfo, "{0:C0}", order.OrderDetails.Sum(od => od.Quantity * od.Price) + order.TransportFee),
+                orderDetails = order.OrderDetails.Select(od => new
+                {
+                    productName = od.Product.ProductName,
+                    urlImage = od.Product.Images.FirstOrDefault()?.Url ?? "",
+                    quantity = od.Quantity,
+                    price = string.Format(cultureInfo, "{0:C0}", od.Price),
+                    amount = string.Format(cultureInfo, "{0:C0}", od.Price * od.Quantity)
+                }).ToList(),
+            };
+            return result;
         }
         public IQueryable<Book_Ecommerce.Domain.Entities.Order> Table()
         {

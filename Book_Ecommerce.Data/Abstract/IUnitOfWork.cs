@@ -29,6 +29,7 @@ namespace Book_Ecommerce.Data.Abstract
         IRepository<Banner> BannerRepository { get; }
         IRepository<Employee> EmployeeRepository { get; }
         IRepository<Comment> CommentRepository { get; }
+        IRepository<FavouriteProduct> FavouriteProductRepository { get; }
 
         Task SaveChangesAsync();
     }

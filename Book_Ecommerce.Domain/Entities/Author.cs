@@ -18,6 +18,10 @@ namespace Book_Ecommerce.Domain.Entities
         public string AuthorSlug { set; get; } = null!;
         [Column(TypeName = "nvarchar(500)")]
         public string? Information { set; get; }
+        [Column(TypeName = "nvarchar(1000)")]
+        public string? UrlImage { get; set; }
+        [Column(TypeName = "nvarchar(1000)")]
+        public string? FileImage { get; set; }
         public IEnumerable<AuthorProduct> AuthorProducts { get; set; } = null!;
 
     }

@@ -39,6 +39,8 @@ namespace Book_Ecommerce.Data
         public IRepository<Banner> BannerRepository => new Repository<Banner>(_dbContext);
         public IRepository<Employee> EmployeeRepository => new Repository<Employee>(_dbContext);
         public IRepository<Comment> CommentRepository => new Repository<Comment>(_dbContext);
+        public IRepository<FavouriteProduct> FavouriteProductRepository 
+            => new Repository<FavouriteProduct>(_dbContext);
         public async Task SaveChangesAsync()
         {
             await _dbContext.SaveChangesAsync();

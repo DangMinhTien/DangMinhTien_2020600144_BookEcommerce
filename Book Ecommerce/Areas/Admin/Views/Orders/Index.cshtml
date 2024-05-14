@@ -244,7 +244,7 @@
                         $('#transportFee').html(response.order.transportFee)
                         $('#totalAmount').html(response.order.totalAmount)
                         var htmlOrderDetail = ''
-                        response.order.orderDetail.forEach(function(element, index){
+                        response.order.orderDetails.forEach(function(element, index){
                             htmlOrderDetail += `<tr>
                                     <td class="text-center">${index + 1}</td>
                                     <td class="text-center">${element.productName}</td>

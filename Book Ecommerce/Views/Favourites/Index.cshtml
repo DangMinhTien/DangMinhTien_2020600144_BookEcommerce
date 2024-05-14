@@ -1,0 +1,143 @@
+﻿@model IEnumerable<ProductVM>
+@{
+    ViewData["Title"] = "Danh sách yêu thích";
+    CultureInfo cultureInfo = new CultureInfo("vi-VN");
+}
+
+<!-- Cart Start -->
+<div class="container-fluid">
+    <div class="row px-xl-5">
+        <div class="col-lg-2"></div>
+        <div class="col-lg-8 table-responsive mb-5">
+            <table class="table table-bordered text-center mb-0">
+                <thead class="bg-secondary text-dark">
+                    <tr>
+                        <th>Sản phẩm</th>
+                        <th>Ảnh</th>
+                        <th>Giá bán</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody class="align-middle">
+                    @foreach (var item in Model)
+                    {
+                        var srcImg = item.Images.FirstOrDefault()?.Url;
+                        if (string.IsNullOrEmpty(srcImg))
+                            srcImg = "/contents/Photos/No_Image_Available.jpg";
+                        <tr>
+                            <td><a class="link-decoration" asp-action="Detail" asp-controller="Products" asp-route-productSlug="@item.ProductSlug">@item.ProductName</a></td>
+                            <td class="align-middle">
+                                <a asp-action="Detail" asp-controller="Products" asp-route-productSlug="@item.ProductSlug">
+                                    <img src="@srcImg" class="img-product" alt="" style="width: 100px; object-fit:cover;" />
+                                </a>
+                            </td>
+                            <td class="align-middle price-item">
+                                @if(item.PercentDiscount != null && item.PercentDiscount > 0)
+                                {
+                                    <div class="d-flex align-items-center mb-2 justify-content-between">
+                                        <h5 class="font-weight-semi-bold">@string.Format(cultureInfo, "{0:C0}", item.PriceAfterDiscount)</h5>
+                                        <h5 class="font-weight-semi-bold text-danger ml-4"><del>@string.Format(cultureInfo, "{0:C0}", item.Price)</del></h5>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="d-flex align-items-center mb-2 justify-content-end">
+                                        <h5 class="font-weight-semi-bold">@string.Format(cultureInfo, "{0:C0}", item.PriceAfterDiscount)</h5>
+                                    </div>
+                                }
+                            </td>
+                            <td class="align-middle">
+                                <div class="d-flex justify-content-around">
+                                    <button data-productid="@item.ProductId" class="btn btn-sm btn-primary AddToCart">
+                                        <i class="fas fa-shopping-cart"></i></button>
+                                    <form asp-action="RemoveItem" asp-controller="Favourites" asp-route-productId="@item.ProductId">
+                                        <button type="submit" class="btn btn-sm btn-primary"><i class="fa fa-times"></i></button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        <div class="col-lg-2"></div>
+    </div>
+</div>
+<!-- Cart End -->
+@section Scripts{
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('.AddToCart').click(function () {
+                var productid = $(this).data('productid')
+                var formData = new FormData()
+                formData.append('productid', productid)
+                formData.append('quantity', 1)
+                $('#loader').show()
+                $.ajax({
+                    url: '@Url.Action("AddToCart", "Cart")',
+                    type: 'POST',
+                    data: formData,
+                    catch: false,
+                    contentType: false,
+                    processData: false,
+                    success: function (response) {
+                        $('#loader').hide()
+                        console.log(response)
+                        var toast = $(RenderHtmlToastSuccess(response.mesClient))
+                        $('.m-toast-box').append(toast)
+                        HideToastAfterShow(toast)
+                        $('#sumcart').text(response.sumItem)
+                    },
+                    error: function (response) {
+                        console.log(response)
+                        $('#loader').hide()
+                        var message = ""
+                        if (response.status == 401)
+                            message = "Yêu cầu bạn đăng nhập để thực hiện chức năng này";
+                        else if (response.status == 403)
+                            message = "Tài khoản của bạn không thể thực hiện chức năng này";
+                        else {
+                            message = response.responseJSON.mesClient
+                            console.log(response.responseJSON)
+                        }
+                        var toast = $(RenderHtmlToastError(message))
+                        $('.m-toast-box').append(toast)
+                        HideToastAfterShow(toast)
+                    }
+                })
+            })
+        })
+        function HideToastAfterShow(toast) {
+            setTimeout(function () {
+                // tạo hiệu ứng
+                toast.addClass('hidden')
+                // sau đó ẩn
+                setTimeout(function () {
+                    toast.remove()
+                }, 1000)
+            }, 5000)
+        }
+        function RenderHtmlToastError(message) {
+            return `<div class="m-toast-message m-toast-error">
+                                <div class="m-toast-icon">
+                                    <i class="fas fa-check-circle"></i>
+                                </div>
+                                <div class="m-toast-text">${message}</div>
+                                <div class="m-toast-close">
+                                    <i class="fas fa-times"></i>
+                                </div>
+                            </div>`
+        }
+        function RenderHtmlToastSuccess(message) {
+            return `<div class="m-toast-message m-toast-success">
+                                <div class="m-toast-icon">
+                                    <i class="fas fa-check-circle"></i>
+                                </div>
+                                        <div class="m-toast-text">${message}</div>
+                                <div class="m-toast-close">
+                                    <i class="fas fa-times"></i>
+                                </div>
+                            </div>`
+        }
+    </script>
+}

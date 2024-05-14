@@ -47,12 +47,14 @@
                         <th>Slug</th>
                         <th>Số lượng sản phẩm</th>
                         <th>Thông tin tác giả</th>
+                        <th>Hình ảnh</th>
                         <th></th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach (var item in Model)
                     {
+                        var urlImage = item.UrlImage == null ? "/contents/Photos/No_Image_Available.jpg" : item.UrlImage;
                         <tr>
                             <td>
                                 <a style="cursor: pointer" data-authorid="@item.AuthorId" class="edit-author" data-toggle="modal" data-target="#formModal">
@@ -63,6 +65,9 @@
                             <td>@item.AuthorSlug</td>
                             <td>@item.SumProduct</td>
                             <td>@item.Information</td>
+                            <td>
+                                <img class="img-author-admin" src="@urlImage" />
+                            </td>
                             <td>
                                 <a data-authorcode="@item.AuthorCode" data-authorid="@item.AuthorId" style="cursor: pointer" class="delete-author">Xóa</a>
                             </td>
@@ -96,6 +101,11 @@
                     <label for="message-text" class="col-form-label">Thông tin tác giả</label>
                     <textarea class="form-control" id="information"></textarea>
                 </div>
+                <div class="form-group">
+                    <label class="col-form-label">Hình ảnh</label>
+                    <input type="file" class="form-control" id="fileImage">
+                </div>
+                <img id="imagePreview" src="/contents/Photos/No_Image_Available.jpg" style="width: 150px; height: 150px; object-fit: cover" />
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
@@ -108,10 +118,28 @@
     <script type="text/javascript">
         var func = 'create'
         var authorId = ''
+        var srcImg = ''
         $(document).ready(function () {
+            $('#fileImage').change(function (e) {
+                var file = e.target.files[0];
+                var reader = new FileReader();
+
+                reader.onload = function (e) {
+                    if (e.target.result) {
+                        $('#imagePreview').attr('src', e.target.result);
+                    }
+                };
+                if (file) {
+                    reader.readAsDataURL(file);
+                } else {
+                    $('#imagePreview').attr('src', srcImg)
+                }
+            });
             $('#createAuthor').click(function () {
                 $('#titleForm').text('Thêm mới')
                 $('#btnFunc').text('Thêm mới')
+                srcImg = '/contents/Photos/No_Image_Available.jpg'
+                $('#imagePreview').attr('src', srcImg)
                 func = 'create'
                 refreshForm()
             })
@@ -131,8 +159,12 @@
                     success: function (response) {
                         console.log(response)
                         $('#loader').hide()
+                        srcImg = response.urlImage;
+                        if (srcImg == null)
+                            srcImg = '/contents/Photos/No_Image_Available.jpg'
                         $('#authorName').val(response.authorName)
                         $('#information').val(response.information)
+                        $('#imagePreview').attr('src', srcImg)
                     },
                     error: function (response) {
                         console.log(response)
@@ -155,6 +187,7 @@
                 var formData = new FormData()
                 formData.append('AuthorName', $('#authorName').val())
                 formData.append('Information', $('#information').val())
+                formData.append('FileImage', $('#fileImage')[0].files[0])
                 if (func == 'create') {
                     $('#loader').show()
                     $.ajax({

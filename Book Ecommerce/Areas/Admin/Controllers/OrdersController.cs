@@ -44,39 +44,12 @@ namespace Book_Ecommerce.Areas.Admin.Controllers
         {
             try
             {
-                var order =await _orderService.Table().Include(o => o.OrderDetails)
-                                                 .ThenInclude(od => od.Product)
-                                                 .ThenInclude(p => p.Images)
-                                                 .Include(o => o.Customer)
-                                                 .FirstOrDefaultAsync(o => o.OrderId == orderId);
+                var order = await _orderService.GetOrderDetailToView(orderId);
                 if (order == null)
-                    return BadRequest(new { mesClient = "Không lấy được đơn hàng", mesDev = "Order is not found" });
-                CultureInfo cultureInfo = new CultureInfo("vi-VN");
-                var result = new
                 {
-                    orderId = order.OrderId,
-                    orderCode = order.OrderCode,
-                    dateCreated = order.DateCreated.ToString("dd/MM/yyyy"),
-                    status  = Generation.GenerationStatusOrderString(order.Status),
-                    note = order.Note,
-                    customerName = order.Customer.FullName,
-                    fullName = order.FullName,
-                    phoneNumber = order.PhoneNumber,
-                    address = order.Address,
-                    dateDelivery = order.DateDelivery.ToString("dd/MM/yyyy"),
-                    paymentType = order.PaymentType,
-                    transportFee = string.Format(cultureInfo, "{0:C0}", order.TransportFee),
-                    totalAmount = string.Format(cultureInfo, "{0:C0}", order.OrderDetails.Sum(od => od.Quantity * od.Price) + order.TransportFee),
-                    orderDetail = order.OrderDetails.Select(od => new
-                    {
-                        productName = od.Product.ProductName,
-                        urlImage = od.Product.Images.FirstOrDefault()?.Url ?? "",
-                        quantity = od.Quantity,
-                        price = string.Format(cultureInfo, "{0:C0}", od.Price),
-                        amount = string.Format(cultureInfo, "{0:C0}", od.Price * od.Quantity)
-                    }).ToList(),
-                };
-                return Ok(new { order = result });
+                    return BadRequest(new { mesClient = "Không tìm được đơn hàng cần xem", mesDev = "Order is not found" });
+                }
+                return Ok(new { order = order });
             }
             catch(Exception ex)
             {

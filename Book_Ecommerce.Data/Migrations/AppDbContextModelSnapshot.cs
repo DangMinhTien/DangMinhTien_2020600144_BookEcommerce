@@ -129,8 +129,14 @@ namespace Book_Ecommerce.Data.Migrations
                     b.Property<long>("CodeNumber")
                         .HasColumnType("bigint");
 
+                    b.Property<string>("FileImage")
+                        .HasColumnType("nvarchar(1000)");
+
                     b.Property<string>("Information")
                         .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("UrlImage")
+                        .HasColumnType("nvarchar(1000)");
 
                     b.HasKey("AuthorId");
 

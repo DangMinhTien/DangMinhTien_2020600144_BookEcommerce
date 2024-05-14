@@ -1,5 +1,6 @@
 ﻿using Book_Ecommerce.Domain.Entities;
 using Book_Ecommerce.Domain.Helpers;
+using Book_Ecommerce.Domain.Models;
 using Book_Ecommerce.Domain.MySettings;
 using Book_Ecommerce.Domain.ViewModels.AuthorViewModel;
 using Book_Ecommerce.Domain.ViewModels.CategoryViewModel;
@@ -15,10 +16,16 @@ namespace Book_Ecommerce.Areas.Admin.Controllers
     public class AuthorsController : Controller
     {
         private readonly IAuthorService _authorService;
+        private readonly ICloudinaryService _cloudinaryService;
+        private readonly ILogger<AuthorsController> _logger;
 
-        public AuthorsController(IAuthorService authorService)
+        public AuthorsController(IAuthorService authorService,
+            ICloudinaryService cloudinaryService,
+            ILogger<AuthorsController> logger)
         {
             _authorService = authorService;
+            _cloudinaryService = cloudinaryService;
+            _logger = logger;
         }
         [HttpGet("/quan-ly-tac-gia")]
         public async Task<IActionResult> Index(string? search = null, int page = 1, int pagesize = MyAppSetting.PAGE_SIZE)
@@ -60,6 +67,17 @@ namespace Book_Ecommerce.Areas.Admin.Controllers
                         AuthorSlug = authorSlug,
                         Information = inputAuthor.Information,
                     };
+                    if(inputAuthor.FileImage != null)
+                    {
+                        var clodinaryModel = await _cloudinaryService.UploadAsync(inputAuthor.FileImage);
+                        author.UrlImage = clodinaryModel.Url;
+                        author.FileImage = clodinaryModel.FileName;
+                    }
+                    else
+                    {
+                        author.UrlImage = null;
+                        author.FileImage = null;
+                    }
                     await _authorService.AddAsync(author);
                     TempData["success"] = "Thêm tác giả thành công";
                     return Ok(new { mesClient = "Thêm tác giả thành công", mesDev = "add author is successfully" });
@@ -93,6 +111,7 @@ namespace Book_Ecommerce.Areas.Admin.Controllers
                 {
                     authorName = author.AuthorName,
                     information = author.Information,
+                    urlImage = author.UrlImage,
                 });
             }
             catch (Exception ex)
@@ -116,6 +135,14 @@ namespace Book_Ecommerce.Areas.Admin.Controllers
                     {
                         return BadRequest(new { isValid = true, mesClient = "Không cập nhật được do thông tìm thấy tác giả", mesDev = "Author is not found" });
                     }
+                    var oldFileImage = string.Empty;
+                    if(inputAuthor.FileImage != null)
+                    {
+                        var clodinaryModel = await _cloudinaryService.UploadAsync(inputAuthor.FileImage);
+                        oldFileImage = author.FileImage;
+                        author.UrlImage = clodinaryModel.Url;
+                        author.FileImage = clodinaryModel.FileName;
+                    }
                     var authorSlug = string.Empty;
                     do
                     {
@@ -125,6 +152,20 @@ namespace Book_Ecommerce.Areas.Admin.Controllers
                     author.Information = inputAuthor.Information;
                     author.AuthorSlug = authorSlug;
                     await _authorService.UpdateAsync(author);
+                    if (inputAuthor.FileImage != null)
+                    {
+                        try
+                        {
+                            if(!string.IsNullOrEmpty(oldFileImage))
+                            {
+                                await _cloudinaryService.DeleteAsync(oldFileImage);
+                            }
+                        }
+                        catch(Exception ex)
+                        {
+                            _logger.LogInformation("Có lỗi cloudinay:" + ex.Message);
+                        }
+                    }
                     TempData["success"] = "Cập nhật tác giả thành công";
                     return Ok(new { mesClient = "Cập nhật tác giả thành công", mesDev = "update author is successfully" });
                 }
@@ -154,8 +195,19 @@ namespace Book_Ecommerce.Areas.Admin.Controllers
                     return BadRequest(new { mesClient = "Không xóa được do thông tìm thấy tác giả", mesDev = "Author is not found" });
                 }
                 await _authorService.RemoveAsync(author);
-                TempData["success"] = "Xóa thể loại thành công";
-                return Ok(new { mesClient = "Xóa thể loại thành công", mesDev = "delete category is successfully" });
+                if (!string.IsNullOrEmpty(author.FileImage))
+                {
+                    try
+                    {
+                        await _cloudinaryService.DeleteAsync(author.FileImage);
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogInformation("Có lỗi cloudinay:" + ex.Message);
+                    }
+                }
+                TempData["success"] = "Xóa tác giả thành công";
+                return Ok(new { mesClient = "Xóa tác giả thành công", mesDev = "delete category is successfully" });
             }
             catch (Exception ex)
             {

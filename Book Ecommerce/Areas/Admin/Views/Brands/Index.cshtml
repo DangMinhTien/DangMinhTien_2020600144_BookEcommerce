@@ -131,17 +131,14 @@
                 if (file) {
                     reader.readAsDataURL(file);
                 } else {
-                    if (func == 'create') {
-                        $('#imagePreview').attr('src', '/contents/Photos/No_Image_Available.jpg')
-                    }
-                    if (func == 'update') {
-                        $('#imagePreview').attr('src', srcImg)
-                    }
+                    $('#imagePreview').attr('src', srcImg)
                 }
             });
             $('#createBrand').click(function () {
                 $('#titleForm').text('Thêm mới')
                 $('#btnFunc').text('Thêm mới')
+                srcImg = '/contents/Photos/No_Image_Available.jpg';
+                $('#imagePreview').attr('src', srcImg)
                 func = 'create'
                 refreshForm()
             })

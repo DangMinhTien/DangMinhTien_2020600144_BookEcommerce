@@ -2,8 +2,13 @@
 @inject UserManager<AppUser> _userManager
 @inject SignInManager<AppUser> _signManager
 @inject IAuthorizationService _authorizationService
+@inject IFavouriteProductService _favouriteProductService
 
 @{
+    <a asp-action="Index" asp-controller="Favourites" class="btn border">
+        <i class="fas fa-heart text-primary"></i>
+        <span id="sumFavourite" class="badge">@await GetSumFavorite()</span>
+    </a>
     <a asp-action="Index" asp-controller="Cart" class="btn border">
         <i class="fas fa-shopping-cart text-primary"></i>
         <span id="sumcart" class="badge">@await GetSumCartItem()</span>
@@ -22,5 +27,18 @@
         if (customer == null)
             return 0;
         return _context.CartItems.Where(c => c.CustomerId == customer.CustomerId).Sum(c => c.Quantity);
+    }
+    public async Task<int> GetSumFavorite()
+    {
+        var resultAuthor = await _authorizationService.AuthorizeAsync(User, "IsCustomer");
+        if (!resultAuthor.Succeeded)
+            return 0;
+        var user = await _userManager.GetUserAsync(User);
+        if (user == null)
+            return 0;
+        var customer = _context.Customers.FirstOrDefault(c => c.CustomerId == user.CustomerId);
+        if (customer == null)
+            return 0;
+        return _favouriteProductService.Table().Count(fp => fp.CustomerId == customer.CustomerId);
     }
 }
