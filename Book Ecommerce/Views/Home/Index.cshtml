@@ -113,7 +113,70 @@
         </div>
     </div>
 </div>
-<!-- Sản phẩm mới Start -->
+<!-- Sản phẩm mới End -->
+<!-- Bán chạy Start -->
+<div class="container-fluid py-5">
+    <div class="text-center mb-4">
+        <h2 class="section-title px-5"><span class="px-2">Top 10 sản phẩm bán chạy</span></h2>
+    </div>
+    <div class="row px-xl-5">
+        <div class="col">
+            <div class="owl-carousel related-carousel">
+                @foreach (var product in Model.TopSelling)
+                {
+                    var image = product.Images.FirstOrDefault();
+                    <div style="box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5); border-radius: 10px; overflow: hidden;"
+                         class="card product-item border-0 mb-4">
+                        <a asp-action="Detail" asp-controller="Products" asp-route-productSlug="@product.ProductSlug">
+                            <div class="card-header product-img position-relative overflow-hidden bg-transparent border p-0">
+                                @if (image != null)
+                                {
+                                    <img style="object-fit:cover" class="w-100 img-product" src="@image.Url" alt="">
+                                }
+                                else
+                                {
+                                    <img style="object-fit:cover" class="w-100 img-product" src="/contents/Photos/No_Image_Available.jpg" alt="">
+                                }
+                            </div>
+                            <div class="card-body border-left border-right text-center p-0 pt-4 pb-3" style="padding: 0.5rem 0 !important">
+                                <h6 class="text-truncate" style="display: -webkit-box;-webkit-box-orient: vertical;overflow: hidden;
+                                        -webkit-line-clamp: 2;white-space: normal !important; height: 2.4em">
+                                    @product.ProductName
+                                </h6>
+                                <div class="d-flex justify-content-center">
+                                    @if (product.PercentDiscount > 0)
+                                    {
+                                        <h6>@string.Format(cultureInfo, "{0:C0}", product.PriceAfterDiscount)</h6>
+
+                                        <h6 class="text-muted ml-2"><del>@string.Format(cultureInfo, "{0:C0}", product.Price)</del></h6>
+                                    }
+                                    else
+                                    {
+                                        <h6>@string.Format(cultureInfo, "{0:C0}", product.Price)</h6>
+                                    }
+                                </div>
+                                <h6 class="text-center text-primary">Số lượng: @product.Quantity</h6>
+                            </div>
+                            <div class="card-footer d-flex justify-content-between bg-light border">
+                                <a asp-action="Detail" asp-controller="Products" asp-route-productSlug="@product.ProductSlug" class="btn btn-sm text-dark p-0"><i class="fas fa-eye text-primary mr-1"></i>Chi tiết</a>
+                                <a data-productid="@product.ProductId" class="btn btn-sm text-dark p-0 AddToCart">
+                                    <i class="fas fa-shopping-cart text-primary mr-1"></i>
+                                    Thêm
+                                </a>
+                                <a data-productid="@product.ProductId" class="btn btn-sm text-dark p-0 AddToFavourite">
+                                    <i class="fas fas fa-heart text-primary mr-1"></i>
+                                    Thích
+                                </a>
+                            </div>
+                        </a>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Bán chạy End -->
+<!-- Product Start-->
 <div class="container-fluid pt-5">
     <div class="text-center mb-4">
         <h2 class="section-title px-5"><span class="px-2">Sản phẩm</span></h2>
@@ -166,7 +229,7 @@
         }
     </div>
 </div>
-<!-- Products End -->
+<!-- Product End -->
 @section Scripts {
     <script type="text/javascript">
         $(document).ready(function () {

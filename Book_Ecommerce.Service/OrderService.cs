@@ -17,6 +17,7 @@ using PayPal.v1.Payments;
 using System.Linq.Expressions;
 using Book_Ecommerce.Domain.Helpers;
 using System.Globalization;
+using Book_Ecommerce.Domain.Entities;
 
 namespace Book_Ecommerce.Service
 {
@@ -198,6 +199,10 @@ namespace Book_Ecommerce.Service
         public IQueryable<Book_Ecommerce.Domain.Entities.Order> Table()
         {
             return _unitOfWork.OrderRepository.Table();
+        }
+        public IQueryable<OrderDetail> TableOrderDetail()
+        {
+            return _unitOfWork.OrderDetailRepository.Table();
         }
         public async Task<Book_Ecommerce.Domain.Entities.Order?> 
             GetSingleByConditionAsync(Expression<Func<Book_Ecommerce.Domain.Entities.Order, bool>> expression)

@@ -44,47 +44,56 @@ namespace Book_Ecommerce.Controllers
 
         public async Task<IActionResult> Index()
         {
-            var authors = await _authorService.GetDataAsync();
-            var brands = await _brandService.GetDataAsync();
-            var newProduct = await _productService.Table()
-                                                .Include(p => p.Images)
-                                                .OrderByDescending(p => p.CodeNumber)
-                                                .Take(10).ToListAsync();
-            var products = await _productService.Table()
-                                                .Include(p => p.Images)
-                                                .Take(24).ToListAsync();
-            var homeVM = new HomeVM
+            try
             {
-                Authors = authors,
-                Brands = brands,
-                NewProducts = newProduct.Select(p => new ProductVM
+                var authors = await _authorService.GetDataAsync();
+                var brands = await _brandService.GetDataAsync();
+                var newProduct = await _productService.Table()
+                                                    .Include(p => p.Images)
+                                                    .OrderByDescending(p => p.CodeNumber)
+                                                    .Take(10).ToListAsync();
+                var products = await _productService.Table()
+                                                    .Include(p => p.Images)
+                                                    .Take(24).ToListAsync();
+                var topSelling = await _productService.GetTopSelling();
+                var homeVM = new HomeVM
                 {
-                    ProductId = p.ProductId,
-                    ProductCode = p.ProductCode,
-                    ProductName = p.ProductName,
-                    ProductSlug = p.ProductSlug,
-                    Quantity = p.Quantity,
-                    Price = p.Price,
-                    PriceAfterDiscount = (p.PercentDiscount > 0) ? p.Price - (p.Price * ((decimal)p.PercentDiscount / 100)) : p.Price,
-                    PercentDiscount = p.PercentDiscount,
-                    Decription = p.Description,
-                    Images = p.Images
-                }).ToList(),
-                Products = products.Select(p => new ProductVM
-                {
-                    ProductId = p.ProductId,
-                    ProductCode = p.ProductCode,
-                    ProductName = p.ProductName,
-                    ProductSlug = p.ProductSlug,
-                    Quantity = p.Quantity,
-                    Price = p.Price,
-                    PriceAfterDiscount = (p.PercentDiscount > 0) ? p.Price - (p.Price * ((decimal)p.PercentDiscount / 100)) : p.Price,
-                    PercentDiscount = p.PercentDiscount,
-                    Decription = p.Description,
-                    Images = p.Images
-                }).ToList(),
-            };
-            return View(homeVM);
+                    Authors = authors,
+                    Brands = brands,
+                    NewProducts = newProduct.Select(p => new ProductVM
+                    {
+                        ProductId = p.ProductId,
+                        ProductCode = p.ProductCode,
+                        ProductName = p.ProductName,
+                        ProductSlug = p.ProductSlug,
+                        Quantity = p.Quantity,
+                        Price = p.Price,
+                        PriceAfterDiscount = (p.PercentDiscount > 0) ? p.Price - (p.Price * ((decimal)p.PercentDiscount / 100)) : p.Price,
+                        PercentDiscount = p.PercentDiscount,
+                        Decription = p.Description,
+                        Images = p.Images
+                    }).ToList(),
+                    TopSelling = topSelling,
+                    Products = products.Select(p => new ProductVM
+                    {
+                        ProductId = p.ProductId,
+                        ProductCode = p.ProductCode,
+                        ProductName = p.ProductName,
+                        ProductSlug = p.ProductSlug,
+                        Quantity = p.Quantity,
+                        Price = p.Price,
+                        PriceAfterDiscount = (p.PercentDiscount > 0) ? p.Price - (p.Price * ((decimal)p.PercentDiscount / 100)) : p.Price,
+                        PercentDiscount = p.PercentDiscount,
+                        Decription = p.Description,
+                        Images = p.Images
+                    }).ToList(),
+                };
+                return View(homeVM);
+            }
+            catch(Exception ex)
+            {
+                return NotFound(ex.Message);
+            }
         }
 
         public IActionResult Privacy()

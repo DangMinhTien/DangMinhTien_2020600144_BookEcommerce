@@ -373,6 +373,36 @@ namespace Book_Ecommerce.Service
             };
             return productVM;
         }
+        public async Task<IEnumerable<ProductVM>> GetTopSelling()
+        {
+            var productIds = await _unitOfWork.OrderDetailRepository.Table()
+                                            .GroupBy(od => od.ProductId)
+                                            .OrderByDescending(g => g.Sum(od => od.Quantity))
+                                            .Select(g => g.Key).Take(10).ToListAsync();
+            var productVMs = new List<ProductVM>();
+            foreach(var productId in productIds)
+            {
+                var product = await _unitOfWork.ProductRepository.GetSingleByConditionAsync(p => p.ProductId == productId);
+                if(product != null)
+                {
+                    productVMs.Add(new ProductVM
+                    {
+                        ProductId = product.ProductId,
+                        ProductCode = product.ProductCode,
+                        ProductName = product.ProductName,
+                        ProductSlug = product.ProductSlug,
+                        Quantity = product.Quantity,
+                        Price = product.Price,
+                        PriceAfterDiscount = (product.PercentDiscount > 0) ? 
+                            product.Price - (product.Price * ((decimal)product.PercentDiscount / 100)) : product.Price,
+                        PercentDiscount = product.PercentDiscount,
+                        Decription = product.Description,
+                        Images = product.Images
+                    });
+                }
+            }
+            return productVMs;
+        }
         public async Task<Product?> GetSingleByConditionAsync(Expression<Func<Product, bool>> expression)
         {
             return await _unitOfWork.ProductRepository.GetSingleByConditionAsync(expression);

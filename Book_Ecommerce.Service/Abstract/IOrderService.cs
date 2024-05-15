@@ -18,6 +18,7 @@ namespace Book_Ecommerce.Service.Abstract
         Task<(IEnumerable<OrderVM>, PagingModel, IEnumerable<PageSizeModel>)> GetToViewMyOrderAsync(string customerId, string? search = null, int page = 1, int pagesize = 20);
         Task RemoveAsync(Order order);
         IQueryable<Order> Table();
+        IQueryable<OrderDetail> TableOrderDetail();
         Task UpdateAsync(Order order);
     }
 }

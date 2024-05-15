@@ -32,5 +32,6 @@ namespace Book_Ecommerce.Service.Abstract
         Task<ProductVM?> GetDetailToViewManageAsync(string productCode);
         Task UpdateAsync(Product product);
         Task RemoveAsync(Product product);
+        Task<IEnumerable<ProductVM>> GetTopSelling();
     }
 }

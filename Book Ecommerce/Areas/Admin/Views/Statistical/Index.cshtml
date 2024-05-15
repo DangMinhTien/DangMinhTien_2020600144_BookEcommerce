@@ -1,6 +1,7 @@
 ﻿
 @{
     ViewData["Title"] = "Thống kê";
+    ViewBag.MenuManage = MenuManage.Statistical;
 }
 <!-- Content Row -->
 <div class="row">
@@ -62,7 +63,24 @@
         </div>
     </div>
 </div>
-
+<div class="row">
+    <div class="form-group col-lg-2">
+        <label class="control-label text-dark">Theo năm:</label>
+        <select class="w-100" id="yearSelected">
+            @for(int i = 2020;i <= DateTime.Now.Year; i++)
+            {
+                if (i == DateTime.Now.Year)
+                {
+                    <option value="@i" selected>Năm @i</option>
+                }
+                else
+                {
+                    <option value="@i">Năm @i</option>
+                }
+            }
+        </select>
+    </div>
+</div>
 <!-- Content Row -->
 <div class="row">
     <div class="col-md-6">
@@ -70,6 +88,11 @@
     </div>
     <div class="col-md-6">
         <canvas id="chartQuantity"></canvas>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <canvas id="chartTopSelling"></canvas>
     </div>
 </div>
 <div class="row mt-5">
@@ -86,61 +109,44 @@
     <script src="~/admin/vendor/chart.js/Chart.min.js"></script>
     <script type="text/javascript">
         $(document).ready(function () {
+            GetRenenue(@DateTime.Now.Year)
+            $('#yearSelected').change(function () {
+                var year = $(this).val()
+                GetRenenue(year)
+            })
             $('#loader').show()
             $.ajax({
-                url: '@Url.Action("GetRevenue", "Statistical", new { area = "Admin" })',
+                url: '@Url.Action("GetTopSelling", "Statistical", new { area = "Admin" })',
                 type: "GET",
                 catch: false,
                 contentType: false,
                 processData: false,
                 success: function (response) {
-                    console.log(response)
+                    console.log("top 10 selling", response)
                     $('#loader').hide()
                     var colors = generateRelatedColors(response.length)
-                    var months = []
-                    var totalQuantitys = []
-                    var revenues = []
+                    var labels = []
+                    var values = []
                     response.forEach(function (element) {
-                        months.push('Th ' + element.month)
-                        totalQuantitys.push(element.totalQuantity)
-                        revenues.push(element.revenue)
+                        labels.push(element.productName)
+                        values.push(element.totalQuantity)
                     })
-                    new Chart("chartRevenue", {
+                    new Chart("chartTopSelling", {
                         type: "bar",
                         data: {
-                            labels: months,
+                            labels: labels,
                             datasets: [{
                                 backgroundColor: colors.rgbaColors,
                                 borderColor: colors.rgbColors,
                                 borderWidth: 1,
-                                data: revenues
+                                data: values
                             }]
                         },
                         options: {
                             legend: { display: false },
                             title: {
                                 display: true,
-                                text: 'Doanh thu trong năm'
-                            }
-                        }
-                    });
-
-                    new Chart("chartQuantity", {
-                        type: "bar",
-                        data: {
-                            labels: months,
-                            datasets: [{
-                                backgroundColor: colors.rgbaColors,
-                                borderColor: colors.rgbColors,
-                                borderWidth: 1,
-                                data: totalQuantitys
-                            }]
-                        },
-                        options: {
-                            legend: { display: false },
-                            title: {
-                                display: true,
-                                text: 'Số lượng bán trong năm'
+                                text: `Các sản phẩm bán chạy`
                             }
                         }
                     });
@@ -301,6 +307,83 @@
             }
 
             return { rgbaColors: rgbaColors, rgbColors: rgbColors };
+        }
+        function GetRenenue(year) {
+            $('#loader').show()
+            $.ajax({
+                url: '@Url.Action("GetRevenue", "Statistical", new { area = "Admin" })' + `?year=${year}`,
+                type: "GET",
+                catch: false,
+                contentType: false,
+                processData: false,
+                success: function (response) {
+                    console.log(response)
+                    $('#loader').hide()
+                    var colors = generateRelatedColors(response.length)
+                    var months = []
+                    var totalQuantitys = []
+                    var revenues = []
+                    response.forEach(function (element) {
+                        months.push('Th ' + element.month)
+                        totalQuantitys.push(element.totalQuantity)
+                        revenues.push(element.revenue)
+                    })
+                    new Chart("chartRevenue", {
+                        type: "bar",
+                        data: {
+                            labels: months,
+                            datasets: [{
+                                backgroundColor: colors.rgbaColors,
+                                borderColor: colors.rgbColors,
+                                borderWidth: 1,
+                                data: revenues
+                            }]
+                        },
+                        options: {
+                            legend: { display: false },
+                            title: {
+                                display: true,
+                                text: `Doanh thu trong năm ${year}`
+                            }
+                        }
+                    });
+
+                    new Chart("chartQuantity", {
+                        type: "bar",
+                        data: {
+                            labels: months,
+                            datasets: [{
+                                backgroundColor: colors.rgbaColors,
+                                borderColor: colors.rgbColors,
+                                borderWidth: 1,
+                                data: totalQuantitys
+                            }]
+                        },
+                        options: {
+                            legend: { display: false },
+                            title: {
+                                display: true,
+                                text: `Số lượng bán trong năm ${year}`
+                            }
+                        }
+                    });
+                },
+                error: function (response) {
+                    console.log(response)
+                    $('#loader').hide()
+                    var message = ""
+                    if (response.status == 401)
+                        message = "Yêu cầu bạn đăng nhập để thực hiện chức năng này";
+                    else if (response.status == 403)
+                        message = "Tài khoản của bạn không thể thực hiện chức năng này";
+                    else {
+                        message = response.responseJSON.mesClient
+                    }
+                    var toast = $(RenderHtmlToastError(message))
+                    $('.m-toast-box').append(toast)
+                    HideToastAfterShow(toast)
+                }
+            })
         }
         function HideToastAfterShow(toast) {
             setTimeout(function () {

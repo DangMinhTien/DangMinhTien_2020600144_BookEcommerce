@@ -51,7 +51,7 @@ namespace Book_Ecommerce.Areas.Admin.Controllers
             }
         }
         [HttpGet("/thong-ke/laydoanhthu")]
-        public async Task<IActionResult> GetRevenue()
+        public async Task<IActionResult> GetRevenue(int year)
         {
             try
             {
@@ -60,7 +60,7 @@ namespace Book_Ecommerce.Areas.Admin.Controllers
                 foreach (var month in lstMonth)
                 {
                     var orders = await _orderService.Table().Include(o => o.OrderDetails)
-                        .Where(o => o.DateCreated.Year ==  DateTime.Now.Year && o.DateCreated.Month == month)
+                        .Where(o => o.DateCreated.Year ==  year && o.DateCreated.Month == month)
                         .ToListAsync();
                     result.Add(new
                     {
@@ -74,6 +74,27 @@ namespace Book_Ecommerce.Areas.Admin.Controllers
             catch(Exception ex)
             {
                 return BadRequest(new {mesClient = "Không lấy được doanh thu", mesDev = ex.Message});
+            }
+        }
+        [HttpGet("/thong-ke/topbanchay")]
+        public async Task<IActionResult> getTopSelling(int year)
+        {
+            try
+            {
+                var products = await _orderService.TableOrderDetail().Include(od => od.Product)
+                                            .GroupBy(od => od.ProductId)
+                                            .OrderByDescending(g => g.Sum(od => od.Quantity))
+                                            .Select(g => new
+                                            {
+                                                productId = g.First().Product.ProductId,
+                                                productName = g.First().Product.ProductName,
+                                                totalQuantity = g.Sum(od => od.Quantity)
+                                            }).Take(10).ToListAsync();
+                return Ok(products);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { mesClient = "Không lấy được doanh thu", mesDev = ex.Message });
             }
         }
         [HttpGet("/thong-ke/theloai")]

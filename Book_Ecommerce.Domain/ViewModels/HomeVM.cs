@@ -13,6 +13,7 @@ namespace Book_Ecommerce.Domain.ViewModels
         public IEnumerable<Author> Authors { get; set; } = null!;
         public IEnumerable<Brand> Brands { get; set; } = null!;
         public IEnumerable<ProductVM> NewProducts { get; set; } = null!;
+        public IEnumerable<ProductVM> TopSelling { get; set; } = null!;
         public IEnumerable<ProductVM> Products { get; set; } = null!;
     }
 }

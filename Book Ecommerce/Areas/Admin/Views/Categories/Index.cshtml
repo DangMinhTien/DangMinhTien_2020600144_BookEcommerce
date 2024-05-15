@@ -4,6 +4,7 @@
     CultureInfo cultureInfo = new CultureInfo("vi-VN");
     var pagingModel = ViewBag.pagingModel as PagingModel ?? new PagingModel();
     var pageSizes = ViewBag.pageSizes as List<PageSizeModel>;
+    ViewBag.MenuManage = MenuManage.Category;
 }
 <!-- DataTales Example -->
 <div class="card shadow">
