@@ -2,16 +2,24 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Book_Ecommerce.Data;
+using Book_Ecommerce.Service.Abstract;
+using Book_Ecommerce.Service;
 
 namespace Book_Ecommerce.Controllers
 {
     public class ProvincesVietNamController : Controller
     {
         private readonly AppDbContext _context;
+        private readonly ILogger<ProvincesVietNamController> _logger;
+        private readonly IProvinceService _provinceService;
 
-        public ProvincesVietNamController(AppDbContext context)
+        public ProvincesVietNamController(AppDbContext context,
+            ILogger<ProvincesVietNamController> logger,
+            IProvinceService provinceService)
         {
             _context = context;
+            _logger = logger;
+            _provinceService = provinceService;
         }
         public IActionResult Index()
         {
@@ -20,38 +28,90 @@ namespace Book_Ecommerce.Controllers
         [HttpGet("/lay-tinh-thanh")]
         public async Task<IActionResult> GetAllProvince()
         {
-            var provinces = await _context.Provinces.ToListAsync();
-            return Json(new { data = provinces});
+            try
+            {
+                var provinces = await _provinceService.GetDataProvinceAsync();
+                return Json(new { data = provinces});
+            }
+            catch (Exception ex)
+            {
+                _logger.LogInformation(ex.Message);
+                return BadRequest();
+            }
         }
         [HttpGet("/lay-quan-huyen-theo-tinh-thanh")]
         public async Task<IActionResult> GetDistrictsByProvince(string provinceCode)
         {
-            var districts = await _context.Districts.Where(d => d.ProvinceCode == provinceCode).ToListAsync();
-            return Json(new { data = districts });
+            try
+            {
+                var districts = await _provinceService.GetDataDistrictAsync(d => d.ProvinceCode == provinceCode);
+                return Json(new { data = districts });
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogInformation(ex.Message);
+                return BadRequest();
+            }
         }
         [HttpGet("/lay-xa-phuong-theo-quan-huyen")]
         public async Task<IActionResult> GetWardsByDistrict(string districtCode)
         {
-            var wards = await _context.Wards.Where(w => w.DistrictCode == districtCode).ToListAsync();
-            return Json(new { data = wards });
+            try
+            {
+                var wards = await _provinceService.GetDataWardAsync(w => w.DistrictCode == districtCode);
+                return Json(new { data = wards });
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogInformation(ex.Message);
+                return BadRequest();
+            }
         }
         [HttpGet("/lay-tinh-thanh-theo-id")]
         public async Task<IActionResult> GetProvinceById(string code)
         {
-            var province = await _context.Provinces.FirstOrDefaultAsync(p => p.Code == code);
-            return Json(new { data = province });
+            try
+            {
+                var province = await _provinceService.GetSingleProvinceByConditionAsync(p => p.Code == code);
+                return Json(new { data = province });
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogInformation(ex.Message);
+                return BadRequest();
+            }
         }
         [HttpGet("/lay-quan-huyen-theo-id")]
         public async Task<IActionResult> GetDistrictsById(string code)
         {
-            var district = await _context.Districts.FirstOrDefaultAsync(p => p.Code == code); ;
-            return Json(new { data = district });
+            try
+            {
+                var district = await _provinceService.GetSingleDistrictByConditionAsync(p => p.Code == code); ;
+                return Json(new { data = district });
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogInformation(ex.Message);
+                return BadRequest();
+            }
         }
         [HttpGet("/lay-quan-huyen-theo-id")]
         public async Task<IActionResult> GetWardsById(string code)
         {
-            var ward = await _context.Wards.FirstOrDefaultAsync(p => p.Code == code);
-            return Json(new { data = ward });
+            try
+            {
+                var ward = await _provinceService.GetSingleWardByConditionAsync(p => p.Code == code);
+                return Json(new { data = ward });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogInformation(ex.Message);
+                return BadRequest();
+            }
         }
     }
 }

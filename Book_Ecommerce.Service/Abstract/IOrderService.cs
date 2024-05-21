@@ -12,6 +12,7 @@ namespace Book_Ecommerce.Service.Abstract
 {
     public interface IOrderService
     {
+        Task<string?> GenerateOrderToHtml(string orderId);
         Task<dynamic?> GetOrderDetailToView(string orderId);
         Task<Order?> GetSingleByConditionAsync(Expression<Func<Order, bool>> expression);
         Task<(IEnumerable<OrderVM>, PagingModel, IEnumerable<PageSizeModel>)> GetToViewManageAsync(string? search = null, int page = 1, int pagesize = 20);

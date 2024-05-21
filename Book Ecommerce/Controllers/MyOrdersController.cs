@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using SelectPdf;
 using System.Globalization;
 
 namespace Book_Ecommerce.Controllers
@@ -103,6 +104,30 @@ namespace Book_Ecommerce.Controllers
             catch (Exception ex)
             {
                 return BadRequest(new { mesClient = "Hủy đơn hàng thất bại do lỗi hệ thống", mesDev = ex.Message });
+            }
+        }
+        [HttpPost("/don-hang-cua-toi/indonhang")]
+        public async Task<IActionResult> GeneratePdf(string orderId)
+        {
+            try
+            {
+                var html = await _orderService.GenerateOrderToHtml(orderId);
+                if(html == null)
+                {
+                    return BadRequest(new { mesClient = "Không xuất pdf được hóa đơn do không tìm thấy đơn hàng", mesDev = "Order is not found" });
+                }
+                HtmlToPdf oHtmlToPdf = new HtmlToPdf();
+                PdfDocument oPdfDocument = oHtmlToPdf.ConvertHtmlString(html);
+                byte[] pdf = oPdfDocument.Save();
+                oPdfDocument.Close();
+                return File(
+                    pdf,
+                    "application/pdf"
+                    );
+            }
+            catch(Exception ex)
+            {
+                return BadRequest(new {mesClient = "Không xuất được hóa đơn do lỗi hệ thống", mesDev = ex.Message});
             }
         }
     }

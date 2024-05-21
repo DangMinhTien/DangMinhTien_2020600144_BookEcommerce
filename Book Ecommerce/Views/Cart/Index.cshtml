@@ -25,13 +25,13 @@
                         if (string.IsNullOrEmpty(srcImg))
                             srcImg = "/contents/Photos/No_Image_Available.jpg";
                         <tr>
-                            <td><a class="link-decoration" asp-action="Detail" asp-controller="Products" asp-route-productSlug="@item.ProductSlug">@item.ProductName</a></td>
+                            <td class="text-left"><a class="link-decoration" asp-action="Detail" asp-controller="Products" asp-route-productSlug="@item.ProductSlug">@item.ProductName</a></td>
                             <td class="align-middle">
                                 <a asp-action="Detail" asp-controller="Products" asp-route-productSlug="@item.ProductSlug">
                                     <img src="@srcImg" class="img-product" alt="" style="width: 50px; object-fit:cover;" />
                                 </a>
                             </td>
-                            <td class="align-middle price-item">@string.Format(cultureInfo, "{0:C0}", item.Price)</td>
+                            <td class="align-middle price-item text-right">@string.Format(cultureInfo, "{0:C0}", item.Price)</td>
                             <td class="align-middle">
                                 <div class="input-group quantity mx-auto" style="width: 100px;">
                                     <div class="input-group-btn">
@@ -47,7 +47,7 @@
                                     </div>
                                 </div>
                             </td>
-                            <td class="align-middle amount-item">@string.Format(cultureInfo, "{0:C0}", item.Amount)</td>
+                            <td class="align-middle amount-item text-right">@string.Format(cultureInfo, "{0:C0}", item.Amount)</td>
                             <td class="align-middle">
                                 <form asp-action="RemoveCart" asp-controller="Cart" asp-route-productId="@item.ProductId">
                                     <button type="submit" class="btn btn-sm btn-primary"><i class="fa fa-times"></i></button>

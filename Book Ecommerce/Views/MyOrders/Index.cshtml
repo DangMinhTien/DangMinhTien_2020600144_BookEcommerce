@@ -66,13 +66,16 @@
                             <td>@item.Customer.FullName</td>
                             <td>@item.FullName</td>
                             <td>@item.PhoneNumber</td>
-                            <td>@item.Address</td>
-                            <td>@item.DateCreated.ToString("dd/MM/yyyy") - @item.DateDelivery.ToString("dd/MM/yyyy")</td>
+                            <td style="width: 250px;">@item.Address</td>
+                            <td style="width: 150px;">@item.DateCreated.ToString("dd/MM/yyyy") - @item.DateDelivery.ToString("dd/MM/yyyy")</td>
                             <td>@string.Format(cultureInfo, "{0:C0}", item.TotalAmount)</td>
                             <td>
                                 <a data-orderid="@item.OrderId" data-ordercode="@item.OrderCode"
                                    style="cursor: pointer" class="cancel-order" data-toggle="modal" data-target="#cancelModel">
                                    Hủy
+                                </a> |
+                                <a class="print-pdf" style="cursor: pointer;" data-orderid="@item.OrderId" data-ordercode="@item.OrderCode">
+                                    In pdf
                                 </a>
                             </td>
                         </tr>
@@ -287,6 +290,53 @@
                             page = pagingModel.currentpage,
                             pagesize = ViewBag.pagesize
                         })'
+                    },
+                    error: function (response) {
+                        console.log(response)
+                        $('#loader').hide()
+                        var message = ""
+                        if (response.status == 401)
+                            message = "Yêu cầu bạn đăng nhập để thực hiện chức năng này";
+                        else if (response.status == 403)
+                            message = "Tài khoản của bạn không thể thực hiện chức năng này";
+                        else {
+                            message = response.responseJSON.mesClient
+                        }
+                        var toast = $(RenderHtmlToastError(message))
+                        $('.m-toast-box').append(toast)
+                        HideToastAfterShow(toast)
+                    }
+                })
+            })
+            $('.print-pdf').click(function () {
+                $('#loader').show()
+                orderId = $(this).data('orderid')
+                orderCode = $(this).data('ordercode')
+                $.ajax({
+                    url: '@Url.Action("GeneratePdf", "MyOrders")' + `?orderId=${orderId}`,
+                    type: "POST",
+                    catch: false,
+                    contentType: false,
+                    processData: false,
+                    xhrFields: {
+                        responseType: 'blob' // Đặt kiểu phản hồi là 'blob'
+                    },
+                    success: function (response) {
+                        console.log(response)
+                        $('#loader').hide()
+
+                        var url = window.URL.createObjectURL(response);
+                        var link = document.createElement('a');
+                        link.href = url;
+                        link.download = `donhang${orderCode}.pdf`; // Tên tệp muốn tải xuống
+                        document.body.append(link);
+                        link.click();
+                        link.remove();
+                        window.URL.revokeObjectURL(url);
+
+                        var toast = $(RenderHtmlToastSuccess('In đơn hàng thành công'))
+                        $('.m-toast-box').append(toast)
+                        HideToastAfterShow(toast)
                     },
                     error: function (response) {
                         console.log(response)

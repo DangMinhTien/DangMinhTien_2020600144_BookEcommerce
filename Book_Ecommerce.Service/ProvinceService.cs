@@ -31,5 +31,17 @@ namespace Book_Ecommerce.Service
         {
             return await _unitOfWork.WardRepository.GetSingleByConditionAsync(expression);
         }
+        public async Task<IEnumerable<Province>> GetDataProvinceAsync(Expression<Func<Province, bool>>? expression = null)
+        {
+            return await _unitOfWork.ProvinceRepository.GetDataAsync(expression);
+        }
+        public async Task<IEnumerable<District>> GetDataDistrictAsync(Expression<Func<District, bool>>? expression = null)
+        {
+            return await _unitOfWork.DistrictRepository.GetDataAsync(expression);
+        }
+        public async Task<IEnumerable<Ward>> GetDataWardAsync(Expression<Func<Ward, bool>>? expression = null)
+        {
+            return await _unitOfWork.WardRepository.GetDataAsync(expression);
+        }
     }
 }

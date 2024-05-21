@@ -32,6 +32,7 @@
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.19.5" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="6.0.16" />
     <PackageReference Include="PayPal" Version="2.0.0-rc2" />
+    <PackageReference Include="Select.HtmlToPdf.NetCore" Version="23.2.0" />
   </ItemGroup>
 
   <ItemGroup>

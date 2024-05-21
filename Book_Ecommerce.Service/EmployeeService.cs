@@ -60,7 +60,7 @@ namespace Book_Ecommerce.Service
             {
                 query = query.Where(e => e.FullName.Contains(search));
             }
-            query = query.OrderBy(e => e.CodeNumber);
+            query = query.OrderByDescending(e => e.CodeNumber);
             #region bắt đầu phân trang
             var totalItem = query.Count();
             var totalPage = (int)Math.Ceiling((double)totalItem / pagesize);

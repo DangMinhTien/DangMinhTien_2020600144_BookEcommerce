@@ -18,6 +18,7 @@ using System.Linq.Expressions;
 using Book_Ecommerce.Domain.Helpers;
 using System.Globalization;
 using Book_Ecommerce.Domain.Entities;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace Book_Ecommerce.Service
 {
@@ -60,7 +61,7 @@ namespace Book_Ecommerce.Service
             {
                 query = query.Where(c => c.OrderCode.Contains(search));
             }
-            query = query.OrderBy(c => c.CodeNumber);
+            query = query.OrderByDescending(c => c.CodeNumber);
             #region bắt đầu phân trang
             var totalItem = query.Count();
             var totalPage = (int)Math.Ceiling((double)totalItem / pagesize);
@@ -195,6 +196,74 @@ namespace Book_Ecommerce.Service
                 }).ToList(),
             };
             return result;
+        }
+        public async Task<string?> GenerateOrderToHtml(string orderId)
+        {
+            var order = await _unitOfWork.OrderRepository.Table().Include(o => o.OrderDetails)
+                                                 .ThenInclude(od => od.Product)
+                                                 .ThenInclude(p => p.Images)
+                                                 .Include(o => o.Customer)
+                                                 .FirstOrDefaultAsync(o => o.OrderId == orderId);
+            if (order == null)
+                return null;
+            CultureInfo cultureInfo = new CultureInfo("vi-VN");
+            string tbody = "";
+            int stt = 1;
+            foreach (var item in order.OrderDetails)
+            {
+                tbody += @$"
+                    <tr>
+                        <td style=""text-align: center;"">{stt++}</td>
+                        <td>{item.Product.ProductName}</td>
+                        <td>
+                            <img style=""width: 100px; height: 120px; object-fit: cover;"" src=""{item.Product.Images.FirstOrDefault()?.Url}
+                            """" />
+                        </td>
+                        <td style=""text-align: center;"">{item.Quantity}</td>
+                        <td style=""text-align: right;"">{string.Format(cultureInfo, "{0:C0}", item.Price)}</td>
+                        <td style=""text-align: right;"">{string.Format(cultureInfo, "{0:C0}", item.Price * item.Quantity)}</td>
+                    </tr>    
+                ";
+            }
+            string orderHtml = @$"
+                    <h2 style=""text-align: center; "">Hóa đơn mua hàng</h2>
+                    <div style=""display: flex; width: 80%; margin: auto;"">
+                        <div style=""flex-grow: 1;"">
+                            <p>Mã hóa đơn: {order.OrderCode}</p>
+                            <p>Ngày tạo: {order.DateCreated.ToString("dd/MM/yyyy")}</p>
+                            <p>Trạng thái: {Generation.GenerationStatusOrderString(order.Status)}</p>
+                            <p>Ghi chú: {order.Note}</p>
+                        </div>
+                        <div style=""flex-grow: 1;"">
+                            <p>Người đặt: {order.Customer.FullName}</p>
+                            <p>Người nhận: {order.FullName}</p>
+                            <p>Điện thoại: {order.PhoneNumber}</p>
+                            <p>Địa chỉ: {order.Address}</p>
+                        </div>
+                        <div style=""flex-grow: 1;"">
+                            <p>Ngày nhận: {order.DateDelivery.ToString("dd/MM/yyyy")}</p>
+                            <p>PT thanh toán: {order.PaymentType}</p>
+                            <p>Phí vận truyển: {string.Format(cultureInfo, "{0:C0}", order.TransportFee)}</p>
+                            <p>Tổng tiền: {string.Format(cultureInfo, "{0:C0}", order.OrderDetails.Sum(od => od.Quantity * od.Price) + order.TransportFee)}</p>
+                        </div>
+                    </div>
+                    <table style=""width: 80%; margin: auto;"" border=""1"">
+                        <thead>
+                            <tr>
+                                <th>STT</th>
+                                <th>Sản phẩm</th>
+                                <th>Hình ảnh</th>
+                                <th>Số lượng</th>
+                                <th>Đơn giá</th>
+                                <th>Thành tiền</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {tbody}
+                        </tbody>
+                    </table>
+                ";
+            return orderHtml;
         }
         public IQueryable<Book_Ecommerce.Domain.Entities.Order> Table()
         {

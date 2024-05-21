@@ -55,6 +55,7 @@ namespace Book_Ecommerce.Controllers
                     ProductName = fp.Product.ProductName,
                     ProductCode = fp.Product.ProductCode,
                     ProductSlug = fp.Product.ProductSlug,
+                    Quantity = fp.Product.Quantity,
                     Price = fp.Product.Price,
                     PercentDiscount = fp.Product.PercentDiscount,
                     PriceAfterDiscount = (fp.Product.PercentDiscount > 0) ? 

@@ -66,14 +66,15 @@ namespace Book_Ecommerce.Service
             {
                 query = query.Where(p => p.ProductName.Contains(search));
             }
-            var products = await query.ToListAsync();
+            query = query.OrderByDescending(p => p.CodeNumber);
             #region bắt đầu phân trang
-            var totalItem = products.Count();
+            var totalItem = query.Count();
             var totalPage = (int)Math.Ceiling((double)totalItem / pagesize);
             if (page > totalPage)
                 page = totalPage;
             if (page < 1)
                 page = 1;
+            var products = await query.Skip((page - 1) * pagesize).Take(pagesize).ToListAsync();
             var productVMs = products.Select(p => new ProductVM
             {
                 ProductId = p.ProductId,
@@ -87,7 +88,7 @@ namespace Book_Ecommerce.Service
                 Decription = p.Description,
                 Brand = p.Brand,
                 Images = p.Images
-            }).Skip((page - 1) * pagesize).Take(pagesize).ToList();
+            }).ToList();
             var pagingModel = new PagingModel
             {
                 currentpage = page,
@@ -116,7 +117,7 @@ namespace Book_Ecommerce.Service
             {
                 query = query.Where(p => p.ProductName.Contains(search));
             }
-            query = query.OrderBy(p => p.CodeNumber);
+            query = query.OrderByDescending(p => p.CodeNumber);
 
             #region Bắt đầu phân trang
             var totalItem = query.Count();
@@ -166,6 +167,7 @@ namespace Book_Ecommerce.Service
                                             .ThenInclude(c => c.Category)
                                             .Include(p => p.Brand)
                                             .Where(p => p.IsActive && p.CategoryProducts.Any(c => c.CategoryId == categoryId))
+                                            .OrderByDescending(p => p.CodeNumber)
                                             .ToListAsync();
             #region Bắt đầu phân trang
             var totalItem = products.Count();
@@ -174,6 +176,7 @@ namespace Book_Ecommerce.Service
                 page = totalPage;
             if (page < 1)
                 page = 1;
+            products = products.Skip((page - 1) * pagesize).Take(pagesize).ToList();
             var productVMs = products.Select(p => new ProductVM
             {
                 ProductId = p.ProductId,
@@ -188,7 +191,7 @@ namespace Book_Ecommerce.Service
                 Categories = p.CategoryProducts.Select(c => c.Category).ToList(),
                 Brand = p.Brand,
                 Images = p.Images
-            }).Skip((page - 1) * pagesize).Take(pagesize).ToList();
+            }).ToList();
             var pagingModel = new PagingModel
             {
                 currentpage = page,
@@ -212,6 +215,7 @@ namespace Book_Ecommerce.Service
                                             .ThenInclude(c => c.Category)
                                             .Include(p => p.Brand)
                                             .Where(p => p.IsActive && p.BrandId == brandId)
+                                            .OrderByDescending(p => p.CodeNumber)
                                             .ToListAsync();
             #region Bắt đầu phân trang
             var totalItem = products.Count();
@@ -220,6 +224,7 @@ namespace Book_Ecommerce.Service
                 page = totalPage;
             if (page < 1)
                 page = 1;
+            products = products.Skip((page - 1) * pagesize).Take(pagesize).ToList();
             var productVMs = products.Select(p => new ProductVM
             {
                 ProductId = p.ProductId,
@@ -234,7 +239,7 @@ namespace Book_Ecommerce.Service
                 Categories = p.CategoryProducts.Select(c => c.Category).ToList(),
                 Brand = p.Brand,
                 Images = p.Images
-            }).Skip((page - 1) * pagesize).Take(pagesize).ToList();
+            }).ToList();
             var pagingModel = new PagingModel
             {
                 currentpage = page,
@@ -257,6 +262,7 @@ namespace Book_Ecommerce.Service
                                             .Include(p => p.AuthorProducts)
                                             .ThenInclude(ap => ap.Author)
                                             .Where(p => p.IsActive && p.AuthorProducts.Any(ap => ap.AuthorId == authorId))
+                                            .OrderByDescending(p => p.CodeNumber)
                                             .ToListAsync();
             #region Bắt đầu phân trang
             var totalItem = products.Count();
@@ -265,6 +271,7 @@ namespace Book_Ecommerce.Service
                 page = totalPage;
             if (page < 1)
                 page = 1;
+            products = products.Skip((page - 1) * pagesize).Take(pagesize).ToList();
             var productVMs = products.Select(p => new ProductVM
             {
                 ProductId = p.ProductId,
@@ -277,7 +284,7 @@ namespace Book_Ecommerce.Service
                 PercentDiscount = p.PercentDiscount,
                 Decription = p.Description,
                 Images = p.Images
-            }).Skip((page - 1) * pagesize).Take(pagesize).ToList();
+            }).ToList();
             var pagingModel = new PagingModel
             {
                 currentpage = page,

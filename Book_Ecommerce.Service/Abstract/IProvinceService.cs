@@ -10,6 +10,9 @@ namespace Book_Ecommerce.Service.Abstract
 {
     public interface IProvinceService
     {
+        Task<IEnumerable<District>> GetDataDistrictAsync(Expression<Func<District, bool>>? expression = null);
+        Task<IEnumerable<Province>> GetDataProvinceAsync(Expression<Func<Province, bool>>? expression = null);
+        Task<IEnumerable<Ward>> GetDataWardAsync(Expression<Func<Ward, bool>>? expression = null);
         Task<District?> GetSingleDistrictByConditionAsync(Expression<Func<District, bool>> expression);
         Task<Province?> GetSingleProvinceByConditionAsync(Expression<Func<Province, bool>> expression);
         Task<Ward?> GetSingleWardByConditionAsync(Expression<Func<Ward, bool>> expression);

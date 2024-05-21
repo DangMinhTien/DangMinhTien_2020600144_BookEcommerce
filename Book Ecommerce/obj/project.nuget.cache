@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "KB8RTZO8AEm0ip8PGxhXzf9EGnE7V/u4TRiKqhDfPcNxRTb/u4BpeaEH3XlJyj+xQUAWympXBD8SzJuu7kI5ew==",
+  "dgSpecHash": "NAq98SsCQ0Sg/sSY3kgqxq2Tepxp9YpT7uCGAC2u3l1MqKUO1Zke95HT/qYABVyhSKbnpRbPCXUVWkdNe9Nhfg==",
   "success": true,
   "projectFilePath": "C:\\Users\\LENOVO\\OneDrive\\Documents\\Wordspace\\DoAnTotNghiep\\Code\\Book Ecommerce\\Book Ecommerce\\Book Ecommerce.csproj",
   "expectedPackageFiles": [
@@ -177,8 +177,9 @@
     "C:\\Users\\LENOVO\\.nuget\\packages\\runtime.ubuntu.14.04-x64.runtime.native.system.security.cryptography.openssl\\4.3.2\\runtime.ubuntu.14.04-x64.runtime.native.system.security.cryptography.openssl.4.3.2.nupkg.sha512",
     "C:\\Users\\LENOVO\\.nuget\\packages\\runtime.ubuntu.16.04-x64.runtime.native.system.security.cryptography.openssl\\4.3.2\\runtime.ubuntu.16.04-x64.runtime.native.system.security.cryptography.openssl.4.3.2.nupkg.sha512",
     "C:\\Users\\LENOVO\\.nuget\\packages\\runtime.ubuntu.16.10-x64.runtime.native.system.security.cryptography.openssl\\4.3.2\\runtime.ubuntu.16.10-x64.runtime.native.system.security.cryptography.openssl.4.3.2.nupkg.sha512",
+    "C:\\Users\\LENOVO\\.nuget\\packages\\select.htmltopdf.netcore\\23.2.0\\select.htmltopdf.netcore.23.2.0.nupkg.sha512",
     "C:\\Users\\LENOVO\\.nuget\\packages\\system.appcontext\\4.3.0\\system.appcontext.4.3.0.nupkg.sha512",
-    "C:\\Users\\LENOVO\\.nuget\\packages\\system.buffers\\4.5.0\\system.buffers.4.5.0.nupkg.sha512",
+    "C:\\Users\\LENOVO\\.nuget\\packages\\system.buffers\\4.5.1\\system.buffers.4.5.1.nupkg.sha512",
     "C:\\Users\\LENOVO\\.nuget\\packages\\system.collections\\4.3.0\\system.collections.4.3.0.nupkg.sha512",
     "C:\\Users\\LENOVO\\.nuget\\packages\\system.collections.concurrent\\4.3.0\\system.collections.concurrent.4.3.0.nupkg.sha512",
     "C:\\Users\\LENOVO\\.nuget\\packages\\system.collections.immutable\\6.0.0\\system.collections.immutable.6.0.0.nupkg.sha512",
@@ -212,6 +213,7 @@
     "C:\\Users\\LENOVO\\.nuget\\packages\\system.net.http\\4.3.4\\system.net.http.4.3.4.nupkg.sha512",
     "C:\\Users\\LENOVO\\.nuget\\packages\\system.net.primitives\\4.3.0\\system.net.primitives.4.3.0.nupkg.sha512",
     "C:\\Users\\LENOVO\\.nuget\\packages\\system.net.sockets\\4.3.0\\system.net.sockets.4.3.0.nupkg.sha512",
+    "C:\\Users\\LENOVO\\.nuget\\packages\\system.numerics.vectors\\4.5.0\\system.numerics.vectors.4.5.0.nupkg.sha512",
     "C:\\Users\\LENOVO\\.nuget\\packages\\system.objectmodel\\4.3.0\\system.objectmodel.4.3.0.nupkg.sha512",
     "C:\\Users\\LENOVO\\.nuget\\packages\\system.reflection\\4.3.0\\system.reflection.4.3.0.nupkg.sha512",
     "C:\\Users\\LENOVO\\.nuget\\packages\\system.reflection.emit\\4.6.0\\system.reflection.emit.4.6.0.nupkg.sha512",

@@ -93,6 +93,10 @@
               "target": "Package",
               "version": "[2.0.0-rc2, )"
             },
+            "Select.HtmlToPdf.NetCore": {
+              "target": "Package",
+              "version": "[23.2.0, )"
+            },
             "bootstrap": {
               "target": "Package",
               "version": "[4.4.1, )"

@@ -277,3 +277,5 @@ C:\Users\LENOVO\OneDrive\Documents\Wordspace\DoAnTotNghiep\Code\Book Ecommerce\B
 C:\Users\LENOVO\OneDrive\Documents\Wordspace\DoAnTotNghiep\Code\Book Ecommerce\Book Ecommerce\bin\Debug\net6.0\Book_Ecommerce.Service.pdb
 C:\Users\LENOVO\OneDrive\Documents\Wordspace\DoAnTotNghiep\Code\Book Ecommerce\Book Ecommerce\bin\Debug\net6.0\Microsoft.EntityFrameworkCore.Design.dll
 C:\Users\LENOVO\OneDrive\Documents\Wordspace\DoAnTotNghiep\Code\Book Ecommerce\Book Ecommerce\bin\Debug\net6.0\CloudinaryDotNet.dll
+C:\Users\LENOVO\OneDrive\Documents\Wordspace\DoAnTotNghiep\Code\Book Ecommerce\Book Ecommerce\bin\Debug\net6.0\Select.Html.dep
+C:\Users\LENOVO\OneDrive\Documents\Wordspace\DoAnTotNghiep\Code\Book Ecommerce\Book Ecommerce\bin\Debug\net6.0\Select.HtmlToPdf.dll

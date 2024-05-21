@@ -17,6 +17,7 @@ using Book_Ecommerce.Domain.ViewModels.CheckoutViewModel;
 using Book_Ecommerce.Service.Abstract;
 using Book_Ecommerce.Service;
 using Microsoft.AspNetCore.Http;
+using PayPal.v1.Orders;
 
 namespace Book_Ecommerce.Controllers
 {
@@ -93,6 +94,21 @@ namespace Book_Ecommerce.Controllers
                 {
                     TempData["infor"] = "Không thể mở phần đặt hàng do giỏ hàng của bạn chưa có sản phẩm nào";
                     return RedirectToAction("Index", "Products");
+                }
+                foreach (var item in cartItemVMs)
+                {
+                    var product = await _productService.GetSingleByConditionAsync(p => p.ProductId == item.ProductId);
+                    if (product == null)
+                    {
+                        TempData["error"] = "Không thể đặt hàng do không tìm thấy sản phẩm";
+                        return RedirectToAction("Index", "Cart");
+                    }
+                    if (product.Quantity < item.Quantity)
+                    {
+                        TempData["error"] = $"Không thể đặt hàng do số lượng của sản phẩm {product.ProductName} " +
+                            $"chỉ là {product.Quantity} nên không đủ";
+                        return RedirectToAction("Index", "Cart");
+                    }
                 }
                 HttpContext.Session.Set<List<CartItemVM>>(MyAppSetting.CART_KEY, (List<CartItemVM>)cartItemVMs);
                 var checkoutVM = new CheckoutVM
@@ -207,7 +223,7 @@ namespace Book_Ecommerce.Controllers
                     var orderDetails = new List<OrderDetail>();
                     foreach (var item in cartItemVMs)
                     {
-                        var product = await _context.Products.FirstOrDefaultAsync(p => p.ProductId == item.ProductId);
+                        var product = await _productService.GetSingleByConditionAsync(p => p.ProductId == item.ProductId);
                         if (product == null)
                         {
                             TempData["error"] = "Không thể đặt hàng do không tìm thấy sản phẩm";
