@@ -70,10 +70,13 @@
                             <td style="width: 150px;">@item.DateCreated.ToString("dd/MM/yyyy") - @item.DateDelivery.ToString("dd/MM/yyyy")</td>
                             <td>@string.Format(cultureInfo, "{0:C0}", item.TotalAmount)</td>
                             <td>
-                                <a data-orderid="@item.OrderId" data-ordercode="@item.OrderCode"
-                                   style="cursor: pointer" class="cancel-order" data-toggle="modal" data-target="#cancelModel">
-                                   Hủy
-                                </a> |
+                                @if(item.Status != (int)StatusOrder.HuyDonHang)
+                                {
+                                    <a data-orderid="@item.OrderId" data-ordercode="@item.OrderCode"
+                                       style="cursor: pointer" class="cancel-order" data-toggle="modal" data-target="#cancelModel">
+                                       Hủy
+                                    </a><span>|</span>
+                                }
                                 <a class="print-pdf" style="cursor: pointer;" data-orderid="@item.OrderId" data-ordercode="@item.OrderCode">
                                     In pdf
                                 </a>
@@ -334,9 +337,6 @@
                         link.remove();
                         window.URL.revokeObjectURL(url);
 
-                        var toast = $(RenderHtmlToastSuccess('In đơn hàng thành công'))
-                        $('.m-toast-box').append(toast)
-                        HideToastAfterShow(toast)
                     },
                     error: function (response) {
                         console.log(response)

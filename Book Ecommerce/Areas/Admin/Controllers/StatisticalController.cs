@@ -1,4 +1,5 @@
 ﻿using Book_Ecommerce.Data.Abstract;
+using Book_Ecommerce.Domain.Entities;
 using Book_Ecommerce.Domain.MySettings;
 using Book_Ecommerce.Service;
 using Book_Ecommerce.Service.Abstract;
@@ -6,6 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Globalization;
+using System.Linq;
 
 namespace Book_Ecommerce.Areas.Admin.Controllers
 {
@@ -39,7 +41,8 @@ namespace Book_Ecommerce.Areas.Admin.Controllers
                 CultureInfo cultureInfo = new CultureInfo("vi-VN");
                 var sumQuantityProduct = _productService.Table().Sum(p => p.Quantity);
                 var sumProductBuy = _unitOfWork.OrderDetailRepository.Table().Sum(o => o.Quantity);
-                var revenue = _unitOfWork.OrderDetailRepository.Table().Sum(o => o.Quantity * o.Price);
+                var revenue = _unitOfWork.OrderDetailRepository.Table().Sum(o => o.Quantity * o.Price) 
+                    + _unitOfWork.OrderRepository.Table().Sum(o => o.TransportFee);
                 ViewBag.sumQuantityProduct = sumQuantityProduct;
                 ViewBag.sumProductBuy = sumProductBuy;
                 ViewBag.revenue = string.Format(cultureInfo, "{0:C0}", revenue);
@@ -56,17 +59,17 @@ namespace Book_Ecommerce.Areas.Admin.Controllers
             try
             {
                 List<int> lstMonth = new List<int>() { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12};
-                List<dynamic> result = new List<dynamic>();
+                var result = new List<dynamic>();
                 foreach (var month in lstMonth)
                 {
                     var orders = await _orderService.Table().Include(o => o.OrderDetails)
-                        .Where(o => o.DateCreated.Year ==  year && o.DateCreated.Month == month)
+                        .Where(o => o.DateCreated.Year == year && o.DateCreated.Month == month)
                         .ToListAsync();
                     result.Add(new
                     {
                         month = month,
                         totalQuantity = orders.Sum(o => o.OrderDetails.Sum(od => od.Quantity)),
-                        revenue = orders.Sum(o => o.OrderDetails.Sum(od => od.Quantity * od.Price))
+                        revenue = orders.Sum(o => o.OrderDetails.Sum(od => od.Quantity * od.Price) + o.TransportFee)
                     });
                 }
                 return Ok(result);

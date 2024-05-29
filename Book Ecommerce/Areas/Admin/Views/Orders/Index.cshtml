@@ -304,10 +304,6 @@
                         link.click();
                         link.remove();
                         window.URL.revokeObjectURL(url);
-
-                        var toast = $(RenderHtmlToastSuccess('In đơn hàng thành công'))
-                        $('.m-toast-box').append(toast)
-                        HideToastAfterShow(toast)
                     },
                     error: function (response) {
                         console.log(response)

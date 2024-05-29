@@ -9,7 +9,7 @@ namespace Book_Ecommerce.Domain.ViewModels.AccountViewModel
 {
     public class InputChangePassword
     {
-        [Required(ErrorMessage = "Bạn phải nhập mật khẩu cũ")]
+        [Required(ErrorMessage = "Bạn phải nhập mật khẩu hiện tại")]
         public string CurrentPassword { get; set; } = null!;
         [Required(ErrorMessage = "Bạn phải nhập mật khẩu mới")]
         [RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$",

@@ -85,7 +85,7 @@ namespace Book_Ecommerce.Controllers
                 }
                 if(order.Status == (int)StatusOrder.HuyDonHang)
                 {
-                    return BadRequest(new { mesClient = "Không hủy  được đơn hàng do đơn hàng đã được hủy", mesDev = "Order has cancel" });
+                    return BadRequest(new { mesClient = "Đơn hàng này đã được hủy", mesDev = "Order has cancel" });
                 }
                 if (order.Status == (int)StatusOrder.GiaoThanhCong || order.Status == (int)StatusOrder.DangGiaoHang)
                 {
