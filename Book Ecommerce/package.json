@@ -1,10 +1,5 @@
 {
-  "version": "1.0.0",
-  "name": "asp.net",
-  "private": true,
   "dependencies": {
-    "gulp": "^4.0.2",
-    "gulp-cli": "^3.0.0",
     "gulp-concat": "^2.6.1",
     "gulp-cssmin": "^0.2.0",
     "gulp-less": "^5.0.0",
@@ -12,9 +7,9 @@
     "gulp-rename": "^2.0.0",
     "gulp-sass": "^5.1.0",
     "gulp-uglify": "^3.0.2",
-    "node-sass": "^9.0.0",
-    "postcss": "^8.4.38",
-    "rimraf": "^5.0.5",
-    "sass": "^1.72.0"
+    "rimraf": "^5.0.5"
+  },
+  "devDependencies": {
+    "gulp": "^4.0.2"
   }
 }
