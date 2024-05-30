@@ -60,18 +60,49 @@ namespace Book_Ecommerce.Areas.Admin.Controllers
             {
                 List<int> lstMonth = new List<int>() { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12};
                 var result = new List<dynamic>();
-                foreach (var month in lstMonth)
+                var orders = await _orderService.Table()
+                    .Include(o => o.OrderDetails).Where(o => o.DateCreated.Year == year).ToListAsync();
+                var resultMonthContain = orders.GroupBy(o => o.DateCreated.Month)
+                                .Select(group => new
+                                {
+                                    month = group.Key,
+                                    totalQuantity = group.Sum(o => o.OrderDetails.Sum(od => od.Quantity)),
+                                    revenue = group.Sum(o => o.OrderDetails.Sum(od => od.Quantity * od.Price) + o.TransportFee)
+                                }).ToList();
+                foreach(var month in lstMonth)
                 {
-                    var orders = await _orderService.Table().Include(o => o.OrderDetails)
-                        .Where(o => o.DateCreated.Year == year && o.DateCreated.Month == month)
-                        .ToListAsync();
-                    result.Add(new
+                    var revenueInMonth = resultMonthContain.FirstOrDefault(r => r.month == month);
+                    if (revenueInMonth != null)
                     {
-                        month = month,
-                        totalQuantity = orders.Sum(o => o.OrderDetails.Sum(od => od.Quantity)),
-                        revenue = orders.Sum(o => o.OrderDetails.Sum(od => od.Quantity * od.Price) + o.TransportFee)
-                    });
+                        result.Add(new
+                        {
+                            month = revenueInMonth.month,
+                            totalQuantity = revenueInMonth.totalQuantity,
+                            revenue = revenueInMonth.revenue
+                        });
+                    }
+                    else
+                    {
+                        result.Add(new
+                        {
+                            month = month,
+                            totalQuantity = 0,
+                            revenue = 0
+                        });
+                    }
                 }
+                //foreach (var month in lstMonth)
+                //{
+                //    var orders = await _orderService.Table().Include(o => o.OrderDetails)
+                //        .Where(o => o.DateCreated.Year == year && o.DateCreated.Month == month)
+                //        .ToListAsync();
+                //    result.Add(new
+                //    {
+                //        month = month,
+                //        totalQuantity = orders.Sum(o => o.OrderDetails.Sum(od => od.Quantity)),
+                //        revenue = orders.Sum(o => o.OrderDetails.Sum(od => od.Quantity * od.Price) + o.TransportFee)
+                //    });
+                //}
                 return Ok(result);
             }
             catch(Exception ex)
