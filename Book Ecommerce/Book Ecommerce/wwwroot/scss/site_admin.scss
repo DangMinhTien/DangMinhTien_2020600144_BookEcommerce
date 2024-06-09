@@ -279,3 +279,134 @@
     }
 }
 //author-admin-end
+// chat start
+
+.container-chat {
+    display: flex;
+    position: relative;
+}
+
+.sidebar-chat {
+    width: 250px;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    transition: transform 0.3s ease;
+    z-index: 1;
+    background-color: white;
+    border-right: 1px solid #EDF1FF;
+}
+
+#close-sidebar-chat {
+    height: 26px;
+    width: 30px;
+    font-size: 20px;
+    background: transparent;
+    border: none;
+    color: black;
+    cursor: pointer;
+}
+
+.sidebar-chat.active {
+    transform: translateX(0);
+}
+
+.sidebar-chat .close-btn {
+    font-size: 24px;
+    background: none;
+    border: none;
+    color: #fff;
+    cursor: pointer;
+    margin: 10px;
+}
+
+.sidebar-chat-links {
+    list-style: none;
+    padding: 20px;
+}
+
+.sidebar-chat-links li {
+    margin: 15px 0;
+}
+
+.sidebar-chat-links li a {
+    color: #fff;
+    text-decoration: none;
+    font-size: 18px;
+}
+
+.content {
+    margin-left: 250px;
+    width: 100%;
+    padding: 20px;
+    transition: margin-left 0.3s ease;
+}
+
+.content header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#toggle-btn {
+    display: none;
+}
+
+@media (max-width: 768px) {
+    .sidebar-chat {
+        transform: translateX(-100%);
+    }
+
+    .sidebar-chat.active {
+        transform: translateX(0);
+    }
+
+    .content {
+        margin-left: 0;
+    }
+
+    #toggle-btn {
+        display: block;
+    }
+}
+
+.chat-online {
+    color: #34ce57
+}
+
+.chat-offline {
+    color: #e4606d
+}
+
+.chat-messages {
+    display: flex;
+    flex-direction: column;
+    min-height: calc(100vh - 250px);
+}
+
+.chat-message-left,
+.chat-message-right {
+    display: flex;
+    width: 75%;
+    flex-shrink: 0;
+}
+
+.chat-message-left {
+    margin-right: auto
+}
+
+.chat-message-right {
+    flex-direction: row-reverse;
+    margin-left: auto
+}
+
+.short-chat-message {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-height: 3em; /* Adjust this based on the line-height */
+    line-height: 1.5em; /* Adjust line height as needed */
+}
+// chat end

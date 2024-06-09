@@ -19,6 +19,7 @@ namespace Book_Ecommerce.Domain.Menu
         public static string Register => "Register";
 
         public static string Login => "Login";
+        public static string Chat => "Chat";
 
         public static string HomeNavClass(string viewName) => PageNavClass(viewName, Home);
 
@@ -31,6 +32,7 @@ namespace Book_Ecommerce.Domain.Menu
         public static string RegisterNavClass(string viewName) => PageNavClass(viewName, Register);
 
         public static string LoginNavClass(string viewName) => PageNavClass(viewName, Login);
+        public static string ChatNavClass(string viewName) => PageNavClass(viewName, Chat);
 
         private static string PageNavClass(string viewName = "", string page = "")
         {

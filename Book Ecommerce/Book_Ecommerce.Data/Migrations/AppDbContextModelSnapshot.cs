@@ -501,6 +501,39 @@ namespace Book_Ecommerce.Data.Migrations
                     b.ToTable("Images");
                 });
 
+            modelBuilder.Entity("Book_Ecommerce.Domain.Entities.Messsages", b =>
+                {
+                    b.Property<string>("MessageId")
+                        .HasColumnType("char(36)");
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(4000)");
+
+                    b.Property<string>("CustomerId")
+                        .IsRequired()
+                        .HasColumnType("char(36)");
+
+                    b.Property<string>("EmployeeId")
+                        .IsRequired()
+                        .HasColumnType("char(36)");
+
+                    b.Property<string>("SendBy")
+                        .IsRequired()
+                        .HasColumnType("char(36)");
+
+                    b.Property<DateTime>("SendDate")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("MessageId");
+
+                    b.HasIndex("CustomerId");
+
+                    b.HasIndex("EmployeeId");
+
+                    b.ToTable("Messsages");
+                });
+
             modelBuilder.Entity("Book_Ecommerce.Domain.Entities.Order", b =>
                 {
                     b.Property<string>("OrderId")
@@ -965,6 +998,25 @@ namespace Book_Ecommerce.Data.Migrations
                         .IsRequired();
 
                     b.Navigation("Product");
+                });
+
+            modelBuilder.Entity("Book_Ecommerce.Domain.Entities.Messsages", b =>
+                {
+                    b.HasOne("Book_Ecommerce.Domain.Entities.Customer", "Customer")
+                        .WithMany()
+                        .HasForeignKey("CustomerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Book_Ecommerce.Domain.Entities.Employee", "Employee")
+                        .WithMany()
+                        .HasForeignKey("EmployeeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Customer");
+
+                    b.Navigation("Employee");
                 });
 
             modelBuilder.Entity("Book_Ecommerce.Domain.Entities.Order", b =>

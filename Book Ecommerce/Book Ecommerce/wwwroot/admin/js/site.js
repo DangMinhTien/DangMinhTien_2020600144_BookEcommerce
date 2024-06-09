@@ -31,3 +31,5 @@
         console.log('Đã xảy ra sự kiện thay đổi kích thước màn hình');
     });
 })
+// chat start
+// chat end

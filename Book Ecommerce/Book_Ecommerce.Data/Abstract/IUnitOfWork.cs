@@ -30,6 +30,7 @@ namespace Book_Ecommerce.Data.Abstract
         IRepository<Employee> EmployeeRepository { get; }
         IRepository<Comment> CommentRepository { get; }
         IRepository<FavouriteProduct> FavouriteProductRepository { get; }
+        IRepository<Messsages> MessageRepository { get; }
 
         Task SaveChangesAsync();
     }

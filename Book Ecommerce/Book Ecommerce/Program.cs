@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.FileProviders;
 using Book_Ecommerce.Infrastructure.Configuration;
+using Book_Ecommerce.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -32,6 +33,8 @@ builder.Services.AddLogging(builder =>
 {
     builder.AddConsole();
 });
+// đăng ký SignaIR
+builder.Services.AddSignalR();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -63,4 +66,6 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 app.MapRazorPages();
+app.MapHub<CommentHub>("/comment-hub");
+app.MapHub<ChatHub>("/chat-hub");
 app.Run();

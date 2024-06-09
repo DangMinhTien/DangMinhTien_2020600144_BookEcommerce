@@ -27,6 +27,7 @@ namespace Book_Ecommerce.Domain.Menu
         public static string Employee => "Employee";
 
         public static string Statistical => "Statistical";
+        public static string Chat => "Chat";
 
         public static string HomeNavClass(string viewName) => PageNavClass(viewName, Home);
 
@@ -46,6 +47,7 @@ namespace Book_Ecommerce.Domain.Menu
         public static string EmployeeNavClass(string viewName) => PageNavClass(viewName, Employee);
 
         public static string StatisticalNavClass(string viewName) => PageNavClass(viewName, Statistical);
+        public static string ChatNavClass(string viewName) => PageNavClass(viewName, Chat);
 
         private static string PageNavClass(string viewName = "", string page = "")
         {

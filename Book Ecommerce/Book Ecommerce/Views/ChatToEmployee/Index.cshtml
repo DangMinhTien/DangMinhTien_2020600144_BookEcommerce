@@ -1,0 +1,73 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    ViewData["Title"] = "Liên hệ với nhân viên";
+    ViewBag.MenuClient = MenuClient.Chat;
+}
+<div class="container-chat">
+    <div class="sidebar-chat">
+        <div class="d-flex justify-content-end">
+            <button id="close-sidebar-chat">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="px-4">
+            <form asp-action="Index" asp-controller="ChatToEmployee" method="get">
+                <div class="d-flex align-items-center">
+                    <div class="flex-grow-1 d-flex">
+                        <input type="text" name="search" class="form-control my-3" value="@ViewBag.search" placeholder="Tìm theo tên...">
+                        <button type="submit" class="btn btn-primary my-3">Tìm</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+        @await Component.InvokeAsync("SideBarChatToEmployee", new {
+            searchEmployee = ViewBag.search as string ?? "",
+            employeeActive = "",
+            customerId = ViewBag.customerId as string ?? ""
+        })
+        
+
+    </div>
+    <div class="content">
+        <div class="">
+            <div class="py-2 px-4 border-bottom">
+                <div class="d-flex align-items-center py-1">
+                    <div class="position-relative">
+                    </div>
+                    <div class="flex-grow-1 pl-3">
+                    </div>
+                    <div>
+                        <button id="toggle-btn" class="btn btn-light border btn-lg px-3"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-more-horizontal feather-lg"><circle cx="12" cy="12" r="1"></circle><circle cx="19" cy="12" r="1"></circle><circle cx="5" cy="12" r="1"></circle></svg></button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="position-relative">
+                <div class="chat-messages p-4">
+                    <h2 class="text-center">Trang liên hệ nhân viên hệ thống</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts{
+    <script>
+        const toggleBtn = document.querySelector('#toggle-btn');
+        const closeSidebarChatBtn = document.querySelector('#close-sidebar-chat');
+        const sidebarchat = document.querySelector('.sidebar-chat');
+
+        closeSidebarChatBtn.style.display = 'none'
+
+        toggleBtn.addEventListener('click', () => {
+            sidebarchat.classList.add('active');
+            closeSidebarChatBtn.style.display = 'block'
+        });
+
+        closeSidebarChatBtn.addEventListener('click', () => {
+            sidebarchat.classList.remove('active');
+            closeSidebarChatBtn.style.display = 'none'
+        });
+    </script>
+}

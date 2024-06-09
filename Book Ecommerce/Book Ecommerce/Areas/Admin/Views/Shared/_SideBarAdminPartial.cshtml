@@ -72,6 +72,12 @@
             <span>Khách hàng</span>
         </a>
     </li>
+    <li class="nav-item @MenuManage.ChatNavClass(ViewBag.MenuManage as string ?? " ")">
+        <a class="nav-link " asp-action="Index" asp-controller="ChatToCustomer" asp-area="Admin">
+            <i class="fas fa-address-book"></i>
+            <span>Liên hệ khách hàng</span>
+        </a>
+    </li>
     <li>
         <hr class="sidebar-divider my-0" />
     </li>

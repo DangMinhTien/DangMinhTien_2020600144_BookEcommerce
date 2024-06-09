@@ -230,6 +230,7 @@
 </div>
 <!-- Products End -->
 @section Scripts {
+    <script src="~/lib/signalr/dist/browser/signalr.js"></script>
     <script type="text/javascript">
         document.addEventListener('DOMContentLoaded', function () {
             const stars = document.querySelectorAll('.star');
@@ -254,7 +255,6 @@
     </script>
     <script type="text/javascript">
         $(document).ready(function () {
-            LoadComment()
             $('.AddToCart').click(function () {
                 var productid = $(this).data('productid')
                 var formData = new FormData()
@@ -377,53 +377,78 @@
                     $('#Quantity').val(1)
             })
             // phần bình luận
-            $('#btnSendComment').click(function () {
+            LoadComment();
+            
+            "use strict";
+
+            var connection = new signalR.HubConnectionBuilder().withUrl("/comment-hub").build();
+            var productId = '@Model.ProductId'
+            //Disable the send button until connection is established.
+
+
+            connection.on("ReceiveComment", function (comment, sumComment) {
+                var htmlStart = RenderStar(comment.vote)
+                var htmlComment = `<div class="media mb-4">
+                    <img src="/contents/Photos/user.png" alt="Image" class="img-fluid mr-3 mt-1" style="width: 45px;">
+                    <div class="media-body">
+                        <h6>${comment.customerName} <small> - <i>${comment.dateCreated}</i></small></h6>
+                        <div class="text-primary mb-2">
+                            ${htmlStart}
+                        </div>
+                        <p>${comment.message}</p>
+                    </div>
+                </div>`
+                $('#viewComments').prepend(htmlComment)
+                $('.sum-comment').text(sumComment)
+            });
+
+            connection.on("Notification", function (status, mesClient, mesDev) {
+                console.log(mesDev)
+                if (status == true) {
+                    var toast = $(RenderHtmlToastSuccess(mesClient))
+                    $('.m-toast-box').append(toast)
+                    HideToastAfterShow(toast)
+                }
+                else {
+                    var toast = $(RenderHtmlToastError(mesClient))
+                    $('.m-toast-box').append(toast)
+                    HideToastAfterShow(toast)
+                }
+            });
+            connection.start().then(function () {
+                console.log("Connected!");
+
+                // Tham gia nhóm sản phẩm cụ thể
+                connection.invoke("JoinProductGroup", productId).catch(function (err) {
+                    return console.error(err.toString());
+                });
+            }).catch(function (err) {
+                return console.error(err.toString());
+            });
+
+            $("#btnSendComment").click(function (event) {
                 var vote = $("input[name='rating']:checked").val();
-                var formData = new FormData()
-                formData.append('Vote', vote)
-                formData.append('Message', $('#message').val())
-                $('#loader').show()
-                $.ajax({
-                    url: '@Url.Action("SendComment", "Products", new { area = "", productId = Model.ProductId })',
-                    type: "POST",
-                    data: formData,
-                    catch: false,
-                    contentType: false,
-                    processData: false,
-                    success: function (response) {
-                        console.log(response)
-                        $('#loader').hide()
-                        $('#errorMessage').html("")
-                        var toast = $(RenderHtmlToastSuccess(response.mesClient))
-                        $('.m-toast-box').append(toast)
-                        HideToastAfterShow(toast)
-                        LoadComment()
-                    },
-                    error: function (response) {
-                        console.log(response)
-                        $('#loader').hide()
-                        $('#errorMessage').html("")
-                        var message = ""
-                        if (response.status == 401)
-                            message = "Yêu cầu bạn đăng nhập để thực hiện chức năng này";
-                        else if (response.status == 403)
-                            message = "Tài khoản của bạn không thể thực hiện chức năng này";
-                        else {
-                            if (response.responseJSON.isValid == false) {
-                                var err = ""
-                                for (var i = 0; i < response.responseJSON.error.length; i++) {
-                                    err += `<p>${response.responseJSON.error[i]}</p>`
-                                }
-                                $('#errorMessage').html(err)
-                            }
-                            message = response.responseJSON.mesClient
-                        }
-                        var toast = $(RenderHtmlToastError(message))
-                        $('.m-toast-box').append(toast)
-                        HideToastAfterShow(toast)
-                    }
-                })
-            })
+                var message = $('#message').val();
+                if(vote > 5 || vote < 1){
+                    $('#errorMessage').html(`<p>Số sao phải từ 1 tới 5</p>`)
+                    return
+                }
+                if(message.trim() == ''){
+                    $('#errorMessage').html(`<p>Bạn phải nhập bình luận</p>`)
+                    return
+                }
+                $('#errorMessage').html(``)
+                connection.invoke("SendComment", productId, `${vote}`, message).catch(function (err) {
+                    console.log(err);
+                });
+                event.preventDefault();
+            });
+            // Rời khỏi nhóm khi đóng trang
+            $(window).on("beforeunload", function () {
+                connection.invoke("LeaveProductGroup", productId).catch(function (err) {
+                    return console.error(err.toString());
+                });
+            });
         })
         function HideToastAfterShow(toast) {
             setTimeout(function () {

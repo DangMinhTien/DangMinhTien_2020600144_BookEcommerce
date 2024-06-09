@@ -1,0 +1,206 @@
+﻿@model IEnumerable<MessageVM>
+@{
+    ViewData["Title"] = "chat với nhân viên hệ thống";
+    ViewBag.MenuClient = MenuClient.Chat;
+    var employeeId = ViewBag.employeeId as string ?? "";
+    var customerId = ViewBag.customerId as string ?? "";
+    var employee = ViewBag.employee as Employee ?? new Employee();
+}
+<div class="container-chat">
+    <div class="sidebar-chat">
+        <div class="d-flex justify-content-end">
+            <button id="close-sidebar-chat">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="px-4">
+            <form asp-action="Index" asp-controller="ChatToEmployee" method="get">
+                <div class="d-flex align-items-center">
+                    <div class="flex-grow-1 d-flex">
+                        <input type="text" name="search" class="form-control my-3" value="@ViewBag.search" placeholder="Tìm theo tên...">
+                        <button type="submit" class="btn btn-primary my-3">Tìm</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+        @await Component.InvokeAsync("SideBarChatToEmployee", new
+            {
+                searchEmployee = "",
+                employeeActive = employeeId,
+                customerId = customerId
+            })
+    </div>
+    <div class="content">
+        <div class="">
+            <div class="py-2 px-4 border-bottom">
+                <div class="d-flex align-items-center py-1">
+                    <div class="position-relative">
+                        <img src="/contents/Photos/user.png" class="rounded-circle mr-1" alt="Sharon Lessman" width="40" height="40">
+                    </div>
+                    <div class="flex-grow-1 pl-3">
+                        <strong>@employee.FullName</strong>
+                    </div>
+                    <div>
+                        <button id="toggle-btn" class="btn btn-light border btn-lg px-3"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-more-horizontal feather-lg"><circle cx="12" cy="12" r="1"></circle><circle cx="19" cy="12" r="1"></circle><circle cx="5" cy="12" r="1"></circle></svg></button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="position-relative">
+                <div class="chat-messages p-4">
+                    @foreach(var item in Model)
+                    {
+                        if(item.SendBy == customerId)
+                        {
+                            <div class="chat-message-right pb-4">
+                                <div class="flex-shrink-1 bg-primary rounded py-2 px-3 mr-3 text-dark">
+                                    <div class="small text-nowrap mt-2">@item.SendDate.ToString("HH:mm - dd/MM/yyyy")</div>
+                                    @item.Content
+                                </div>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="chat-message-left pb-4">
+                                <div class="flex-shrink-1 bg-secondary rounded py-2 px-3 ml-3 text-dark">
+                                    <div class="small text-nowrap mt-2">@item.SendDate.ToString("HH:mm - dd/MM/yyyy")</div>
+                                    @item.Content
+                                </div>
+                            </div>
+                        }
+                    }
+                </div>
+            </div>
+
+            <div class="flex-grow-0 py-3 px-4 border-top">
+                <div class="input-group">
+                    <input id="content" type="text" class="form-control" placeholder="Nhắn tin của bạn">
+                    <button id="btnSendMessage" class="btn btn-primary">Gửi</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+@section Scripts {
+    <script>
+        const toggleBtn = document.querySelector('#toggle-btn');
+        const closeSidebarChatBtn = document.querySelector('#close-sidebar-chat');
+        const sidebarchat = document.querySelector('.sidebar-chat');
+
+        closeSidebarChatBtn.style.display = 'none'
+
+        toggleBtn.addEventListener('click', () => {
+            sidebarchat.classList.add('active');
+            closeSidebarChatBtn.style.display = 'block'
+        });
+
+        closeSidebarChatBtn.addEventListener('click', () => {
+            sidebarchat.classList.remove('active');
+            closeSidebarChatBtn.style.display = 'none'
+        });
+    </script>
+    <script src="~/lib/signalr/dist/browser/signalr.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            "use strict";
+
+            var connection = new signalR.HubConnectionBuilder().withUrl("/chat-hub").build();
+            var customerId = '@customerId'
+            var employeeId = '@employeeId'
+            //Disable the send button until connection is established.
+
+
+            connection.on("ReceiveMessage", function (message) {
+                console.log(message)
+                if (message.sendBy == customerId) {
+                    var messageBox = ` <div class="chat-message-right pb-4">
+                                        <div class="flex-shrink-1 bg-primary rounded py-2 px-3 mr-3 text-dark">
+                                            <div class="small text-nowrap mt-2">${message.sendDate}</div>
+                                            ${message.content}
+                                        </div>
+                                    </div>`
+                }
+                else {
+                    var messageBox = `<div class="chat-message-left pb-4">
+                                        <div class="flex-shrink-1 bg-secondary rounded py-2 px-3 ml-3 text-dark">
+                                            <div class="small text-nowrap mt-2">${message.sendDate}</div>
+                                            ${message.content}
+                                        </div>
+                                    </div>`
+                }
+                $(".chat-messages").append(messageBox)
+            });
+
+            connection.on("Notification", function (status, mesClient, mesDev) {
+                console.log(mesDev)
+                if (status == false) {
+                    var toast = $(RenderHtmlToastError(mesClient))
+                    $('.m-toast-box').append(toast)
+                    HideToastAfterShow(toast)
+                }
+            });
+            connection.start().then(function () {
+                console.log("Connected!");
+
+                // Tham gia nhóm sản phẩm cụ thể
+                connection.invoke("JoinChat", `${customerId}-${employeeId}`).catch(function (err) {
+                    return console.error(err.toString());
+                });
+            }).catch(function (err) {
+                return console.error(err.toString());
+            });
+
+            $("#btnSendMessage").click(function (event) {
+                var content = $("#content").val()
+                if (content.trim() == "") {
+                    return
+                }
+                $("#content").val("")
+                connection.invoke("SendMessage", `${customerId}-${employeeId}`, customerId, employeeId, content, customerId)
+                .catch(function (err) {
+                    console.log(err);
+                });
+                event.preventDefault();
+            });
+            // Rời khỏi nhóm khi đóng trang
+            $(window).on("beforeunload", function () {
+                connection.invoke("LeaveChat", `${customerId}-${employeeId}`).catch(function (err) {
+                    return console.error(err.toString());
+                });
+            });
+        })
+        function HideToastAfterShow(toast) {
+            setTimeout(function () {
+                // tạo hiệu ứng
+                toast.addClass('hidden')
+                // sau đó ẩn
+                setTimeout(function () {
+                    toast.remove()
+                }, 1000)
+            }, 5000)
+        }
+        function RenderHtmlToastError(message) {
+            return `<div class="m-toast-message m-toast-error">
+                                <div class="m-toast-icon">
+                                    <i class="fas fa-check-circle"></i>
+                                </div>
+                                <div class="m-toast-text">${message}</div>
+                                <div class="m-toast-close">
+                                    <i class="fas fa-times"></i>
+                                </div>
+                            </div>`
+        }
+        function RenderHtmlToastSuccess(message) {
+            return `<div class="m-toast-message m-toast-success">
+                                <div class="m-toast-icon">
+                                    <i class="fas fa-check-circle"></i>
+                                </div>
+                                        <div class="m-toast-text">${message}</div>
+                                <div class="m-toast-close">
+                                    <i class="fas fa-times"></i>
+                                </div>
+                            </div>`
+        }
+    </script>
+}

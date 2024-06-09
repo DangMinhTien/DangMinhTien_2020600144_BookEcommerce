@@ -111,7 +111,7 @@ namespace Book_Ecommerce.Areas.Admin.Controllers
             }
         }
         [HttpGet("/thong-ke/topbanchay")]
-        public async Task<IActionResult> getTopSelling(int year)
+        public async Task<IActionResult> getTopSelling()
         {
             try
             {

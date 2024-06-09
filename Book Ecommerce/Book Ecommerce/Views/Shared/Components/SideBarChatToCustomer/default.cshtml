@@ -1,0 +1,19 @@
+﻿@model IEnumerable<ChatVM>
+@{
+
+}
+@foreach (var item in Model)
+{
+    var cssActive = item.IsActive ? "active" : "";
+    <a asp-action="ViewChat" asp-controller="ChatToCustomer" asp-area="Admin" asp-route-customerId="@item.CustomerId"
+       class="list-group-item list-group-item-action border-0 @cssActive">
+        <div class="d-flex align-items-start">
+            <img src="/contents/Photos/user.png" class="rounded-circle mr-1" alt="@item.Customer.FullName"
+                 width="40" height="40">
+            <div class="flex-grow-1 ml-3 font-weight-bold">
+                @item.Customer.FullName - (@item.Customer.CustomerCode)
+                <p class="small short-chat-message">@item.LastMessage</p>
+            </div>
+        </div>
+    </a>
+}

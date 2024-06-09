@@ -179,55 +179,5 @@ namespace Book_Ecommerce.Controllers
                 return BadRequest(new {mesClient = "Không lấy được đánh giá do lỗi hệ thống", mesDev =  ex.Message});
             }
         }
-        [Authorize(Roles = MyRole.CUSTOMER)]
-        [HttpPost("/sanpham/guidanhgia")]
-        public async Task<IActionResult> SendComment(string productId, InputComment inputComment)
-        {
-            if(ModelState.IsValid)
-            {
-                try
-                {
-                    var user = await _userManager.GetUserAsync(User);
-                    if (user == null)
-                    {
-                        return BadRequest(new { isValid = true, mesClient = "Không gửi được đánh giá do không tìm thấy tài khoản đăng nhập", mesDev = "don't find account login" });
-                    }
-                    var customer = await _customerService.GetSingleByConditionAsync(c => c.CustomerId == user.CustomerId);
-                    if (customer == null)
-                    {
-                        return BadRequest(new { isValid = true, mesClient = "Không gửi được đánh giá do không tìm thấy khách hàng đăng nhập", mesDev = "don't find customer login" });
-                    }
-                    var product = await _productService.GetSingleByConditionAsync(p => p.ProductId == productId);
-                    if (product == null)
-                    {
-                        return BadRequest(new { isValid = true, mesClient = "Không gửi được đánh giá do không tìm thấy sản phẩm", mesDev = "don't find product" });
-                    }
-                    var comment = new Comment
-                    {
-                        CommentId = Guid.NewGuid().ToString(),
-                        Vote = inputComment.Vote ?? 5,
-                        Message = inputComment.Message,
-                        DateCreated = DateTime.Now,
-                        CustomerId = customer.CustomerId,
-                        ProductId = product.ProductId,
-                    };
-                    await _commentService.AddAsync(comment);
-                    return Ok(new {mesClient = "Gửi đánh giá thành công", mesDev = "send comment successfully"});
-                }
-                catch(Exception ex)
-                {
-                    return BadRequest(new { isValid = true, mesClient = "Không gửi được đánh giá do lỗi hệ thống", mesDev = ex.Message });
-                }
-            }
-            List<string> error = new List<string>();
-            foreach (var value in ModelState.Values)
-            {
-                foreach (var err in value.Errors)
-                {
-                    error.Add(err.ErrorMessage);
-                }
-            }
-            return BadRequest(new {isValid = false, error = error, mesClient = "Lỗi nhập dữ liệu", mesDev = "error inpur data"});
-        }
     }
 }

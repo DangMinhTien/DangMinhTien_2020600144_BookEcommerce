@@ -21,6 +21,7 @@
                 var ResultAuthor = await authorizationService.AuthorizeAsync(User, "IsCustomer");
                 if (ResultAuthor.Succeeded)
                 {
+                    <a asp-action="Index" asp-controller="ChatToEmployee" asp-area="" class="nav-item nav-link @MenuClient.ChatNavClass(ViewBag.MenuClient as string ?? "")">Liên hệ</a>
                     <div class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle @MenuClient.MyOrderNavClass(ViewBag.MenuClient as string ?? "") @MenuClient.ProfileNavClass(ViewBag.MenuClient as string ?? "")"
                            data-toggle="dropdown">Tài khoản</a>
@@ -33,16 +34,16 @@
             }
             
         </div>
-            <div class="navbar-nav ml-auto py-0">
-                @if (SignInManager.IsSignedIn(User))
-                {
-                    <a asp-action="Logout" asp-controller="Accounts" class="nav-item nav-link">Đăng xuất</a>
-                }
-                else
-                {
-                <a asp-action="Login" asp-controller="Accounts" class="nav-item nav-link @MenuClient.LoginNavClass(ViewBag.MenuClient as string ?? "")">Đăng nhập</a>
-                }
-            <a asp-action="Register" asp-controller="Accounts" class="nav-item nav-link @MenuClient.RegisterNavClass(ViewBag.MenuClient as string ?? "")">Đăng ký</a>
-            </div>
+        <div class="navbar-nav ml-auto py-0">
+            @if (SignInManager.IsSignedIn(User))
+            {
+                <a asp-action="Logout" asp-controller="Accounts" class="nav-item nav-link">Đăng xuất</a>
+            }
+            else
+            {
+            <a asp-action="Login" asp-controller="Accounts" class="nav-item nav-link @MenuClient.LoginNavClass(ViewBag.MenuClient as string ?? "")">Đăng nhập</a>
+            }
+        <a asp-action="Register" asp-controller="Accounts" class="nav-item nav-link @MenuClient.RegisterNavClass(ViewBag.MenuClient as string ?? "")">Đăng ký</a>
+        </div>
     </div>
 </nav>

@@ -13,6 +13,11 @@
     {
       "library": "summernote@0.8.20",
       "destination": "wwwroot/lib/summernote/"
+    },
+    {
+      "provider": "unpkg",
+      "library": "@microsoft/signalr@6.0.6",
+      "destination": "wwwroot/lib/signalr/"
     }
   ]
 }

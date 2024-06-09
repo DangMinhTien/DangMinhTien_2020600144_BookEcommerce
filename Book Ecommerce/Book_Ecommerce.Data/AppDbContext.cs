@@ -24,6 +24,7 @@ namespace Book_Ecommerce.Data
         public DbSet<Province> Provinces { get; set; } = null!;
         public DbSet<District> Districts { get; set; } = null!;
         public DbSet<Ward> Wards { get; set; } = null!;
+        public DbSet<Messsages> Messsages { get; set; } = null!;
 
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {
